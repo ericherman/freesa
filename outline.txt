@@ -1,0 +1,75 @@
+High level outline of the book:
+
+- Introduction
+
+  What is this book?
+
+  - Our goal: build, completely from source code, a complete and
+    up-to-date GNU/Linux operating system installation for small
+    devices that have at least a few gigabytes of storage but
+    lack both direct human interaction I/O capabilities (keyboard
+    and monitor) and usable serial ports.
+
+  Is this book redundant?
+
+  - Linux From Scratch and Do It Yourself Linux are similar, but
+    have different focus (building desktop systems).  Neither is
+    focused (are they? better check DIY) on clearly explaining
+    the purpose of each individual step, and neither is very good
+    at discussing the challenges of building on a device with no
+    built-in console.
+
+  - OpenWRT and other systems designed to build an embedded
+    appliance are designed to build a small flash-resident image,
+    rather than a full OS install, and are entirely built using a
+    cross-toolchain.
+
+- Our Goal
+
+  - A flash-resident image that contains the Linux kernel and
+    enough supporting userspace code to initialize hardware and
+    mount a real root filesystem (either on built-in storage or
+    over NFS).
+
+  - A full GNU/Linux operating system installation on the
+    device's built-in storage.
+
+- Overview of the build process
+
+  - Ensure the bootstrap system is adequate (list of build
+    dependencies):
+    - toolchain for building software
+    - NFS server
+    - trx image manipulation tools from OpenWRT
+  - glibc-based cross-toolchain (A)
+  - temporary system build tools (built using A); this is the
+    initial part of CLFS through "if you are going to..." branch
+    point
+  - create a tarball (B) that includes the temporary system.
+  - complete the "if you are going to chroot" branch; tar this up
+    as well as (C).
+  - restore the (B) tarball and complete the "if you are going to
+    boot" branch.  This is the filesystem that will be
+    NFS-mounted to complete the build.
+    - additional requirements: fdisk, appropriate fs tools
+      (reiser, xfs, e2fs, whatever), module-init-tools if not
+      part of standard CLFS, vim
+    - copy the (C) image into the NFS exported filesystem
+  - set up NFS on bootstrap system; export the filesystem.
+  - initial (bootstrap) flash image, containing:
+    - Linux kernel with static network configuration and NFS root
+      filesystem location hard-coded
+    - kernel includes subset of OpenWRT patches, doesn't need
+      mini_fo etc., needs lzma boot code etc
+    - The kernel modules from that build go into the NFS root fs
+  - Flash the bootstrap image using rescue mode
+  - ALTERNATIVE: smaller subset of kernel patches, no LZMA,
+    TFTP-boot kernel -- requires serial port on device.
+
+  - Boot the freesa device using NFS root fs image
+  - Activate the hard disk, partition, mkfs, mount, unpack (C) tarball
+  - chroot into the partial system
+
+  - Final system buildout as per CLFS with package users
+  - Automated option
+
