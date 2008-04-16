@@ -24,6 +24,18 @@ High level outline of the book:
     rather than a full OS install, and are entirely built using a
     cross-toolchain.
 
+  To whom might this book be valuable?
+
+  - People who want to build a complete operating system
+    distribution using free software, targeting a device that is
+    not mainstream.
+
+  - People who want to build a general-purpose, highly portable
+    server that they can use for any arbitrary computing task.
+
+  - People who would like to understand exactly what goes into an
+    operating system installation, and how to produce one.
+
 - Our Goal
 
   - A flash-resident image that contains the Linux kernel and
@@ -33,6 +45,89 @@ High level outline of the book:
 
   - A full GNU/Linux operating system installation on the
     device's built-in storage.
+
+  - A book describing the entire process we used to develop those
+    things. 
+    - A description of our approach to discovering enough about
+      the target device that we could put together a plan of
+      attack.
+    - A step-by-step explanation of the process of building the
+      software, with an emphasis on why each step is important.
+
+  - The development of scripts that make it relatively easy to
+    build new systems as packages within the base system are
+    upgraded.
+
+- Device Discovery
+
+  - We started by noticing the WL-700gE, a wireless router that
+    has a built-in hard disk and power supply.
+    - Gosh, that thing looks like a server except it's the size
+      of a hardcover book!
+    - It would be nice to use something like that as a firewall
+    - Maybe we could use it for other stuff as well (web hosting,
+      destination for backups, email, DNS, VOIP, ...)
+    - It would be kind of nice to have a tiny little server so we
+      could have a consistent computing environment no matter
+      where we go.
+    - What would it take to get a complete OS installation on
+      that disk, instead of using the disk just for file storage?
+
+  - Finding device information on the Internet
+    - Asus source tarball (has bad versions of software but very
+      useful documentation)
+    - OpenWRT
+    - Asus forums
+  - Hacking the device to have a usable serial console
+    - Let's void the warranty!
+  - Understanding the boot loader (CFE)
+    - We can use CFE's recovery mode to flash a new firmware
+      image
+    - It would be great to use Linux as a second-stage boot
+      loader, then have that copy of Linux boot the real runtime
+      kernel from the hard disk or tftp or whatever
+      - kexec (yay!)
+      - kexec may not work for MIPS (boo!)
+  - TFTP and NFS booting for feasability testing
+  - Getting the hard disk to spin
+    - OpenWRT "diag" kernel module and boot scripts
+    - Make sure we can do it ourselves
+  - What if you don't have an OpenWRT project to crib from? (you
+    are targeting a different hardware device)
+    - Learn things we didn't have to learn (become a kernel hacker)
+    - Find a different target device
+
+  - Identifying the constraints imposed by our target device
+    - 2MB of flash, 1728kb available
+    - flash must contain enough of a system to spin and mount the hard disk
+    - ideally, we write to flash as few times as possible
+    - no serial console available by default, let's try to ensure
+      that a full build is possible without a serial console
+
+  - Developing a plan of attack
+    - The flash image will contain the kernel and enough of a
+      root filesystem to get things running
+    - Once the hardware is initialized, the kernel will mount the
+      real root filesystem from the hard disk and pole-vault into
+      it (chroot, pivot_root).
+    - Tools needed to build the firmware: from OpenWRT; so we are
+      good to go.
+    - Operating system build: we can base that on CLFS
+    - Build enough of a temporary system to get the thing into a
+      state where we can finish the build
+      - NFS-boot that temp system
+      - Install the temp system to the internal HD and chroot
+        into it to finish the build -- compiling over NFS is
+        painful
+    - Build a build-time (temporary) firmware image to use for
+      the rest of the OS build, hard-code the NFS root filesystem
+      location, networking parameters, etc. -- use telnetd to get
+      a root prompt.
+    - Boot from that firmware, NFS root fs.  Telnet to the
+      device; spin hard disk and chroot into system
+    - OS build a la CLFS
+
+->>> HERE I AM
 
 - Overview of the build process
 
