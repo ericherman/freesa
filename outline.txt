@@ -4,11 +4,19 @@ High level outline of the book:
 
   What is this book?
 
-  - Our goal: build, completely from source code, a complete and
-    up-to-date GNU/Linux operating system installation for small
-    devices that have at least a few gigabytes of storage but
-    lack both direct human interaction I/O capabilities (keyboard
-    and monitor) and usable serial ports.
+  - Our primary goal: build, completely from source code, a
+    complete and up-to-date GNU/Linux operating system
+    installation for small devices that have at least a few
+    gigabytes of storage but lack both direct human interaction
+    I/O capabilities (keyboard and monitor) and usable serial
+    ports.
+
+  - Our secondary goal: make it easier for other people to do
+    similar things in the future, if they have the need or
+    inclination.
+
+  - Our tertiary goal: impress women with our stunning technical
+    prowess.  That works, right?  I think I saw it in xkcd.
 
   Is this book redundant?
 
@@ -72,6 +80,7 @@ High level outline of the book:
       where we go.
     - What would it take to get a complete OS installation on
       that disk, instead of using the disk just for file storage?
+      (Answer: a big pile of work.)
 
   - Finding device information on the Internet
     - Asus source tarball (has bad versions of software but very
@@ -101,6 +110,10 @@ High level outline of the book:
     - 2MB of flash, 1728kb available
     - flash must contain enough of a system to spin and mount the hard disk
     - ideally, we write to flash as few times as possible
+    - First 256kb of flash is the CFE boot loader; without it, we
+      have a brick.  (Don't cross the streams.)
+    - No JTAG apparently means no way to un-brick the thing.
+      (Really, don't cross the streams!)
     - no serial console available by default, let's try to ensure
       that a full build is possible without a serial console
 
@@ -112,24 +125,31 @@ High level outline of the book:
       it (chroot, pivot_root).
     - Tools needed to build the firmware: from OpenWRT; so we are
       good to go.
-    - Operating system build: we can base that on CLFS
+    - Operating system build: we can base that on CLFS.
+      (Describe CLFS approach at a high level)
     - Build enough of a temporary system to get the thing into a
       state where we can finish the build
       - NFS-boot that temp system
       - Install the temp system to the internal HD and chroot
         into it to finish the build -- compiling over NFS is
         painful
-    - Build a build-time (temporary) firmware image to use for
-      the rest of the OS build, hard-code the NFS root filesystem
-      location, networking parameters, etc. -- use telnetd to get
-      a root prompt.
-    - Boot from that firmware, NFS root fs.  Telnet to the
-      device; spin hard disk and chroot into system
+    - Build-time firmware vs run-time firmware (another temporary
+      component, like /cross-tools and /tools) -- just a kernel.
     - OS build a la CLFS
+    - no console, so openssl and openssh are necessary (and
+      telnetd for failsafe boot option)
+    - in boot scripts: provide some kind of recovery failsafe
+      option in case something is awry with sshd.  Maybe start a
+      telnetd -- or use an external usb disk as the root fs
+      location if there is one attached...
+    - Runtime kernel, flash image tools, runtime flash image
+    - Copy runtime flash elsewhere and use rescue mode to install
+      it:  don't write to flash from linux-land, for fear of
+      stepping on CFE.
+    - Boot -- does any smoke emerge?
+    - Profit!
 
-->>> HERE I AM
-
-- Overview of the build process
+- High-level description of the build process
 
   - Ensure the bootstrap system is adequate (list of build
     dependencies):
@@ -167,4 +187,8 @@ High level outline of the book:
 
   - Final system buildout as per CLFS with package users
   - Automated option
+
+  - Boot scripts for normal system
+
+  - build runtime flash image: flash filesystem boot scripts etc
 
