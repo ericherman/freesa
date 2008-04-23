@@ -58,7 +58,7 @@ make $KERNEL_ARCH headers_check &&
 make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT/usr &&
 echo WOOT
 
-[On digad: 0:15 azoth: 0:13]
+[On digad: 0:19 azoth: 0:13]
 
 STEP 2 binutils
 
@@ -72,7 +72,7 @@ make configure-host && make && make install &&
 cp -v ../binutils*/include/libiberty.h $SYSROOT/usr/include &&
 echo WOOT
 
-[On digad: 2:19 azoth 2:00]
+[On digad: 2:30 azoth 2:00]
 
 STEP 3 glibc headers
 
@@ -97,7 +97,7 @@ cp -v ../glibc*/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
     $SYSROOT/usr/include/bits &&
 echo WOOT
 
-[On digad: 0:52 azoth: 0:30]
+[On digad: 0:49 azoth: 0:30]
 
 STEP 4 gcc (bare compiler)
 
@@ -118,7 +118,7 @@ The LDFLAGS_FOR_TARGET and CPPFLAGS_FOR_TARGET are from gcc bug #35532 --
 they are mentioned by Carlos O'Donell as the way to use all of the sysroot
 framework.
 
-We can't do a full compiler up front, because we need the crti.o from
+We can't build a full compiler up front, because we need the crti.o from
 glibc.  (We may need other stuff as well.)  So first we will just build a
 bare compiler, which won't be able to produce executables because it
 doesn't have a libgcc.  That is what the "all-gcc" target does:  it just
@@ -129,8 +129,8 @@ glibc (crti.o, crt1.o, crtn.o); those object files are needed to build
 libgcc.
 
 With the x86 to x86 toolchain, I did not have to specify host.  With the
-x86 to mips toolchain, I did.  It is probably OK to specify it for both,
-but I have not checked to make sure.
+x86 to mips toolchain, I did.  It's OK to specify it for the faux-cross 
+toolchain as well.
 
 
 ../gcc/configure --prefix=/cross-tools \
@@ -145,7 +145,7 @@ export CPPFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
 make all-gcc && make install-gcc &&
 echo WOOT
 
-[On azoth: 4:28]
+[On digad: 6:36 azoth: 4:28]
 
 
 STEP 5 glibc (startup files)
@@ -168,7 +168,16 @@ all" in the CSU subdirectory?  I tried this without success:
 
 make -r PARALLELMFLAGS="" CVSOPTS="" -C ../glibc/csu objdir=`pwd` all
 
-Here's the build script to use:
+UPDATE: that command works well enough to get the startup files built on an
+x86-to-x86 build; it may have failed on the mips build only for
+environmental reasons (i.e. I may have screwed something up.)  It is worth
+trying!
+
+What happened on the x86 attempt is that it built the three startup files
+and then quit because it did not know how to build iconv/stamp.o.
+
+Here's the build script to use, possibly replacing the "make lib" line with
+something more elegant if you are daring:
 
 echo "libc_cv_forced_unwind=yes" > config.cache
 echo "libc_cv_c_cleanup=yes" >> config.cache
@@ -199,7 +208,7 @@ time.
 make all-target-libgcc && make install-target-libgcc && 
 echo WOOT
 
-[On azoth: 1:42]
+[On digad: 0:49 azoth: 1:42]
 
 STEP 7 glibc (full)
 
@@ -212,7 +221,7 @@ glibc build will use the ones it creates; we'll go ahead and delete them
 first.
 
 
-rm $SYSROOT/lib/crt?.o
+rm -f $SYSROOT/lib/crt?.o
 echo "libc_cv_forced_unwind=yes" > config.cache
 echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
@@ -228,7 +237,7 @@ make &&
 make install_root=$SYSROOT install && 
 echo WOOT
 
-[On azoth: 11:00]
+[On digad: 14:31 azoth: 11:00]
 
 
 STEP 8 gcc (full compiler)
@@ -249,7 +258,7 @@ make AS_FOR_TARGET="${CLFS_TARGET}-as" LD_FOR_TARGET="${CLFS_TARGET}-ld" &&
 make install &&
 echo WOOT
 
-[On azoth: 11:07]
+[On digad: 11:28 azoth: 11:07]
 
 Wow, it worked.  I didn't expect that to happen.
 
