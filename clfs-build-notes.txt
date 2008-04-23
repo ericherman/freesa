@@ -36,7 +36,6 @@ process.
 Configure line should include 
 "--with-gmp=/cross-tools --with-mpfr=/cross-tools"
 
-AT: 6.11 zlib
 
 6.14 
 gettext-0.17
