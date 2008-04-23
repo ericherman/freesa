@@ -1,0 +1,44 @@
+===================================================================
+RCS file: /cvs/glibc/libc/configure.in,v
+retrieving revision 1.472
+retrieving revision 1.473
+diff -u -r1.472 -r1.473
+--- libc/configure.in	2008/01/24 20:21:23	1.472
++++ libc/configure.in	2008/02/01 00:20:07	1.473
+@@ -914,8 +914,12 @@
+ # header directory and add that to the list.  NOTE: Only does the right
+ # thing on a system that doesn't need fixincludes.  (Not presently a problem.)
+ if test -n "$sysheaders"; then
+-  ccheaders=`$CC -print-file-name=include`
+-  SYSINCLUDES="-nostdinc -isystem $ccheaders \
++  SYSINCLUDES=-nostdinc
++  for d in include include-fixed; do
++    i=`$CC -print-file-name="$d"` && test "x$i" != x && test "x$i" != "x$d" &&
++    SYSINCLUDES="$SYSINCLUDES -isystem $i"
++  done
++  SYSINCLUDES="$SYSINCLUDES \
+ -isystem `echo $sysheaders | sed 's/:/ -isystem /g'`"
+   if test -n "$CXX"; then
+     cxxversion=`$CXX -dumpversion 2>&AS_MESSAGE_LOG_FD` &&
+===================================================================
+RCS file: /cvs/glibc/libc/configure,v
+retrieving revision 1.462
+retrieving revision 1.463
+diff -u -r1.462 -r1.463
+--- libc/configure	2008/01/24 20:21:23	1.462
++++ libc/configure	2008/02/01 00:20:07	1.463
+@@ -5065,8 +5065,12 @@
+ # header directory and add that to the list.  NOTE: Only does the right
+ # thing on a system that doesn't need fixincludes.  (Not presently a problem.)
+ if test -n "$sysheaders"; then
+-  ccheaders=`$CC -print-file-name=include`
+-  SYSINCLUDES="-nostdinc -isystem $ccheaders \
++  SYSINCLUDES=-nostdinc
++  for d in include include-fixed; do
++    i=`$CC -print-file-name="$d"` && test "x$i" != "x$d" &&
++    SYSINCLUDES="$SYSINCLUDES -isystem $i"
++  done
++  SYSINCLUDES="$SYSINCLUDES \
+ -isystem `echo $sysheaders | sed 's/:/ -isystem /g'`"
+   if test -n "$CXX"; then
+     cxxversion=`$CXX -dumpversion 2>&5` &&

@@ -1,0 +1,261 @@
+Here are notes and scripts and things related to my efforts to
+build a cross-toolchain using current tools, by which I mean:
+
+glibc 2.7
+binutils 2.18
+gcc 4.3.0
+linux 2.6.25 (or, for mips, 2.6.23.16)
+
+This is all built using a sysroot approach, as recommended by the GCC
+developers, and WITHOUT using most of the CLFS toolchain build
+instructions.
+
+The patches referred to here are included in the "patches" directory.
+
+Flags for building an x86-to-x86 "cross" toolchain -- put these in the
+building user's .bashrc:
+
+export CLFS=/mnt
+export LC_ALL=POSIX
+export PATH=/cross-tools/bin:/bin:/usr/bin
+unset CFLAGS
+unset CXXFLAGS
+export CLFS_HOST=i686-cross-linux-gnu
+export CLFS_TARGET=i686-pc-linux-gnu
+export SYSROOT=/cross-tools/sysroot
+export KERNEL_VERSION=2.6.25
+unset KERNEL_ARCH
+export GLIBCFLAG="-march=$(cut -d- -f1 <<< $CLFS_TARGET) -mtune=generic -g -O2"
+
+
+Flags for building an x86-to-mipsel cross-toolchain:
+
+export CLFS_TARGET=mipsel-unknown-linux-gnu
+export KERNEL_VERSION=2.6.23
+export GLIBCFLAG="-g -O2"
+export KERNEL_ARCH="ARCH=mips"
+
+For each build step, I am copying the script snippets into a
+little script called "b" and then running it with:
+
+time ./b 2>&1 | tee $CLFS/Logs/${NAME_OF_STEP}
+
+where NAME_OF_STEP changes every time, obviously.
+
+STEP 0 host system dependencies
+
+Build and install gmp and mpfr.  I used gmp 4.2.2 and mpfr 2.3.1.
+
+The CLFS book says it's also important to have file at least 
+version 2.41, so go ahead and upgrade that if necessary.
+
+STEP 1 linux kernel headers
+
+This one doesn't need a separate build directory.
+
+make mrproper &&
+make $KERNEL_ARCH headers_check &&
+make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT/usr &&
+echo WOOT
+
+[On digad: 0:15 azoth: 0:13]
+
+STEP 2 binutils
+
+Apply the posix and branch_update-3 patches from CLFS.
+
+../binutils/configure --prefix=/cross-tools \
+   --build=${CLFS_HOST} --target=${CLFS_TARGET} \
+   --disable-nls --enable-shared --disable-multilib \
+   --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT &&
+make configure-host && make && make install &&
+cp -v ../binutils*/include/libiberty.h $SYSROOT/usr/include &&
+echo WOOT
+
+[On digad: 2:19 azoth 2:00]
+
+STEP 3 glibc headers
+
+Apply the patches: libgcc_eh, localedef_segfault, i586_chk, and
+fixup_for_gcc43.  The first three are from CLFS; the last one corrects the
+glibc build so it works with GCC 4.3 (and is already in glibc CVS).
+
+After doing this build, get rid of the glibc-build directory but
+keep the source directory around for now:  we will need it again a
+little later.
+
+CC=gcc ../glibc/configure --prefix=/usr \
+  --host=${CLFS_HOST} --build=${CLFS_TARGET} \
+  --disable-sanity-checks --enable-kernel=${KERNEL_VERSION} \
+  --with-headers=$SYSROOT/usr/include \
+  --with-binutils=/cross-tools/${CLFS_TARGET}/bin &&
+make cross-compiling=yes install_root=$SYSROOT install-headers &&
+cp -v bits/stdio_lim.h $SYSROOT/usr/include/bits &&
+touch $SYSROOT/usr/include/gnu/stubs.h &&
+cp -v ../glibc*/nptl/sysdeps/pthread/pthread.h $SYSROOT/usr/include &&
+cp -v ../glibc*/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
+    $SYSROOT/usr/include/bits &&
+echo WOOT
+
+[On digad: 0:52 azoth: 0:30]
+
+STEP 4 gcc (bare compiler)
+
+Apply the posix patch from CLFS.
+
+After doing this build, don't get rid of ANYTHING -- we will use the same
+build directory later on after we use the bare compiler from here to create
+the startup files that are needed to get libgcc compiled.  (If you do
+delete the gcc-build directory, don't panic, it will just take a few
+minutes to rebuild the bare compiler before the libgcc build happens.)
+
+It seems as though it should be unnecessary to mess around with the GCC
+specs here.  It is a cross-compiler; if the wrong libraries are linked in,
+presumably the thing will simply not work at all.  Let's try skipping all
+that stuff.
+
+The LDFLAGS_FOR_TARGET and CPPFLAGS_FOR_TARGET are from gcc bug #35532 --
+they are mentioned by Carlos O'Donell as the way to use all of the sysroot
+framework.
+
+We can't do a full compiler up front, because we need the crti.o from
+glibc.  (We may need other stuff as well.)  So first we will just build a
+bare compiler, which won't be able to produce executables because it
+doesn't have a libgcc.  That is what the "all-gcc" target does:  it just
+creates the bare compiler.
+
+That compiler is enough that we can build the startup object files from
+glibc (crti.o, crt1.o, crtn.o); those object files are needed to build
+libgcc.
+
+With the x86 to x86 toolchain, I did not have to specify host.  With the
+x86 to mips toolchain, I did.  It is probably OK to specify it for both,
+but I have not checked to make sure.
+
+
+../gcc/configure --prefix=/cross-tools \
+  --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
+  --disable-multilib \
+  --disable-nls --disable-shared \
+  --disable-libmudflap --disable-libssp \
+  --disable-threads --enable-languages=c \
+  --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT &&
+export LDFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
+export CPPFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
+make all-gcc && make install-gcc &&
+echo WOOT
+
+[On azoth: 4:28]
+
+
+STEP 5 glibc (startup files)
+
+If you kept around the source directory from step 3, just use it again
+here.  If not, remember to apply the patches: libgcc_eh,
+localedef_segfault, i586_chk, and fixup_for_gcc43.  
+
+I don't know how to get the glibc build process just to process the csu
+subdirectory and then stop.  So try building the entire library; it will
+crash when trying to do a build in the elf directory, and then we can put
+the important startup files where gcc expects them.
+
+If you want, you can interrupt the build with ctrl-C a minute or so into
+the build, after the crt?.o files have been created -- there's no need to
+wait for the build to fail on its own.
+
+Does anyone know how to tell the glibc build process just to do a "make
+all" in the CSU subdirectory?  I tried this without success:
+
+make -r PARALLELMFLAGS="" CVSOPTS="" -C ../glibc/csu objdir=`pwd` all
+
+Here's the build script to use:
+
+echo "libc_cv_forced_unwind=yes" > config.cache
+echo "libc_cv_c_cleanup=yes" >> config.cache
+BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
+    AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
+    CFLAGS="${GLIBCFLAG}" \
+    ../glibc/configure --prefix=/usr \
+    --host=${CLFS_TARGET} --build=${CLFS_HOST} \
+    --disable-profile --enable-add-ons \
+    --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
+    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
+    --cache-file=config.cache &&
+make lib || echo "It crashed, just like we knew it would." &&
+mkdir $SYSROOT/lib &&
+cp csu/crt*.o $SYSROOT/lib &&
+echo WOOT
+
+[On azoth: 5:05]
+
+
+STEP 6 gcc (libgcc)
+
+If you deleted the gcc and/or gcc-build directories from step 4,
+reconstruct them now by doing that step again.  After this, trash the
+gcc-build directory; but we will want the gcc source directory one more
+time.
+
+make all-target-libgcc && make install-target-libgcc && 
+echo WOOT
+
+[On azoth: 1:42]
+
+STEP 7 glibc (full)
+
+Now we have a usable GCC and we can build glibc at last!  Use the same
+glibc source directory as before, or re-apply all the patches that were
+used previously, and use a fresh glibc-build directory.
+
+We don't need the startup files we created in step 5 any more, because the
+glibc build will use the ones it creates; we'll go ahead and delete them
+first.
+
+
+rm $SYSROOT/lib/crt?.o
+echo "libc_cv_forced_unwind=yes" > config.cache
+echo "libc_cv_c_cleanup=yes" >> config.cache
+BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
+    AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
+    CFLAGS="$GLIBCFLAG" \
+    ../glibc/configure --prefix=/usr \
+    --host=${CLFS_TARGET} --build=${CLFS_HOST} \
+    --disable-profile --enable-add-ons \
+    --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
+    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
+    --cache-file=config.cache &&
+make && 
+make install_root=$SYSROOT install && 
+echo WOOT
+
+[On azoth: 11:00]
+
+
+STEP 8 gcc (full compiler)
+
+Again, apply only the posix patch from CLFS; we are going to depend on the
+sysroot machinery to do the right thing.
+
+../gcc/configure --prefix=/cross-tools \
+  --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
+  --disable-multilib \
+  --disable-nls --enable-shared \
+  --enable-languages=c,c++ --enable-__cxa_atexit \
+  --enable-c99 --enable-long-long --enable-threads=posix \
+  --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT &&
+export LDFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
+export CPPFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
+make AS_FOR_TARGET="${CLFS_TARGET}-as" LD_FOR_TARGET="${CLFS_TARGET}-ld" &&
+make install &&
+echo WOOT
+
+[On azoth: 11:07]
+
+Wow, it worked.  I didn't expect that to happen.
+
+It is possible that some parts of glibc are missing at this point.  If so,
+we will need to rebuild glibc.
+
+We only have a static libgcc, libgcc_eh, and libgcov.  I don't know if
+that's a problem.
+

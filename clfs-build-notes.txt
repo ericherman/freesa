@@ -1,0 +1,222 @@
+following SVN-20080228-x86 -- EXCEPT for the toolchain
+
+!!! Use the sysroot cross-toolchain build !!!
+
+The main difference is that the /tools directory doesn't contain
+anything after doing the toolchain build -- everything is built
+in the /cross-tools directory.  That's good, though -- that means
+the /tools directory will contain only stuff built using the
+cross-tools.
+
+At this point we're going to FBBG, mostly.
+
+6.4.1 GCC
+
+Build a cross-compiled gmp and mpfr before you try to build GCC
+4.3, because they are dependencies.  Build GMP with:
+
+./configure --prefix=/cross-tools --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} --target=${CLFS_TARGET} &&
+make &&
+make install
+
+Build MPFR with:
+
+./configure --prefix=/cross-tools --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} --target=${CLFS_TARGET} \
+    --with-gmp=/cross-tools &&
+make &&
+make install
+
+Switch to GCC 4.3.0
+
+Install the posix and specs patches.
+Run the sed scripts to change the cpp search path and fixincludes
+process.
+Configure line should include 
+"--with-gmp=/cross-tools --with-mpfr=/cross-tools"
+
+AT: 6.11 zlib
+
+6.14 
+gettext-0.17
+
+Failures occur when building gettext; it finds syntax errors in
+wctype.h.  To fix this, do:
+
+echo "gl_cv_func_wcwidth_works=yes" > config.cache
+
+and add --config=config.cache to the configure line. (In other
+words, use the same workaround that tar has in section 6.20)
+
+
+9.1 
+
+Prior to doing tool builds (tcl etc), build lzma so
+lzma-compressed packages can be uncompressed.  This is a normal:
+
+./configure --prefix=/tools && make && make install
+
+Also build shadow (so that we have adduser and addgroup for the
+package owners stuff):
+
+Apply the same patch as in section 10.46, and build with:
+
+./configure --prefix=/tools --sysconfdir=/etc --without-selinux \
+   --without-libpam --disable-nls --without-audit  &&
+make && make install
+
+also change the "chroot" command so that it adds /tools/sbin to
+the PATH in the chrooted environment; or set it up that way in
+/root/.bashrc or whatever.
+
+and vim (so we can edit options files):
+
+./configure --prefix=/tools && make && make install
+
+
+10.3 set CFLAGS and CXXFLAGS:
+
+export CFLAGS="-march=prescott -O3 -pipe -fomit-frame-pointer"
+export CXXFLAGS="${CFLAGS}"
+
+Override these in the "options" file for each package user if
+necessary.
+
+10.5 
+
+*******
+PRIOR TO INSTALLING LINUX KERNEL HEADERS
+*******
+install the package users stuff!
+
+See "README" in the package-users tarball for instructions.
+
+AFTER INSTALLING LINUX KERNEL HEADERS
+
+Move /usr/include/scsi to /usr/include/linux/scsi (or just rename
+them?) -- glibc needs to install files with the same names to
+/usr/include/scsi.
+
+10.6
+
+man-pages
+
+If you want the posix man pages, pre-create 
+/usr/share/man/{man0p,man1p,man3p} and make them install dirs.
+
+
+10.7
+
+glibc
+
+The CLFS book suggests setting CFLAGS in the configure command
+line to something like "-march=i686 -mtune=generic -g -O2"; that
+is probably a good idea.  I always add -pipe and
+-fomit-frame-pointer and have never had problems as a result.
+
+After installing glibc, you can allow all package users to re-run
+ldconfig by setting a special user "ldconfig" in the install
+group, and making /sbin/ldconfig owned by ldconfig, in the
+install group, with mode 6750.  (Or you can leave the owner as
+glibc, if you don't mind ldconfig running with glibc's
+privileges.)
+
+Many other packages will need to write to /usr/info/dir, which is
+onwed by glibc.  Put it in the install group and chmod 664 it.
+
+10.9
+
+Binutils build fails in gas/read.c in "equals".  Fixed with an
+additional patch (fix-werror-1).
+
+10.10
+
+GCC installation will require the removal of a bunch of symlinks
+in /usr/lib owned by root pointing into the /tools directory,
+e.g. libgcc_s.so, libgcc_s.so.1, libstdc++.* -- chown these to 
+gcc before doing the build/test/install cycle.
+
+10.12
+
+There may be three ext2 filesystem check symlinks into /tools
+from /sbin -- delete them before installing the e2fsprogs
+package.
+
+10.13
+
+For coreutils, I skipped running the tests altogether.
+
+There are symlinks that need to be removed or chowned before 
+the coreutils user can install its (correct) 
+versions: /bin/{cat,pwd,rm,stty}
+
+10.19
+
+Before installing libtool, be sure to re-run set_install_dirs so
+that the /usr/share/aclocal directory created by bison becomes an
+install directory; otherwise libtool won't be able to do its
+install.
+
+10.22
+
+There's a perl symlink to tools at /usr/bin/perl, get rid of
+it first.
+
+Also create the minimal /etc/hosts, and turn on the loopback
+interface and set the hostname, as described in this section.
+
+For the FreeSA build, the configure for perl again drops into a
+shell a couple of times, which needs to be exited and then the 
+suggested option selected.  I don't know how to avoid this, other
+than to modify the configure.gnu script.
+
+10.27
+
+There is a bash symlink in /bin; you can't get rid of it, because
+it's needed while the bash build proceeds.  So instead, chown the
+symlink to the bash user with "chown -h bash:bash /bin/bash". The
+-h means to chown the symlink rather than the file pointed to by
+the symlink.
+
+10.34
+
+Grep is just like bash.  chown /bin/grep to grep so the install
+will work.  It would probably be safe just to remove the symlink,
+but why bother?
+
+10.46
+
+shadow -- the install may fail if it's unable to install some
+foreign-language man pages.  What I do is make /usr/share/man an
+install dir and then delete the foreign language man pages later
+on.
+
+remove the SUID bit from su; otherwise it will stop working. Also
+make other programs (/bin/passwd,
+/usr/bin/{chage,chfn,chsh,expiry,gpasswd,newgrp} SUID root, or
+remove the SUID bit from them.  At least /bin/passwd should be
+SUID root so that people can change their passwords.
+
+10.47
+
+The Makefile wants to run the real install program
+(/usr/bin/install) instead of the more-control helper script.
+This patch fixes things:
+
+diff -r -N -u sysklogd-1.5-orig/Makefile sysklogd-1.5/Makefile
+--- sysklogd-1.5-orig/Makefile  2007-05-30 10:28:48.000000000 -0500
++++ sysklogd-1.5/Makefile       2007-12-22 22:27:22.000000000 -0600
+@@ -27,7 +27,7 @@
+ LDFLAGS= -s
+ 
+ # Look where your install program is.
+-INSTALL = /usr/bin/install
++INSTALL = install
+ 
+ # Destination paths, set prefix=/opt if required
+ BINDIR = /usr/sbin
+
+-----------cut here----------
+
+
