@@ -36,17 +36,44 @@ process.
 Configure line should include 
 "--with-gmp=/cross-tools --with-mpfr=/cross-tools"
 
+6.7 bzip2
 
-6.14 
-gettext-0.17
+I switched to bzip2 1.0.5.
 
-Failures occur when building gettext; it finds syntax errors in
-wctype.h.  To fix this, do:
+6.10 findutils
 
-echo "gl_cv_func_wcwidth_works=yes" > config.cache
+I switched to findutils 4.4.0.  This required several configure overrides.
 
-and add --config=config.cache to the configure line. (In other
-words, use the same workaround that tar has in section 6.20)
+cat > config.cache <<EOF
+gl_cv_func_fflush_stdin=yes
+gl_cv_func_fseeko=yes
+gl_cv_var_stdin_large_offset=yes
+gl_cv_func_wcwidth_works=yes
+EOF
+
+And add --cache-file=config.cache to the configure line, of course.
+(This is a superset of the same fix applied for gettext 0.17 later on.)
+
+6.12 file
+
+I switched to file 4.24.  In the middle of the build, it crashed with
+"no rule to make target file"; I got it to finish by doing:
+
+"cp src/.libs/file magic"
+
+and then re-ran make.  That is totally dorky, I agree.
+
+6.20 tar
+
+I switched to tar 1.20.
+
+6.21 texinfo
+
+The build fails because it can't find the curses library.  Change the
+configure line:
+
+LDFLAGS="-L/tools/lib" ./configure --prefix=/tools \
+    --build=${CLFS_HOST} --host=${CLFS_TARGET}
 
 
 9.1 
