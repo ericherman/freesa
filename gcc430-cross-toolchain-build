@@ -1,14 +1,26 @@
 Here are notes and scripts and things related to my efforts to
 build a cross-toolchain using current tools, by which I mean:
 
-glibc 2.7
 binutils 2.18
 gcc 4.3.0
+glibc 2.7
+gmp 4.2.2
 linux 2.6.25 (or, for mips, 2.6.23.16)
+mpfr 2.3.1
+
+GMP and MPFR are new pieces of the GNU toolchain; since they are
+required in order to build GCC, I think they qualify as
+components of the toolchain the same way that glibc does.
 
 This is all built using a sysroot approach, as recommended by the GCC
 developers, and WITHOUT using most of the CLFS toolchain build
-instructions.
+instructions.  "sysroot" means that a directory on the host system, in our
+case /tools, will be set up to contain a subset of the root filesystem of
+the target system; include files and libraries will be used only from the
+sysroot location, not from the normal host system locations.  That's
+perfect for us, since we want to ensure that components of the host system
+are ignored by our cross-tools, whether we're doing a real cross-toolchain
+or a faux cross-toolchain (like an x86-to-x86 cross).
 
 The patches referred to here are included in the "patches" directory.
 
@@ -22,7 +34,7 @@ unset CFLAGS
 unset CXXFLAGS
 export CLFS_HOST=i686-cross-linux-gnu
 export CLFS_TARGET=i686-pc-linux-gnu
-export SYSROOT=/cross-tools/sysroot
+export SYSROOT=/tools
 export KERNEL_VERSION=2.6.25
 unset KERNEL_ARCH
 export GLIBCFLAG="-march=$(cut -d- -f1 <<< $CLFS_TARGET) -mtune=generic -g -O2"
@@ -45,6 +57,7 @@ where NAME_OF_STEP changes every time, obviously.
 STEP 0 host system dependencies
 
 Build and install gmp and mpfr.  I used gmp 4.2.2 and mpfr 2.3.1.
+You can install them anywhere you want, but I went with /usr.
 
 The CLFS book says it's also important to have file at least 
 version 2.41, so go ahead and upgrade that if necessary.
@@ -101,7 +114,12 @@ echo WOOT
 
 STEP 4 gcc (bare compiler)
 
-Apply the posix patch from CLFS.
+Apply only the posix patch from CLFS.
+
+It seems as though it should be unnecessary to mess around with the GCC
+specs here.  It is a cross-compiler; if the wrong libraries are linked in,
+presumably the thing will simply not work at all, and this compiler is only
+going to be used to build glibc anyway.
 
 After doing this build, don't get rid of ANYTHING -- we will use the same
 build directory later on after we use the bare compiler from here to create
@@ -109,24 +127,21 @@ the startup files that are needed to get libgcc compiled.  (If you do
 delete the gcc-build directory, don't panic, it will just take a few
 minutes to rebuild the bare compiler before the libgcc build happens.)
 
-It seems as though it should be unnecessary to mess around with the GCC
-specs here.  It is a cross-compiler; if the wrong libraries are linked in,
-presumably the thing will simply not work at all.  Let's try skipping all
-that stuff.
-
 The LDFLAGS_FOR_TARGET and CPPFLAGS_FOR_TARGET are from gcc bug #35532 --
 they are mentioned by Carlos O'Donell as the way to use all of the sysroot
 framework.
 
-We can't build a full compiler up front, because we need the crti.o from
-glibc.  (We may need other stuff as well.)  So first we will just build a
-bare compiler, which won't be able to produce executables because it
-doesn't have a libgcc.  That is what the "all-gcc" target does:  it just
-creates the bare compiler.
+We can't build a full compiler up front, because we need the C runtime
+startup files (crti.o and so on) from glibc.  So first we will just build a
+bare compiler, which we can use to compile those startup files.
 
-That compiler is enough that we can build the startup object files from
-glibc (crti.o, crt1.o, crtn.o); those object files are needed to build
-libgcc.
+A few GCC and glibc versions ago, the bare compiler produced here was
+able to compile the full glibc.  That's no longer the case, alas; these
+days, you need the bare compiler (from the all-gcc build target) and also
+the support library libgcc (from the all-target-libgcc build target).
+
+After we build the crt?.o files, we can then build libgcc; and then we'll
+be able to build glibc.  After that, we'll build the full gcc.
 
 With the x86 to x86 toolchain, I did not have to specify host.  With the
 x86 to mips toolchain, I did.  It's OK to specify it for the faux-cross 
@@ -163,10 +178,7 @@ If you want, you can interrupt the build with ctrl-C a minute or so into
 the build, after the crt?.o files have been created -- there's no need to
 wait for the build to fail on its own.
 
-Does anyone know how to tell the glibc build process just to do a "make
-all" in the CSU subdirectory?  I tried this without success:
 
-make -r PARALLELMFLAGS="" CVSOPTS="" -C ../glibc/csu objdir=`pwd` all
 
 UPDATE: that command works well enough to get the startup files built on an
 x86-to-x86 build; it may have failed on the mips build only for
@@ -190,12 +202,14 @@ BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
     --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
     --cache-file=config.cache &&
-make lib || echo "It crashed, just like we knew it would." &&
-mkdir $SYSROOT/lib &&
-cp csu/crt*.o $SYSROOT/lib &&
+make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crt1.o &&
+make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crti.o &&
+make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crtn.o &&
+mkdir -p $SYSROOT/lib &&
+cp csu/crt{1,i,n}.o $SYSROOT/lib &&
 echo WOOT
 
-[On azoth: 5:05]
+[On digad: 0:12]
 
 
 STEP 6 gcc (libgcc)
@@ -205,23 +219,23 @@ reconstruct them now by doing that step again.  After this, trash the
 gcc-build directory; but we will want the gcc source directory one more
 time.
 
+After we build and install libgcc, we can get rid of the crt object files
+we just built in the previous step.  They're going to be rebuilt anyway
+when we do the full glibc build.
+
 make all-target-libgcc && make install-target-libgcc && 
+rm -f $SYSROOT/lib/crt{1,i,n}.o &&
 echo WOOT
 
 [On digad: 0:49 azoth: 1:42]
 
-STEP 7 glibc (full)
+STEP 7 glibc
 
-Now we have a usable GCC and we can build glibc at last!  Use the same
-glibc source directory as before, or re-apply all the patches that were
-used previously, and use a fresh glibc-build directory.
-
-We don't need the startup files we created in step 5 any more, because the
-glibc build will use the ones it creates; we'll go ahead and delete them
-first.
+Now we have a usable GCC, complete with libgcc, and we can build glibc at
+last!  Use the same glibc source directory as before, or re-apply all the
+patches that were used previously; but use a fresh glibc-build directory.
 
 
-rm -f $SYSROOT/lib/crt?.o
 echo "libc_cv_forced_unwind=yes" > config.cache
 echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
@@ -237,13 +251,32 @@ make &&
 make install_root=$SYSROOT install && 
 echo WOOT
 
-[On digad: 14:31 azoth: 11:00]
+[On digad: 14:07 azoth: 11:00]
 
 
 STEP 8 gcc (full compiler)
 
-Again, apply only the posix patch from CLFS; we are going to depend on the
-sysroot machinery to do the right thing.
+Now we are going to build the full gcc cross-compiler.  The point of this
+compiler is to build the temporary tools (under /tools) that will allow us
+to build the final LFS system.  When we're using those tools to build the
+final system, we want to do a native build of everything, including glibc,
+so we want those tools to be independent of any filesystem locations that
+will still be present in the final system.  In particular, this includes
+/lib.
+
+When the standard GNU toolchain builds an executable, it always links it
+against the dynamic link library (which is /lib/ld-linux.so.2).  That's
+normally fine, but we want the programs we build under /tools to be
+entirely independent of /lib.  So we need to adjust our cross-toolchain so
+that the programs it builds look in /tools/lib for their libraries.
+Alternatively, we could build everything under /tools as a static
+executable, so they would be self-contained and not need any shared
+libraries at all; but that option isn't well-supported by glibc.  (Maybe if
+we changed the cross-toolchain to be uClibc-based, instead of glibc-based,
+we could get that to work.)
+
+We're going to try to adjust things after the build, instead of
+applying additional patches now.
 
 ../gcc/configure --prefix=/cross-tools \
   --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
@@ -262,9 +295,41 @@ echo WOOT
 
 Wow, it worked.  I didn't expect that to happen.
 
-It is possible that some parts of glibc are missing at this point.  If so,
-we will need to rebuild glibc.
 
-We only have a static libgcc, libgcc_eh, and libgcov.  I don't know if
-that's a problem.
+Now!  We have a couple of options.  First, we can call our
+cross-toolchain done and celebrate victory.  Second, we can use
+the full compiler we just built to rebuild glibc.
+
+"Why would we do that?!" you ask.
+
+Well, there are some things that didn't get built earlier in the
+glibc build, probably because we didn't have some support
+libraries like libgcc_eh.  In particular, we don't have programs
+like ldd.  We don't strictly need them, but you may want to
+rebuild glibc on general principles.  If so, do NOT apply the
+libgcc_eh patch!
+
+If you don't want to rebuild glibc, then proceed to:
+
+STEP 9 Adjusting The Toolchain
+
+Spec file editing is a dark art.  You can read all about it in
+gcc.info, though, so it's not as intractably dark an art as
+building a cross-toolchain from source.
+
+There are specs built into gcc these days (rather than present as
+an actual file called specs); you can display them with "gcc
+-dumpspecs".  If you put a modified specs file in the same
+directory as libgcc.a, then that overrides the built-in specs.
+
+The spec we want to change is the "dynamic-linker" spec.
+
+So:
+
+$CC -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
+   $(dirname $($CC --print-libgcc-file-name))/specs
+
+Now the binaries built in the next chapter, when we are
+constructing the temporary tools, will seek the dynamic linker
+under /tools just like we want them to.
 
