@@ -76,6 +76,44 @@ LDFLAGS="-L/tools/lib" ./configure --prefix=/tools \
     --build=${CLFS_HOST} --host=${CLFS_TARGET}
 
 
+7.6 sysvinit
+
+sulogin couldn't be built because it can't find "crypt".  It isn't really
+necessary, though, so just ditch it.  (Remove references to sulogin from 
+src/Makefile.)
+
+7.8 util-linux-ng
+
+Change configuration line so the libraries we built stuff under /tools will
+be found:
+
+CFLAGS='-I/tools/include' LDFLAGS='-L/tools/lib' ./configure \
+    --build=${CLFS_HOST} \
+    --host=${CLFS_TARGET} --enable-login-utils \
+    --disable-makeinstall-chown
+
+7.9 udev
+
+Upgrade to 120.
+
+7.11 linux kernel
+
+We need the OpenWRT kernel patches.  It sure would be great if we knew 
+which ones are actually necessary.  Alas!  We don't, yet.
+
+8.3 util-linux-ng
+
+Change configuration line so the libraries we built stuff under /tools will
+be found:
+
+CFLAGS='-I/tools/include' LDFLAGS='-L/tools/lib' \
+   ./configure --prefix=/tools \
+    --build=${CLFS_HOST} --host=${CLFS_TARGET}
+
+8.4 initial filesystem setup
+
+Don't worry about mounting /proc or /sys yet.
+
 9.1 
 
 Prior to doing tool builds (tcl etc), build lzma so
