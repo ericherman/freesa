@@ -24,6 +24,13 @@ or a faux cross-toolchain (like an x86-to-x86 cross).
 
 The patches referred to here are included in the "patches" directory.
 
+Note that we are building our cross-glibc with a "minimum kernel
+version" of 2.6.25; that means the actual runtime kernel being
+used to construct the real LFS system using the stuff under
+/tools will have to be a 2.6.25 kernel.  You can adjust the
+kernel version downward if you are currently using an older
+kernel and don't want to upgrade it.
+
 Flags for building an x86-to-x86 "cross" toolchain -- put these in the
 building user's .bashrc:
 

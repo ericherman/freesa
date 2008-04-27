@@ -15,16 +15,16 @@ At this point we're going to FBBG, mostly.
 Build a cross-compiled gmp and mpfr before you try to build GCC
 4.3, because they are dependencies.  Build GMP with:
 
-./configure --prefix=/cross-tools --build=${CLFS_HOST} \
+./configure --prefix=/tools --build=${CLFS_HOST} \
     --host=${CLFS_TARGET} --target=${CLFS_TARGET} &&
 make &&
 make install
 
 Build MPFR with:
 
-./configure --prefix=/cross-tools --build=${CLFS_HOST} \
+./configure --prefix=/tools --build=${CLFS_HOST} \
     --host=${CLFS_TARGET} --target=${CLFS_TARGET} \
-    --with-gmp=/cross-tools &&
+    --with-gmp=/tools &&
 make &&
 make install
 
@@ -34,7 +34,7 @@ Install the posix and specs patches.
 Run the sed scripts to change the cpp search path and fixincludes
 process.
 Configure line should include 
-"--with-gmp=/cross-tools --with-mpfr=/cross-tools"
+"--with-gmp=/tools --with-mpfr=/tools"
 
 6.7 bzip2
 
@@ -121,7 +121,7 @@ lzma-compressed packages can be uncompressed.  This is a normal:
 
 ./configure --prefix=/tools && make && make install
 
-Also build shadow (so that we have adduser and addgroup for the
+Also build shadow (so that we have adduser and addgroup and su for the
 package owners stuff):
 
 Apply the same patch as in section 10.46, and build with:
