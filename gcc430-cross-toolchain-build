@@ -1,5 +1,5 @@
-Here are notes and scripts and things related to my efforts to
-build a cross-toolchain using current tools, by which I mean:
+Here are notes and scripts and things related to my efforts to build a
+cross-toolchain using current tools, by which I mean:
 
 binutils 2.18
 gcc 4.3.0
@@ -8,9 +8,9 @@ gmp 4.2.2
 linux 2.6.25 (or, for mips, 2.6.23.16)
 mpfr 2.3.1
 
-GMP and MPFR are new pieces of the GNU toolchain; since they are
-required in order to build GCC, I think they qualify as
-components of the toolchain the same way that glibc does.
+GMP and MPFR are new pieces of the GNU toolchain; since they are required
+in order to build GCC, I think they qualify as components of the toolchain
+the same way that glibc does.
 
 This is all built using a sysroot approach, as recommended by the GCC
 developers, and WITHOUT using most of the CLFS toolchain build
@@ -24,14 +24,15 @@ or a faux cross-toolchain (like an x86-to-x86 cross).
 
 The patches referred to here are included in the "patches" directory.
 
-Note that we are building our cross-glibc with a "minimum kernel
-version" of 2.6.25; that means the actual runtime kernel being
-used to construct the real LFS system using the stuff under
-/tools will have to be a 2.6.25 kernel.  You can adjust the
-kernel version downward if you are currently using an older
-kernel and don't want to upgrade it.
+Note that we are building our cross-glibc with a "minimum kernel version"
+of 2.6.25; that means the actual runtime kernel being used to construct the
+real LFS system using the stuff under /tools will have to be a 2.6.25
+kernel.  You can adjust the kernel version downward if you are currently
+using an older kernel and don't want to upgrade it.  It isn't really a big
+deal to build an optimized glibc here; none of the code we are currently
+building will wind up on the final system.
 
-Flags for building an x86-to-x86 "cross" toolchain -- put these in the
+Flags for building an x86-to-x86 "faux" cross-toolchain -- put these in the
 building user's .bashrc:
 
 export CLFS=/mnt
@@ -61,13 +62,22 @@ time ./b 2>&1 | tee $CLFS/Logs/${NAME_OF_STEP}
 
 where NAME_OF_STEP changes every time, obviously.
 
+gcc, glibc, and binutils MUST all be built from a separate "build"
+directory, not the source directory.  Normally, the source directory name
+includes the version number (e.g. binutils-2.18); I'm using my git 
+repositories for the toolchain components, so the version number isn't in
+the directory name.  All of the scriptlets embedded here have configure
+commands that work for me, using my git toolchain components; you'll have
+to adjust them if you're working from released source tarballs.
+
 STEP 0 host system dependencies
 
-Build and install gmp and mpfr.  I used gmp 4.2.2 and mpfr 2.3.1.
-You can install them anywhere you want, but I went with /usr.
+Build and install gmp and mpfr.  I used gmp 4.2.2 and mpfr 2.3.1.  You can
+install them anywhere you want, but I went with /usr.  They don't take up
+much space, and they might come in handy for something later.
 
-The CLFS book says it's also important to have file at least 
-version 2.41, so go ahead and upgrade that if necessary.
+The CLFS book says it's also important to have file at least version 2.41,
+so go ahead and upgrade that if necessary.
 
 STEP 1 linux kernel headers
 
@@ -126,7 +136,8 @@ Apply only the posix patch from CLFS.
 It seems as though it should be unnecessary to mess around with the GCC
 specs here.  It is a cross-compiler; if the wrong libraries are linked in,
 presumably the thing will simply not work at all, and this compiler is only
-going to be used to build glibc anyway.
+going to be used to build glibc anyway.  (We're going to rebuild GCC after
+we have a glibc.)
 
 After doing this build, don't get rid of ANYTHING -- we will use the same
 build directory later on after we use the bare compiler from here to create
@@ -134,18 +145,13 @@ the startup files that are needed to get libgcc compiled.  (If you do
 delete the gcc-build directory, don't panic, it will just take a few
 minutes to rebuild the bare compiler before the libgcc build happens.)
 
-The LDFLAGS_FOR_TARGET and CPPFLAGS_FOR_TARGET are from gcc bug #35532 --
-they are mentioned by Carlos O'Donell as the way to use all of the sysroot
-framework.
-
-We can't build a full compiler up front, because we need the C runtime
-startup files (crti.o and so on) from glibc.  So first we will just build a
-bare compiler, which we can use to compile those startup files.
-
-A few GCC and glibc versions ago, the bare compiler produced here was
-able to compile the full glibc.  That's no longer the case, alas; these
-days, you need the bare compiler (from the all-gcc build target) and also
-the support library libgcc (from the all-target-libgcc build target).
+GCC can't create programs unless it has access to a support library called
+libgcc.  (There are other support libraries as well, like libgcc_eh, but I
+don't know what they are for.)  We can't build libgcc, because it has to be
+linked against some C runtime startup files (crti.o and a couple others)
+from glibc.  So all we can do at this point is build a "bare" compiler:
+just the gcc program per se.  We can use that bare compiler to produce the
+C startup files.
 
 After we build the crt?.o files, we can then build libgcc; and then we'll
 be able to build glibc.  After that, we'll build the full gcc.
@@ -153,6 +159,10 @@ be able to build glibc.  After that, we'll build the full gcc.
 With the x86 to x86 toolchain, I did not have to specify host.  With the
 x86 to mips toolchain, I did.  It's OK to specify it for the faux-cross 
 toolchain as well.
+
+The LDFLAGS_FOR_TARGET and CPPFLAGS_FOR_TARGET are from gcc bug #35532 --
+they are mentioned by Carlos O'Donell as the way to use all of the sysroot
+framework.
 
 
 ../gcc/configure --prefix=/cross-tools \
