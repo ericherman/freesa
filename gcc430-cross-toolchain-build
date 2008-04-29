@@ -186,27 +186,12 @@ If you kept around the source directory from step 3, just use it again
 here.  If not, remember to apply the patches: libgcc_eh,
 localedef_segfault, i586_chk, and fixup_for_gcc43.  
 
-I don't know how to get the glibc build process just to process the csu
-subdirectory and then stop.  So try building the entire library; it will
-crash when trying to do a build in the elf directory, and then we can put
-the important startup files where gcc expects them.
+The build commands here just build the startup files we need.  We'll build
+the rest of glibc after we build libgcc.
 
-If you want, you can interrupt the build with ctrl-C a minute or so into
-the build, after the crt?.o files have been created -- there's no need to
-wait for the build to fail on its own.
+Again, when this step is complete, delete the glibc-build directory but
+keep the source directory around.
 
-
-
-UPDATE: that command works well enough to get the startup files built on an
-x86-to-x86 build; it may have failed on the mips build only for
-environmental reasons (i.e. I may have screwed something up.)  It is worth
-trying!
-
-What happened on the x86 attempt is that it built the three startup files
-and then quit because it did not know how to build iconv/stamp.o.
-
-Here's the build script to use, possibly replacing the "make lib" line with
-something more elegant if you are daring:
 
 echo "libc_cv_forced_unwind=yes" > config.cache
 echo "libc_cv_c_cleanup=yes" >> config.cache
@@ -226,7 +211,7 @@ mkdir -p $SYSROOT/lib &&
 cp csu/crt{1,i,n}.o $SYSROOT/lib &&
 echo WOOT
 
-[On digad: 0:12]
+[On digad: 0:12 azoth: 0:20]
 
 
 STEP 6 gcc (libgcc)
@@ -244,7 +229,8 @@ make all-target-libgcc && make install-target-libgcc &&
 rm -f $SYSROOT/lib/crt{1,i,n}.o &&
 echo WOOT
 
-[On digad: 0:49 azoth: 1:42]
+[On digad: 0:49 azoth: 0:48]
+
 
 STEP 7 glibc
 
@@ -293,7 +279,8 @@ we changed the cross-toolchain to be uClibc-based, instead of glibc-based,
 we could get that to work.)
 
 We're going to try to adjust things after the build, instead of
-applying additional patches now.
+applying additional patches now.  Use the same posix patch as earlier, but
+no others.
 
 ../gcc/configure --prefix=/cross-tools \
   --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
@@ -308,7 +295,7 @@ make AS_FOR_TARGET="${CLFS_TARGET}-as" LD_FOR_TARGET="${CLFS_TARGET}-ld" &&
 make install &&
 echo WOOT
 
-[On digad: 11:28 azoth: 11:07]
+[On digad: 11:28 azoth: 9:04]
 
 Wow, it worked.  I didn't expect that to happen.
 
@@ -343,8 +330,8 @@ The spec we want to change is the "dynamic-linker" spec.
 
 So:
 
-$CC -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
-   $(dirname $($CC --print-libgcc-file-name))/specs
+${CLFS_TARGET}-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
+   $(dirname $(${CLFS_TARGET}-gcc --print-libgcc-file-name))/specs
 
 Now the binaries built in the next chapter, when we are
 constructing the temporary tools, will seek the dynamic linker
