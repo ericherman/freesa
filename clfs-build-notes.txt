@@ -75,6 +75,39 @@ curses library.  Change the configure line:
 LDFLAGS="-L/tools/lib" ./configure --prefix=/tools \
     --build=${CLFS_HOST} --host=${CLFS_TARGET}
 
+-------------OK PAY ATTENTION---------------
+Something like this text will wind up in the Freesa book.
+
+For the FREESA build: AT THE END OF CHAPTER 6 -- when given the boot/chroot
+decision -- tar up the current state as mips-clfs-A.  Then execute chapter
+7 (boot).  Then tar up the current state again as mips-clfs-B.  Then
+restore mips-clfs-A and execute chapter 8 (chroot).  Then tar up the
+current state again as mips-clfs-B.
+
+mips-clfs-B (chroot) is a tarball that will be extracted onto the Freesa
+hard disk.  The Freesa final system build will be conducted when chrooted
+into that environment.
+
+mips-clfs-C (boot) is a tarball that will be extracted onto an NFS server.
+The Freesa box will be booted with a kernel that NFS-mounts the root
+filesystem from that NFS server.
+
+Rationale:  in order to make the temporary tools system bootable, some
+programs are needed in the final filesystem hierarchy.  These make it more
+complicated to use package users for everything during the final system
+build.  We want to use the internal hard disk for the final system builds
+because compiling over NFS is slow and sometimes issues spurious errors
+because the NFS server clock may not be perfectly synchronized with the
+Freesa clock.
+
+The other things we will need for the build are: a properly patched kernel
+(the stock Linus kernel does not work on the Freesa device); image
+utilities that can package the kernel into a TRX image that can be flashed
+into the Freesa; and adequate kernel modules on the mips-clfs-C system for
+the device to access the hard disk.
+-------------PROCEED------------------------
+
+
 
 7.6 sysvinit
 
@@ -101,18 +134,18 @@ Upgrade to 120.
 We need the OpenWRT kernel patches.  It sure would be great if we knew 
 which ones are actually necessary.  Alas!  We don't, yet.
 
+
 8.3 util-linux-ng
 
-Change configuration line so the libraries we built stuff under /tools will
-be found:
+Change configuration line so the libraries we built /tools will be found:
 
 CFLAGS='-I/tools/include' LDFLAGS='-L/tools/lib' \
    ./configure --prefix=/tools \
     --build=${CLFS_HOST} --host=${CLFS_TARGET}
 
-8.4 initial filesystem setup
+8.4 mounting filesystems (and on from there)
 
-Don't worry about mounting /proc or /sys yet.
+Bail out at this point.  Tar up the current CLFS state as mips-clfs-C.
 
 9.1 
 
