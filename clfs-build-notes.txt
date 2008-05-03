@@ -134,6 +134,23 @@ Upgrade to 120.
 We need the OpenWRT kernel patches.  It sure would be great if we knew 
 which ones are actually necessary.  Alas!  We don't, yet.
 
+The basic kernel version we're using is 2.6.23.16.  Added to this are lots
+of changes from the OpenWRT project, located in the target/linux directory:
+
+- All of the files from generic-2.6/files are copied in
+- All of the files from brcm47xx/files are copied in
+- All of the patches from generic-2.6/patches-2.6.23 are applied in order
+- All of the patches from brcm47xx/patches-2.6.23 are applied in order
+
+If you do not want to do all that, you can clone git://www.rnd.cx/linux 
+and checkout the openwrt-r11011 tag.  And then apply the gcc430-fix patch,
+because otherwise it won't compile.
+
+A base kernel configuration you can use is in the kernel directory.
+
+Change the default boot command line so it has the IP address and path of
+the NFS server you will be using for the initial boot of the Freesa box.
+
 
 8.3 util-linux-ng
 

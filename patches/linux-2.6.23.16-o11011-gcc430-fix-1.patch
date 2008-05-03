@@ -1,0 +1,15 @@
+diff --git a/Makefile b/Makefile
+index e8a9b3d..7162c39 100644
+--- a/Makefile
++++ b/Makefile
+@@ -314,7 +314,9 @@ CPPFLAGS        := -D__KERNEL__ $(LINUXINCLUDE)
+ 
+ CFLAGS          := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+ 		   -fno-strict-aliasing -fno-common \
+-		   -Werror-implicit-function-declaration
++		   -Werror-implicit-function-declaration \
++		   -fno-tree-scev-cprop
++
+ AFLAGS          := -D__ASSEMBLY__
+ 
+ # Read KERNELRELEASE from include/config/kernel.release (if it exists)
