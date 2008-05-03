@@ -80,7 +80,7 @@ Something like this text will wind up in the Freesa book.
 
 For the FREESA build: AT THE END OF CHAPTER 6 -- when given the boot/chroot
 decision -- tar up the current state as mips-clfs-A.  Then execute chapter
-7 (boot).  Then tar up the current state again as mips-clfs-B.  Then
+7 (boot).  Then tar up the current state again as mips-clfs-C.  Then
 restore mips-clfs-A and execute chapter 8 (chroot).  Then tar up the
 current state again as mips-clfs-B.
 
@@ -151,10 +151,49 @@ A base kernel configuration you can use is in the kernel directory.
 Change the default boot command line so it has the IP address and path of
 the NFS server you will be using for the initial boot of the Freesa box.
 
+After building the kernel, make it bootable with:
+
+${CLFS_TARGET}-objcopy -O binary -R .reginfo -R .note -R .comment \
+    -R .mdebug -S vmlinux vmlinux-fixed
+
+TODO: we will eventually need to convert this into a trx image, so it can
+be flashed onto the Freesa box.  That will require us to build the OpenWRT
+trx-building programs, and also reverse-engineer the part of the OpenWRT
+build that generates a trx that contains an LZMA-compressed kernel.
+Initially, to make sure the kernel boots, we can use tftp.
+
+SAVE THE KERNEL SOURCE TREE.  Do not touch it.  Any additional modules,
+like the "diag" module that spins the hard disk, will need to be compiled
+against that kernel tree (with the same compiler).
+
+7.12 colo
+
+Skip colo.  It is irrelevant to Freesa.  We boot using CFE.
+
+7.14 /etc/fstab
+
+We will not initially have a swap partition.  Don't create a swap entry in
+/etc/fstab.
+
+The root filesystem will be NFS-mounted.  The appropriate entry in
+/etc/fstab will be something like:
+
+192.168.236.5:/home/clfs / nfs defaults 0 0
+
+7.18 making the temporary system bootable
+
+This section is irrelevant to us.
+
+This is a good place to tar up the current clfs directory as mips-clfs-C.
+Do that.  Then restore the mips-clfs-A tarfile and do chapter 8 (chroot) to
+construct the root filesystem that we will install to the internal hard
+disk of the Freesa box.
+
 
 8.3 util-linux-ng
 
-Change configuration line so the libraries we built /tools will be found:
+Change configuration line so the libraries we built in /tools will be
+found:
 
 CFLAGS='-I/tools/include' LDFLAGS='-L/tools/lib' \
    ./configure --prefix=/tools \
