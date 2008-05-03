@@ -1,0 +1,397 @@
+diff --git a/gcc/config/alpha/gnu.h b/gcc/config/alpha/gnu.h
+index b9bfcea..7ce8369 100644
+--- a/gcc/config/alpha/gnu.h
++++ b/gcc/config/alpha/gnu.h
+@@ -11,7 +11,7 @@
+     } while (0)
+ 
+ #undef ELF_DYNAMIC_LINKER
+-#define ELF_DYNAMIC_LINKER	"/lib/ld.so"
++#define ELF_DYNAMIC_LINKER	"/tools/lib/ld.so"
+ 
+ #undef	STARTFILE_SPEC
+ #define STARTFILE_SPEC \
+diff --git a/gcc/config/alpha/linux-elf.h b/gcc/config/alpha/linux-elf.h
+index c48fc93..1cb764a 100644
+--- a/gcc/config/alpha/linux-elf.h
++++ b/gcc/config/alpha/linux-elf.h
+@@ -27,8 +27,8 @@ along with GCC; see the file COPYING3.  If not see
+ #define EXTRA_SPECS \
+ { "elf_dynamic_linker", ELF_DYNAMIC_LINKER },
+ 
+-#define GLIBC_DYNAMIC_LINKER	"/lib/ld-linux.so.2"
+-#define UCLIBC_DYNAMIC_LINKER "/lib/ld-uClibc.so.0"
++#define GLIBC_DYNAMIC_LINKER	"/tools/lib/ld-linux.so.2"
++#define UCLIBC_DYNAMIC_LINKER "/tools/lib/ld-uClibc.so.0"
+ #if UCLIBC_DEFAULT
+ #define CHOOSE_DYNAMIC_LINKER(G, U) "%{mglibc:%{muclibc:%e-mglibc and -muclibc used together}" G ";:" U "}"
+ #else
+diff --git a/gcc/config/arm/linux-eabi.h b/gcc/config/arm/linux-eabi.h
+index 4174d70..f06c374 100644
+--- a/gcc/config/arm/linux-eabi.h
++++ b/gcc/config/arm/linux-eabi.h
+@@ -61,7 +61,7 @@
+ /* Use ld-linux.so.3 so that it will be possible to run "classic"
+    GNU/Linux binaries on an EABI system.  */
+ #undef  GLIBC_DYNAMIC_LINKER
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld-linux.so.3"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld-linux.so.3"
+ 
+ /* At this point, bpabi.h will have clobbered LINK_SPEC.  We want to
+    use the GNU/Linux version, not the generic BPABI version.  */
+diff --git a/gcc/config/arm/linux-elf.h b/gcc/config/arm/linux-elf.h
+index 54eba14..5df0556 100644
+--- a/gcc/config/arm/linux-elf.h
++++ b/gcc/config/arm/linux-elf.h
+@@ -62,7 +62,7 @@
+ 
+ #define LIBGCC_SPEC "%{msoft-float:-lfloat} %{mfloat-abi=soft*:-lfloat} -lgcc"
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld-linux.so.2"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld-linux.so.2"
+ 
+ #define LINUX_TARGET_LINK_SPEC  "%{h*} %{version:-v} \
+    %{b} \
+diff --git a/gcc/config/cris/linux.h b/gcc/config/cris/linux.h
+index 9d947ee..8dbf40e 100644
+--- a/gcc/config/cris/linux.h
++++ b/gcc/config/cris/linux.h
+@@ -102,7 +102,7 @@ along with GCC; see the file COPYING3.  If not see
+ #undef CRIS_DEFAULT_CPU_VERSION
+ #define CRIS_DEFAULT_CPU_VERSION CRIS_CPU_NG
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld.so.1"
+ 
+ /* We need an -rpath-link to ld.so.1, and presumably to each directory
+    specified with -B.  */
+diff --git a/gcc/config/frv/linux.h b/gcc/config/frv/linux.h
+index 71cd094..916905b 100644
+--- a/gcc/config/frv/linux.h
++++ b/gcc/config/frv/linux.h
+@@ -35,7 +35,7 @@
+ #define ENDFILE_SPEC \
+   "%{shared|pie:crtendS.o%s;:crtend.o%s} crtn.o%s"
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld.so.1"
+ 
+ #undef LINK_SPEC
+ #define LINK_SPEC "\
+diff --git a/gcc/config/i386/gnu.h b/gcc/config/i386/gnu.h
+index a2b4f24..97b87b9 100644
+--- a/gcc/config/i386/gnu.h
++++ b/gcc/config/i386/gnu.h
+@@ -22,7 +22,7 @@
+   %{!shared: \
+     %{!static: \
+       %{rdynamic:-export-dynamic} \
+-      %{!dynamic-linker:-dynamic-linker /lib/ld.so}} \
++      %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so}} \
+     %{static:-static}}"
+ 
+ #undef	STARTFILE_SPEC
+diff --git a/gcc/config/i386/linux.h b/gcc/config/i386/linux.h
+index ac81498..98aeb2a 100644
+--- a/gcc/config/i386/linux.h
++++ b/gcc/config/i386/linux.h
+@@ -100,7 +100,7 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ /* These macros may be overridden in k*bsd-gnu.h and i386/k*bsd-gnu.h. */
+ #define LINK_EMULATION "elf_i386"
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld-linux.so.2"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld-linux.so.2"
+ 
+ #undef  SUBTARGET_EXTRA_SPECS
+ #define SUBTARGET_EXTRA_SPECS \
+diff --git a/gcc/config/i386/linux64.h b/gcc/config/i386/linux64.h
+index 37ede61..b85eebb 100644
+--- a/gcc/config/i386/linux64.h
++++ b/gcc/config/i386/linux64.h
+@@ -53,8 +53,8 @@ along with GCC; see the file COPYING3.  If not see
+    When the -shared link option is used a final link is not being
+    done.  */
+ 
+-#define GLIBC_DYNAMIC_LINKER32 "/lib/ld-linux.so.2"
+-#define GLIBC_DYNAMIC_LINKER64 "/lib64/ld-linux-x86-64.so.2"
++#define GLIBC_DYNAMIC_LINKER32 "/tools/lib/ld-linux.so.2"
++#define GLIBC_DYNAMIC_LINKER64 "/tools/lib64/ld-linux-x86-64.so.2"
+ 
+ #if TARGET_64BIT_DEFAULT
+ #define SPEC_32 "m32"
+diff --git a/gcc/config/ia64/linux.h b/gcc/config/ia64/linux.h
+index cecae0d..e121900 100644
+--- a/gcc/config/ia64/linux.h
++++ b/gcc/config/ia64/linux.h
+@@ -37,7 +37,7 @@ do {						\
+ /* Define this for shared library support because it isn't in the main
+    linux.h file.  */
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld-linux-ia64.so.2"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld-linux-ia64.so.2"
+ 
+ #undef LINK_SPEC
+ #define LINK_SPEC "\
+diff --git a/gcc/config/linux.h b/gcc/config/linux.h
+index 7df208c..7c11c48 100644
+--- a/gcc/config/linux.h
++++ b/gcc/config/linux.h
+@@ -112,9 +112,9 @@ along with GCC; see the file COPYING3.  If not see
+    GLIBC_DYNAMIC_LINKER must be defined for each target using them, or
+    GLIBC_DYNAMIC_LINKER32 and GLIBC_DYNAMIC_LINKER64 for targets
+    supporting both 32-bit and 64-bit compilation.  */
+-#define UCLIBC_DYNAMIC_LINKER "/lib/ld-uClibc.so.0"
+-#define UCLIBC_DYNAMIC_LINKER32 "/lib/ld-uClibc.so.0"
+-#define UCLIBC_DYNAMIC_LINKER64 "/lib/ld64-uClibc.so.0"
++#define UCLIBC_DYNAMIC_LINKER "/tools/lib/ld-uClibc.so.0"
++#define UCLIBC_DYNAMIC_LINKER32 "/tools/lib/ld-uClibc.so.0"
++#define UCLIBC_DYNAMIC_LINKER64 "/tools/lib/ld64-uClibc.so.0"
+ #define LINUX_DYNAMIC_LINKER \
+   CHOOSE_DYNAMIC_LINKER (GLIBC_DYNAMIC_LINKER, UCLIBC_DYNAMIC_LINKER)
+ #define LINUX_DYNAMIC_LINKER32 \
+@@ -130,3 +130,7 @@ along with GCC; see the file COPYING3.  If not see
+ #define TARGET_HAS_SINCOS (OPTION_GLIBC)
+ 
+ #define TARGET_POSIX_IO
++
++/* Remove /usr/include from the end of the include search path.  */
++#undef STANDARD_INCLUDE_DIR
++#define STANDARD_INCLUDE_DIR 0
+diff --git a/gcc/config/m32r/linux.h b/gcc/config/m32r/linux.h
+index 0515e5b..fba92b2 100644
+--- a/gcc/config/m32r/linux.h
++++ b/gcc/config/m32r/linux.h
+@@ -58,7 +58,7 @@
+ 
+ /* If ELF is the default format, we should not use /lib/elf.  */
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld-linux.so.2"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld-linux.so.2"
+ 
+ #undef	LINK_SPEC
+ #if TARGET_LITTLE_ENDIAN
+diff --git a/gcc/config/m68k/linux.h b/gcc/config/m68k/linux.h
+index 2eb4641..1314cf6 100644
+--- a/gcc/config/m68k/linux.h
++++ b/gcc/config/m68k/linux.h
+@@ -84,7 +84,7 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ /* If ELF is the default format, we should not use /lib/elf.  */
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld.so.1"
+ 
+ #undef LINK_SPEC
+ #define LINK_SPEC "-m m68kelf %{shared} \
+diff --git a/gcc/config/mips/linux.h b/gcc/config/mips/linux.h
+index 4ee046a..ed4b2d7 100644
+--- a/gcc/config/mips/linux.h
++++ b/gcc/config/mips/linux.h
+@@ -64,7 +64,7 @@ along with GCC; see the file COPYING3.  If not see
+ #undef MIPS_DEFAULT_GVALUE
+ #define MIPS_DEFAULT_GVALUE 0
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld.so.1"
+ 
+ /* Borrowed from sparc/linux.h */
+ #undef LINK_SPEC
+diff --git a/gcc/config/mips/linux64.h b/gcc/config/mips/linux64.h
+index 36b67d6..4231a43 100644
+--- a/gcc/config/mips/linux64.h
++++ b/gcc/config/mips/linux64.h
+@@ -38,10 +38,10 @@ NO_SHARED_SPECS \
+ %{!shared: \
+   %{profile:-lc_p} %{!profile:-lc}}"
+ 
+-#define GLIBC_DYNAMIC_LINKER32 "/lib/ld.so.1"
+-#define GLIBC_DYNAMIC_LINKER64 "/lib64/ld.so.1"
+-#define GLIBC_DYNAMIC_LINKERN32 "/lib32/ld.so.1"
+-#define UCLIBC_DYNAMIC_LINKERN32 "/lib32/ld-uClibc.so.0"
++#define GLIBC_DYNAMIC_LINKER32 "/tools/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKER64 "/tools/lib64/ld.so.1"
++#define GLIBC_DYNAMIC_LINKERN32 "/tools/lib32/ld.so.1"
++#define UCLIBC_DYNAMIC_LINKERN32 "/tools/lib32/ld-uClibc.so.0"
+ #define LINUX_DYNAMIC_LINKERN32 \
+   CHOOSE_DYNAMIC_LINKER (GLIBC_DYNAMIC_LINKERN32, UCLIBC_DYNAMIC_LINKERN32)
+ 
+diff --git a/gcc/config/mn10300/linux.h b/gcc/config/mn10300/linux.h
+index ac9f8c5..4ca5fa4 100644
+--- a/gcc/config/mn10300/linux.h
++++ b/gcc/config/mn10300/linux.h
+@@ -32,7 +32,7 @@
+ #undef  ASM_SPEC
+ #define ASM_SPEC "%{Wa,*:%*}"
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld.so.1"
+ 
+ #undef  LINK_SPEC
+ #define LINK_SPEC "%{mrelax:--relax} %{shared:-shared} \
+diff --git a/gcc/config/pa/pa-linux.h b/gcc/config/pa/pa-linux.h
+index 8af089a..9eba3d5 100644
+--- a/gcc/config/pa/pa-linux.h
++++ b/gcc/config/pa/pa-linux.h
+@@ -44,7 +44,7 @@ along with GCC; see the file COPYING3.  If not see
+ /* Define this for shared library support because it isn't in the main
+    linux.h file.  */
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld.so.1"
+ 
+ #undef LINK_SPEC
+ #define LINK_SPEC "\
+diff --git a/gcc/config/rs6000/linux64.h b/gcc/config/rs6000/linux64.h
+index eea5fd7..2d485d5 100644
+--- a/gcc/config/rs6000/linux64.h
++++ b/gcc/config/rs6000/linux64.h
+@@ -339,10 +339,10 @@ extern int dot_symbols;
+ #undef	LINK_OS_DEFAULT_SPEC
+ #define LINK_OS_DEFAULT_SPEC "%(link_os_linux)"
+ 
+-#define GLIBC_DYNAMIC_LINKER32 "/lib/ld.so.1"
+-#define GLIBC_DYNAMIC_LINKER64 "/lib64/ld64.so.1"
+-#define UCLIBC_DYNAMIC_LINKER32 "/lib/ld-uClibc.so.0"
+-#define UCLIBC_DYNAMIC_LINKER64 "/lib/ld64-uClibc.so.0"
++#define GLIBC_DYNAMIC_LINKER32 "/tools/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKER64 "/tools/lib64/ld64.so.1"
++#define UCLIBC_DYNAMIC_LINKER32 "/tools/lib/ld-uClibc.so.0"
++#define UCLIBC_DYNAMIC_LINKER64 "/tools/lib/ld64-uClibc.so.0"
+ #if UCLIBC_DEFAULT
+ #define CHOOSE_DYNAMIC_LINKER(G, U) "%{mglibc:%{muclibc:%e-mglibc and -muclibc used together}" G ";:" U "}"
+ #else
+diff --git a/gcc/config/rs6000/sysv4.h b/gcc/config/rs6000/sysv4.h
+index 6e04bee..b8707db 100644
+--- a/gcc/config/rs6000/sysv4.h
++++ b/gcc/config/rs6000/sysv4.h
+@@ -891,8 +891,8 @@ extern int fixuplabelno;
+ 
+ #define LINK_START_LINUX_SPEC ""
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld.so.1"
+-#define UCLIBC_DYNAMIC_LINKER "/lib/ld-uClibc.so.0"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld.so.1"
++#define UCLIBC_DYNAMIC_LINKER "/tools/lib/ld-uClibc.so.0"
+ #if UCLIBC_DEFAULT
+ #define CHOOSE_DYNAMIC_LINKER(G, U) "%{mglibc:%{muclibc:%e-mglibc and -muclibc used together}" G ";:" U "}"
+ #else
+@@ -934,7 +934,7 @@ extern int fixuplabelno;
+ 
+ #define LINK_OS_GNU_SPEC "-m elf32ppclinux %{!shared: %{!static: \
+   %{rdynamic:-export-dynamic} \
+-  %{!dynamic-linker:-dynamic-linker /lib/ld.so.1}}}"
++  %{!dynamic-linker:-dynamic-linker /tools/lib/ld.so.1}}}"
+ 
+ #define CPP_OS_GNU_SPEC "-D__unix__ -D__gnu_hurd__ -D__GNU__	\
+ %{!undef:					                \
+diff --git a/gcc/config/s390/linux.h b/gcc/config/s390/linux.h
+index ddbcfa9..7f220aa 100644
+--- a/gcc/config/s390/linux.h
++++ b/gcc/config/s390/linux.h
+@@ -72,8 +72,8 @@ along with GCC; see the file COPYING3.  If not see
+ #define MULTILIB_DEFAULTS { "m31" }
+ #endif
+ 
+-#define GLIBC_DYNAMIC_LINKER32 "/lib/ld.so.1"
+-#define GLIBC_DYNAMIC_LINKER64 "/lib/ld64.so.1"
++#define GLIBC_DYNAMIC_LINKER32 "/tools/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKER64 "/tools/lib/ld64.so.1"
+ 
+ #undef  LINK_SPEC
+ #define LINK_SPEC \
+diff --git a/gcc/config/sh/linux.h b/gcc/config/sh/linux.h
+index d513af8..a433f09 100644
+--- a/gcc/config/sh/linux.h
++++ b/gcc/config/sh/linux.h
+@@ -47,7 +47,7 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ #define TARGET_ASM_FILE_END file_end_indicate_exec_stack
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld-linux.so.2"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld-linux.so.2"
+ 
+ #undef SUBTARGET_LINK_EMUL_SUFFIX
+ #define SUBTARGET_LINK_EMUL_SUFFIX "_linux"
+diff --git a/gcc/config/sparc/linux.h b/gcc/config/sparc/linux.h
+index bd3b1f5..4ab5f49 100644
+--- a/gcc/config/sparc/linux.h
++++ b/gcc/config/sparc/linux.h
+@@ -120,8 +120,8 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ /* If ELF is the default format, we should not use /lib/elf.  */
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld-linux.so.2"
+-#define UCLIBC_DYNAMIC_LINKER "/lib/ld-uClibc.so.0"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld-linux.so.2"
++#define UCLIBC_DYNAMIC_LINKER "/tools/lib/ld-uClibc.so.0"
+ #if UCLIBC_DEFAULT
+ #define CHOOSE_DYNAMIC_LINKER(G, U) "%{mglibc:%{muclibc:%e-mglibc and -muclibc used together}" G ";:" U "}"
+ #else
+@@ -132,7 +132,7 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ 
+ #undef  LINK_SPEC
+-#define LINK_SPEC "-m elf32_sparc -Y P,/usr/lib %{shared:-shared} \
++#define LINK_SPEC "-m elf32_sparc -Y P,/tools/lib %{shared:-shared} \
+   %{!mno-relax:%{!r:-relax}} \
+   %{!shared: \
+     %{!ibcs: \
+diff --git a/gcc/config/sparc/linux64.h b/gcc/config/sparc/linux64.h
+index b205552..0683a2c 100644
+--- a/gcc/config/sparc/linux64.h
++++ b/gcc/config/sparc/linux64.h
+@@ -144,10 +144,10 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ /* If ELF is the default format, we should not use /lib/elf.  */
+ 
+-#define GLIBC_DYNAMIC_LINKER32 "/lib/ld-linux.so.2"
+-#define GLIBC_DYNAMIC_LINKER64 "/lib64/ld-linux.so.2"
+-#define UCLIBC_DYNAMIC_LINKER32 "/lib/ld-uClibc.so.0"
+-#define UCLIBC_DYNAMIC_LINKER64 "/lib/ld64-uClibc.so.0"
++#define GLIBC_DYNAMIC_LINKER32 "/tools/lib/ld-linux.so.2"
++#define GLIBC_DYNAMIC_LINKER64 "/tools/lib64/ld-linux.so.2"
++#define UCLIBC_DYNAMIC_LINKER32 "/tools/lib/ld-uClibc.so.0"
++#define UCLIBC_DYNAMIC_LINKER64 "/tools/lib/ld64-uClibc.so.0"
+ #if UCLIBC_DEFAULT
+ #define CHOOSE_DYNAMIC_LINKER(G, U) "%{mglibc:%{muclibc:%e-mglibc and -muclibc used together}" G ";:" U "}"
+ #else
+@@ -167,7 +167,7 @@ along with GCC; see the file COPYING3.  If not see
+   { "link_arch_default", LINK_ARCH_DEFAULT_SPEC },	  \
+   { "link_arch",	 LINK_ARCH_SPEC },
+ 
+-#define LINK_ARCH32_SPEC "-m elf32_sparc -Y P,/usr/lib %{shared:-shared} \
++#define LINK_ARCH32_SPEC "-m elf32_sparc -Y P,/tools/lib %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+@@ -176,7 +176,7 @@ along with GCC; see the file COPYING3.  If not see
+         %{static:-static}}} \
+ "
+ 
+-#define LINK_ARCH64_SPEC "-m elf64_sparc -Y P,/usr/lib64 %{shared:-shared} \
++#define LINK_ARCH64_SPEC "-m elf64_sparc -Y P,/tools/lib64 %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+@@ -257,7 +257,7 @@ along with GCC; see the file COPYING3.  If not see
+ #else /* !SPARC_BI_ARCH */
+ 
+ #undef LINK_SPEC
+-#define LINK_SPEC "-m elf64_sparc -Y P,/usr/lib64 %{shared:-shared} \
++#define LINK_SPEC "-m elf64_sparc -Y P,/tools/lib64 %{shared:-shared} \
+   %{!shared: \
+     %{!ibcs: \
+       %{!static: \
+diff --git a/gcc/config/xtensa/linux.h b/gcc/config/xtensa/linux.h
+index 69ab626..07c2492 100644
+--- a/gcc/config/xtensa/linux.h
++++ b/gcc/config/xtensa/linux.h
+@@ -43,7 +43,7 @@ along with GCC; see the file COPYING3.  If not see
+   %{mlongcalls:--longcalls} \
+   %{mno-longcalls:--no-longcalls}"
+ 
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld.so.1"
++#define GLIBC_DYNAMIC_LINKER "/tools/lib/ld.so.1"
+ 
+ #undef LINK_SPEC
+ #define LINK_SPEC \
