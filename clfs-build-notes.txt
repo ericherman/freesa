@@ -189,6 +189,20 @@ Do that.  Then restore the mips-clfs-A tarfile and do chapter 8 (chroot) to
 construct the root filesystem that we will install to the internal hard
 disk of the Freesa box.
 
+TODO!
+
+Make the NFS root filesystem set up a telnetd or something
+similar so that the user can telnet to the freesa box (temp
+system) and execute commands on it:  otherwise a hacked box with
+serial console is needed.  (Networking will already be configured:
+otherwise, the NFS root filesystem will not be accessible.)
+
+Set up a getty in the inittab in case there IS a serial console:
+
+T0:23:respawn:/sbin/getty -L ttyS0 115200 vt100
+
+
+
 
 8.3 util-linux-ng
 
