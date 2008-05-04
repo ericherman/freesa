@@ -244,7 +244,7 @@ echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
     CFLAGS="$GLIBCFLAG" \
-    ../glibc/configure --prefix=/usr \
+    ../glibc/configure --prefix=/tools \
     --host=${CLFS_TARGET} --build=${CLFS_HOST} \
     --disable-profile --enable-add-ons \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
@@ -299,21 +299,6 @@ echo WOOT
 
 Wow, it worked.  I didn't expect that to happen.
 
-
-Now!  We have a couple of options.  First, we can call our
-cross-toolchain done and celebrate victory.  Second, we can use
-the full compiler we just built to rebuild glibc.
-
-"Why would we do that?!" you ask.
-
-Well, there are some things that didn't get built earlier in the
-glibc build, probably because we didn't have some support
-libraries like libgcc_eh.  In particular, we don't have programs
-like ldd.  We don't strictly need them, but you may want to
-rebuild glibc on general principles.  If so, do NOT apply the
-libgcc_eh patch!
-
-If you don't want to rebuild glibc, then proceed to:
 
 STEP 9 Adjusting The Toolchain
 

@@ -115,6 +115,11 @@ sulogin couldn't be built because it can't find "crypt".  It isn't really
 necessary, though, so just ditch it.  (Remove references to sulogin from 
 src/Makefile.)
 
+Uncomment the "if your system has a console port" agetty line
+from the standard clfs inittab, and comment out the section that
+says "comment this out if your system only has a serial console."
+Duh.
+
 7.8 util-linux-ng
 
 Change configuration line so the libraries we built stuff under /tools will
@@ -180,6 +185,23 @@ The root filesystem will be NFS-mounted.  The appropriate entry in
 
 192.168.236.5:/home/clfs / nfs defaults 0 0
 
+As long as we are creating config files, create an
+/etc/inetd.conf with:
+
+----
+telnet stream tcp nowait root /usr/sbin/telnetd telnetd
+----
+
+And create an /etc/services with:
+
+----
+telnet           23/tcp    # Telnet
+telnet           23/udp    # Telnet
+----
+
+TODO add a boot script that starts inetd and possibly configures
+more network stuff so it works properly.
+
 7.17 changing ownership
  
 Before chowning anything, we need to build a couple more things.
@@ -216,17 +238,7 @@ vim:
 make &&
 make install
 
-pstools: ...
-
-TODO add /etc/inetd.conf and start inetd from inittab
-
-TODO add ld.so.conf and build an ld.so.cache, which tells ld.so.1 to seek
-libraries under /tools/lib and /tools/usr/lib!!!  Otherwise all libs need
-to be symlinked to /lib which is no good.
-
-Uncomment the agetty line from the standard clfs inittab.
-Comment out the section that says "comment this out if your system
-only has a serial console."  Duh.
+psmisc: ...
 
 
 7.18 making the temporary system bootable
