@@ -1,0 +1,20 @@
+When NFS-booting:
+
+We should patch the kernel to get rid of:
+
+b44: eth1: BUG!  Timeout waiting for bit 80000000 of register 428 to clear.
+
+"tools" isn't really the root of the system, but we told the toolchain that
+it was the sysroot.  What would probably be better is to build with
+SYSROOT=$CLFS instead of SYSROOT=$CLFS/tools.
+
+pushd $CLFS/tools/lib
+ln *.* ../../lib
+
+
+Build the "diag" module from openwrt.  Put that in the Freesa git, as well.
+
+ARCH=mips CROSS_COMPILE=${CLFS_TARGET}- KERNELDIR=${CLFS}/Build/linux make
+ 
+As cross-tools for "C": build VIM, lzma
+

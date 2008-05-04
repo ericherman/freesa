@@ -1,0 +1,3 @@
+This is the "diag" kernel module from openwrt, which (among other
+things) turns on the hard disk and LEDs when installed on a
+WL-700gE.

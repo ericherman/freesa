@@ -204,10 +204,30 @@ So.  Inetutils:
 make &&
 make install
 
-TODO add /etc/services and start inetd from inittab
+Lzma: ...grumble, grumble
 
+./configure --prefix=/tools --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
+make && make install
 
-T0:23:respawn:/sbin/getty -L ttyS0 115200 vt100
+vim:
+
+./configure --prefix=$CLFS/usr \
+    --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
+make &&
+make install
+
+pstools: ...
+
+TODO add /etc/inetd.conf and start inetd from inittab
+
+TODO add ld.so.conf and build an ld.so.cache, which tells ld.so.1 to seek
+libraries under /tools/lib and /tools/usr/lib!!!  Otherwise all libs need
+to be symlinked to /lib which is no good.
+
+Uncomment the agetty line from the standard clfs inittab.
+Comment out the section that says "comment this out if your system
+only has a serial console."  Duh.
+
 
 7.18 making the temporary system bootable
 
