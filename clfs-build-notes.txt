@@ -180,29 +180,44 @@ The root filesystem will be NFS-mounted.  The appropriate entry in
 
 192.168.236.5:/home/clfs / nfs defaults 0 0
 
-7.18 making the temporary system bootable
+7.17 changing ownership
+ 
+Before chowning anything, we need to build a couple more things.
 
-This section is irrelevant to us.
+The point of the NFS-root-mounted filesystem is to allow us to access the hard
+disk, build a partition table, create filesystems and swap, mount the
+filesystems, unpack the stage B tarball onto them, and then chroot into the
+local disk environment and complete the build from there.
 
-This is a good place to tar up the current clfs directory as mips-clfs-C.
-Do that.  Then restore the mips-clfs-A tarfile and do chapter 8 (chroot) to
-construct the root filesystem that we will install to the internal hard
-disk of the Freesa box.
+That means, in addition to the stuff we have created so far, we need a telnet
+server (so once the system is booted we can get a prompt on it without
+requiring a serial console).
 
-TODO!
+So.  Inetutils:
 
-Make the NFS root filesystem set up a telnetd or something
-similar so that the user can telnet to the freesa box (temp
-system) and execute commands on it:  otherwise a hacked box with
-serial console is needed.  (Networking will already be configured:
-otherwise, the NFS root filesystem will not be accessible.)
+./configure --prefix=$CLFS/usr --libexecdir=$CLFS/usr/sbin \
+    --sysconfdir=$CLFS/etc --localstatedir=$CLFS/var \
+    --disable-logger --disable-syslogd \
+    --disable-whois --disable-talkd \
+    --disable-talk \
+    --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
+make &&
+make install
 
-Set up a getty in the inittab in case there IS a serial console:
+TODO add /etc/services and start inetd from inittab
+
 
 T0:23:respawn:/sbin/getty -L ttyS0 115200 vt100
 
+7.18 making the temporary system bootable
 
+This section is irrelevant to us.  But it is a convenient location to
+bundle up the current CLFS directory as mips-clfs-C.  Do that.  Then
+restore the mips-clfs-A tarfile and do chapter 8 (chroot) to construct the
+root filesystem that we will install to the internal hard disk of the
+Freesa box.
 
+NOW WE ARE IN THE mips-clfs-A DIRECTORY AGAIN.  GO TO CHAPTER 8.
 
 8.3 util-linux-ng
 
