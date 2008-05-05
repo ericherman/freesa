@@ -96,7 +96,7 @@ BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
     --cache-file=config.cache &&
 make && 
-make install_root=$SYSROOT install && 
+make install_root=/ install && 
 echo WOOT
 }
 
@@ -132,6 +132,24 @@ do
         exit 1
     fi
 done
+
+if [ -z $SYSROOT ]
+then
+    echo "environment variables aren't all set"
+    exit 2
+fi
+
+if [ -z ${CLFS_TARGET} ]
+then
+    echo "environment variables aren't all set"
+    exit 2
+fi
+
+if [ -z ${CLFS_HOST} ]
+then
+    echo "environment variables aren't all set"
+    exit 2
+fi
 
 echo "clearing out tools, I hope that's what you wanted."
 rm -rf /tools/*
