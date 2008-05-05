@@ -137,40 +137,50 @@ echo "clearing out tools, I hope that's what you wanted."
 rm -rf /tools/*
 rm -rf /cross-tools/*
 rm -rf binutils-build glibc-build gcc-build
+mkdir Logs
 
+echo "STEP 1"
 pushd linux
-step1_kernel_headers
+step1_kernel_headers > $PWD/Logs/step1.txt
 popd
 
+echo "STEP 2"
 mkdir binutils-build && pushd binutils-build
-step2_binutils
+step2_binutils > $PWD/Logs/step2.txt
 popd && rm -rf binutils-build
 
+echo "STEP 3"
 mkdir glibc-build && pushd glibc-build
-step3_glibc_headers
+step3_glibc_headers > $PWD/Logs/step3.txt
 popd && rm -rf glibc-build
 
+echo "STEP 4"
 mkdir gcc-build && pushd gcc-build
-step4_gcc_bare
+step4_gcc_bare > $PWD/Logs/step4.txt
 popd
 
+echo "STEP 5"
 mkdir glibc-build && pushd glibc-build
-step5_glibc_startup
+step5_glibc_startup > $PWD/Logs/step5.txt
 popd && rm -rf glibc-build
 
+echo "STEP 6"
 pushd gcc-build
-step6_gcc_libgcc
+step6_gcc_libgcc > $PWD/Logs/step6.txt
 popd && rm -rf gcc-build
 
+echo "STEP 7"
 mkdir glibc-build && pushd glibc-build
-step7_glibc_full
+step7_glibc_full > $PWD/Logs/step7.txt
 popd && rm -rf glibc-build
 
+echo "STEP 8"
 mkdir gcc-build && cd gcc-build
-step8_gcc_full
+step8_gcc_full > $PWD/Logs/step8.txt
 popd && rm -rf gcc-build
 
-step9_specs
+echo "STEP 9"
+step9_specs > $PWD/Logs/step9.txt
 
 echo "WOOT WOOT WOOT WOOT"
 
