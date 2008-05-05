@@ -137,7 +137,7 @@ echo "clearing out tools, I hope that's what you wanted."
 rm -rf /tools/*
 rm -rf /cross-tools/*
 rm -rf binutils-build glibc-build gcc-build
-mkdir ${BUILD_DIR}/Logs
+mkdir -p ${BUILD_DIR}/Logs
 
 echo "STEP 1"
 pushd linux
