@@ -1,0 +1,52 @@
+PART 1:
+
+Goal:  construct ...
+
+a. an NFS-root-mountable filesystem that starts a telnetd and
+  gives access to the hard disk
+b. a chroot-able tarball to be installed on the internal disk
+c. a TRX image containing a kernel that mounts the NFS-root filesystem
+
+Can be automated with any damn thing we please.  I like ruby, personally.
+
+At this point, the user installs the TRX image using the BIG ORANGE BUTTON
+rescue mode; boots the device, notes the mounting of the NFS-root filesystem,
+has a kamikaze, telnets to the device, fdisk, mke2fs's, mkswap, mount, and
+untar (1)b. from above.  Then chroots to the internal disk filesystem.
+
+PART 2:
+
+Goal:  build simple system using the tools in /tools.
+
+(Basically this is an LFS base system, with some extensions for stuff we need
+like openssl, openssh, etc)
+
+This can be automated with bash.
+
+We don't have anything but bash at the beginning of this process.
+
+We can go ahead and build ruby et al as part of this process.
+
+PART 3:
+
+a. TRX image maintenance utilities
+b. A real runtime kernel
+c. A uClibc-based toolchain
+d. Utilities for the initial (flash) root filesystem (using uClibc)
+e. the actual TRX image to be installed in the flash region
+
+This can be automated with anything we please, say for example Ruby.
+
+At this point the user gets the flash image off the system over the 
+network somehow.  Maybe by exiting the chroot and copying it to the 
+NFS-mounted filesystem.
+
+Now the user usese the BIG ORANGE BUTTON again, this time to install the 
+TRX image built natively on the system.
+
+Smoke test.
+
+Have a drink
+  ...or...
+Get blotto.  Wait until tomorrow.  Go back to step 1.
+
