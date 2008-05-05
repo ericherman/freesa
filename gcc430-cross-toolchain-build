@@ -251,7 +251,7 @@ BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
     --cache-file=config.cache &&
 make && 
-make install_root=$SYSROOT install && 
+make install_root=/ install && 
 echo WOOT
 
 [On digad: 14:07 azoth: 11:00]
