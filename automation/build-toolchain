@@ -2,6 +2,8 @@
 #
 # TODO: this would be more fun if it were in ruby.
 
+set -e
+
 function step1_kernel_headers()
 {
   make mrproper &&
@@ -130,6 +132,11 @@ do
         exit 1
     fi
 done
+
+echo "clearing out tools, I hope that's what you wanted."
+rm -rf /tools/*
+rm -rf /cross-tools/*
+rm -rf binutils-build glibc-build gcc-build
 
 pushd linux
 step1_kernel_headers
