@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# TODO: this would be more fun if it were in ruby.
+# TODO: this might be more fun if it were in ruby.
 
 set -e
 
@@ -196,7 +196,7 @@ rm -f $CLFS/tools/tools
 ln -s . $CLFS/tools/tools
 
 echo "STEP 8"
-mkdir gcc-build && cd gcc-build
+mkdir gcc-build && pushd gcc-build
 step8_gcc_full > ${BUILD_DIR}/Logs/step8.txt
 popd && rm -rf gcc-build
 

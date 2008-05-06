@@ -1,33 +1,41 @@
-PART 1:
-
-Goal:  construct ...
+PART 1:  Cross-build
 
 a. an NFS-root-mountable filesystem that starts a telnetd and
   gives access to the hard disk
 b. a chroot-able tarball to be installed on the internal disk
 c. a TRX image containing a kernel that mounts the NFS-root filesystem
 
-Can be automated with any damn thing we please.  I like ruby, personally.
+Can be automated with anything we please.  I like ruby, personally.
 
-At this point, the user installs the TRX image using the BIG ORANGE BUTTON
-rescue mode; boots the device, notes the mounting of the NFS-root filesystem,
-has a kamikaze, telnets to the device, fdisk, mke2fs's, mkswap, mount, and
-untar (1)b. from above.  Then chroots to the internal disk filesystem.
+After part 1, the user manually sets up an NFS server, installs the TRX
+image using the BIG ORANGE BUTTON rescue mode; boots the device, notes the
+mounting of the NFS-root filesystem, telnets to the device, fdisk,
+mke2fs's, mkswap, mount, and untar 1b from above.  Then chroots to the
+internal disk filesystem.
 
-PART 2:
+We could provide scripts to assist in that stuff, but I do not think it is
+justified effort.  That stuff is not hard and much of it is open to
+customization by the user.
+
+PART 2:  Native Build
 
 Goal:  build simple system using the tools in /tools.
 
 (Basically this is an LFS base system, with some extensions for stuff we need
 like openssl, openssh, etc)
 
-This can be automated with bash.
+This can be automated with bash.  We don't have anything but bash at the
+beginning of this process.  We could extend part1 to include ruby in the
+chroot bundle, though.
 
-We don't have anything but bash at the beginning of this process.
+We can also go ahead and build ruby (or whatever else we need) as part of
+this process.
 
-We can go ahead and build ruby et al as part of this process.
+PART 3:  Make System Bootable
 
-PART 3:
+This is much more involved than usual because we don't have access to a
+"normal" bootloader -- the only stage-1 bootloader we can use is CFE, and
+CFE doesn't give access to the hard disk.
 
 a. TRX image maintenance utilities
 b. A real runtime kernel
@@ -49,4 +57,12 @@ Smoke test.
 Have a drink
   ...or...
 Get blotto.  Wait until tomorrow.  Go back to step 1.
+
+-------------
+
+automating the process -- fundamentally what we are doing is running a big
+pile of shell commands in a particular order, and bailing out if something
+fails.  That can be done in bash or ruby (or anything else).  Is ruby apt
+to be better than bash?  I'm inclined to think so...it has objects, after
+all.
 
