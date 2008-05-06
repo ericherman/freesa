@@ -189,6 +189,10 @@ step3_glibc_headers > ${BUILD_DIR}/Logs/step3.txt
 cd ${BUILD_DIR}
 rm -rf glibc-build
 
+# XXX this is a kludge.  GCC insists on finding things under
+# $SYSROOT/usr -- which is reasonable -- we would like to change
+# this to be $SYSROOT/tools but are unsure how.
+
 ln -s tools $SYSROOT/usr
 
 echo "STEP 4"

@@ -89,10 +89,7 @@ STEP 1 linux kernel headers
 
 This one doesn't need a separate build directory.
 
-make mrproper &&
-make $KERNEL_ARCH headers_check &&
-make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT/usr &&
-echo WOOT
+(SEE SCRIPT FOR COMMANDS)
 
 [On digad: 0:19 azoth: 0:13]
 
@@ -100,13 +97,7 @@ STEP 2 binutils
 
 Apply the posix and branch_update-3 patches from CLFS.
 
-../binutils/configure --prefix=/cross-tools \
-   --build=${CLFS_HOST} --target=${CLFS_TARGET} \
-   --disable-nls --enable-shared --disable-multilib \
-   --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT &&
-make configure-host && make && make install &&
-cp -v ../binutils*/include/libiberty.h $SYSROOT/usr/include &&
-echo WOOT
+(SEE SCRIPT FOR COMMANDS)
 
 [On digad: 2:30 azoth 2:00]
 
@@ -120,18 +111,7 @@ After doing this build, get rid of the glibc-build directory but
 keep the source directory around for now:  we will need it again a
 little later.
 
-CC=gcc ../glibc/configure --prefix=/usr \
-  --host=${CLFS_HOST} --build=${CLFS_TARGET} \
-  --disable-sanity-checks --enable-kernel=${KERNEL_VERSION} \
-  --with-headers=$SYSROOT/usr/include \
-  --with-binutils=/cross-tools/${CLFS_TARGET}/bin &&
-make cross-compiling=yes install_root=$SYSROOT install-headers &&
-cp -v bits/stdio_lim.h $SYSROOT/usr/include/bits &&
-touch $SYSROOT/usr/include/gnu/stubs.h &&
-cp -v ../glibc*/nptl/sysdeps/pthread/pthread.h $SYSROOT/usr/include &&
-cp -v ../glibc*/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
-    $SYSROOT/usr/include/bits &&
-echo WOOT
+(SEE SCRIPT FOR COMMANDS)
 
 [On digad: 0:49 azoth: 0:30]
 
@@ -175,17 +155,7 @@ can find the native headers -- it always looks for them in
 $SYSROOT/usr/include, and we are installing them into
 $SYSROOT/tools/include.
 
-../gcc/configure --prefix=/cross-tools \
-  --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
-  --disable-multilib \
-  --disable-nls --disable-shared \
-  --disable-libmudflap --disable-libssp \
-  --disable-threads --enable-languages=c \
-  --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT &&
-export LDFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
-export CPPFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
-make all-gcc && make install-gcc &&
-echo WOOT
+(SEE SCRIPT FOR COMMANDS)
 
 [On digad: 6:36 azoth: 4:28]
 
@@ -202,24 +172,7 @@ the rest of glibc after we build libgcc.
 Again, when this step is complete, delete the glibc-build directory but
 keep the source directory around.
 
-
-echo "libc_cv_forced_unwind=yes" > config.cache
-echo "libc_cv_c_cleanup=yes" >> config.cache
-BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
-    AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
-    CFLAGS="${GLIBCFLAG}" \
-    ../glibc/configure --prefix=/usr \
-    --host=${CLFS_TARGET} --build=${CLFS_HOST} \
-    --disable-profile --enable-add-ons \
-    --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
-    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
-    --cache-file=config.cache &&
-make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crt1.o &&
-make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crti.o &&
-make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crtn.o &&
-mkdir -p $SYSROOT/lib &&
-cp csu/crt{1,i,n}.o $SYSROOT/lib &&
-echo WOOT
+(SEE SCRIPT FOR COMMANDS)
 
 [On digad: 0:12 azoth: 0:20]
 
@@ -235,9 +188,7 @@ After we build and install libgcc, we can get rid of the crt object files
 we just built in the previous step.  They're going to be rebuilt anyway
 when we do the full glibc build.
 
-make all-target-libgcc && make install-target-libgcc && 
-rm -f $SYSROOT/lib/crt{1,i,n}.o &&
-echo WOOT
+(SEE SCRIPT FOR COMMANDS)
 
 [On digad: 0:49 azoth: 0:48]
 
@@ -248,21 +199,7 @@ Now we have a usable GCC, complete with libgcc, and we can build glibc at
 last!  Use the same glibc source directory as before, or re-apply all the
 patches that were used previously; but use a fresh glibc-build directory.
 
-
-echo "libc_cv_forced_unwind=yes" > config.cache
-echo "libc_cv_c_cleanup=yes" >> config.cache
-BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
-    AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
-    CFLAGS="$GLIBCFLAG" \
-    ../glibc/configure --prefix=/tools \
-    --host=${CLFS_TARGET} --build=${CLFS_HOST} \
-    --disable-profile --enable-add-ons \
-    --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
-    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
-    --cache-file=config.cache &&
-make && 
-make install_root=/ install && 
-echo WOOT
+(SEE SCRIPT FOR COMMANDS)
 
 [On digad: 14:07 azoth: 11:00]
 
@@ -292,18 +229,7 @@ We're going to try to adjust things after the build, instead of
 applying additional patches now.  Use the same posix patch as earlier, but
 no others.
 
-../gcc/configure --prefix=/cross-tools \
-  --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
-  --disable-multilib \
-  --disable-nls --enable-shared \
-  --enable-languages=c,c++ --enable-__cxa_atexit \
-  --enable-c99 --enable-long-long --enable-threads=posix \
-  --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT &&
-export LDFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
-export CPPFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
-make AS_FOR_TARGET="${CLFS_TARGET}-as" LD_FOR_TARGET="${CLFS_TARGET}-ld" &&
-make install &&
-echo WOOT
+(SEE SCRIPT FOR COMMANDS)
 
 [On digad: 11:28 azoth: 9:04]
 
@@ -325,8 +251,7 @@ The spec we want to change is the "dynamic-linker" spec.
 
 So:
 
-${CLFS_TARGET}-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
-   $(dirname $(${CLFS_TARGET}-gcc --print-libgcc-file-name))/specs
+(SEE SCRIPT FOR COMMANDS)
 
 Now the binaries built in the next chapter, when we are
 constructing the temporary tools, will seek the dynamic linker
