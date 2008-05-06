@@ -1,6 +1,5 @@
 class Executioner
   def execute_in_dir(shell_command, output_file, cwd)
-    # maybe check if output_file is writable?
     child_pid = Process.fork
     if child_pid # this is the parent
       Process.waitpid(child_pid)
@@ -8,7 +7,7 @@ class Executioner
     else # this is the child
       Dir.chdir(cwd) if cwd
       $stdout.reopen(output_file)
-      $stderr = $stdout
+      $stderr.reopen(output_file)
       exec(shell_command)
     end
   end
