@@ -31,10 +31,12 @@ make install
 Switch to GCC 4.3.0
 
 Install the posix and specs patches.
-Run the sed scripts to change the cpp search path and fixincludes
-process.
+Run the sed scripts to change the cpp search path and fixincludes process.
 Configure line should include 
 "--with-gmp=/tools --with-mpfr=/tools"
+
+It might be necessary to define __WORDSIZE as 32 in
+/usr/include/bits/wordsize.h.
 
 6.7 bzip2
 
