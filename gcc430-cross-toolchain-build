@@ -15,12 +15,18 @@ the same way that glibc does.
 This is all built using a sysroot approach, as recommended by the GCC
 developers, and WITHOUT using most of the CLFS toolchain build
 instructions.  "sysroot" means that a directory on the host system, in our
-case /tools, will be set up to contain a subset of the root filesystem of
+case $CLFS, will be set up to contain a subset of the root filesystem of
 the target system; include files and libraries will be used only from the
 sysroot location, not from the normal host system locations.  That's
 perfect for us, since we want to ensure that components of the host system
 are ignored by our cross-tools, whether we're doing a real cross-toolchain
 or a faux cross-toolchain (like an x86-to-x86 cross).
+
+Relative to the sysroot, we want to configure all the temporary system
+tools with the expectation that they will be running from /tools on the
+final system, so the temporary system is self-contained within the /tools
+directory and doesn't pay attention to the normal root filesystem locations
+(/usr, /lib, and so on).
 
 The patches referred to here are included in the "patches" directory.
 
@@ -42,7 +48,7 @@ unset CFLAGS
 unset CXXFLAGS
 export CLFS_HOST=i686-cross-linux-gnu
 export CLFS_TARGET=i686-pc-linux-gnu
-export SYSROOT=/tools
+export SYSROOT=$CLFS
 export KERNEL_VERSION=2.6.25
 unset KERNEL_ARCH
 export GLIBCFLAG="-march=$(cut -d- -f1 <<< $CLFS_TARGET) -mtune=generic -g -O2"

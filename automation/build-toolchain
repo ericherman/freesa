@@ -4,12 +4,24 @@
 
 set -e
 
+function step0_prepare_sources()
+{
+git clone $CLFS/Toolchain/binutils
+{ pushd binutils && git checkout with-clfs-patches && popd ; } 2>&1 
+git clone $CLFS/Toolchain/gcc
+{ pushd gcc && git checkout with-posix-patch && popd ; } 2>&1
+git clone $CLFS/Toolchain/glibc
+{ pushd glibc && git checkout with-clfs-and-gcc430-patches && popd ; } 2>&1
+git clone $CLFS/Toolchain/linux
+{ pushd linux && git checkout openwrt-plus-freesa && popd ; } 2>&1
+}
+
 function step1_kernel_headers()
 {
-  make mrproper &&
-  make $KERNEL_ARCH headers_check &&
-  make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT/usr &&
-  echo WOOT
+make mrproper &&
+make $KERNEL_ARCH headers_check &&
+make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT/tools &&
+echo WOOT
 }
 
 function step2_binutils()
@@ -19,23 +31,23 @@ function step2_binutils()
    --disable-nls --enable-shared --disable-multilib \
    --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT &&
 make configure-host && make && make install &&
-cp -v ../binutils*/include/libiberty.h $SYSROOT/usr/include &&
+cp -v ../binutils*/include/libiberty.h $SYSROOT/tools/include &&
 echo WOOT
 }
 
 function step3_glibc_headers()
 {
-CC=gcc ../glibc/configure --prefix=/usr \
+CC=gcc ../glibc/configure --prefix=/tools \
   --host=${CLFS_HOST} --build=${CLFS_TARGET} \
   --disable-sanity-checks --enable-kernel=${KERNEL_VERSION} \
-  --with-headers=$SYSROOT/usr/include \
+  --with-headers=$SYSROOT/tools/include \
   --with-binutils=/cross-tools/${CLFS_TARGET}/bin &&
 make cross-compiling=yes install_root=$SYSROOT install-headers &&
-cp -v bits/stdio_lim.h $SYSROOT/usr/include/bits &&
-touch $SYSROOT/usr/include/gnu/stubs.h &&
-cp -v ../glibc*/nptl/sysdeps/pthread/pthread.h $SYSROOT/usr/include &&
+cp -v bits/stdio_lim.h $SYSROOT/tools/include/bits &&
+touch $SYSROOT/tools/include/gnu/stubs.h &&
+cp -v ../glibc*/nptl/sysdeps/pthread/pthread.h $SYSROOT/tools/include &&
 cp -v ../glibc*/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
-  $SYSROOT/usr/include/bits &&
+  $SYSROOT/tools/include/bits &&
 echo WOOT
 }
 
@@ -61,11 +73,11 @@ echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
     CFLAGS="${GLIBCFLAG}" \
-    ../glibc/configure --prefix=/usr \
+    ../glibc/configure --prefix=/tools \
     --host=${CLFS_TARGET} --build=${CLFS_HOST} \
     --disable-profile --enable-add-ons \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
-    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
+    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/tools/include \
     --cache-file=config.cache &&
 make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crt1.o &&
 make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crti.o &&
@@ -93,10 +105,10 @@ BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     --host=${CLFS_TARGET} --build=${CLFS_HOST} \
     --disable-profile --enable-add-ons \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
-    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
+    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/tools/include \
     --cache-file=config.cache &&
 make && 
-make install_root=/ install && 
+make install_root=$SYSROOT install && 
 echo WOOT
 }
 
@@ -122,16 +134,9 @@ ${CLFS_TARGET}-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
    $(dirname $(${CLFS_TARGET}-gcc --print-libgcc-file-name))/specs
 }
 
+unset CC CXX AR AS RANLIB LD STRIP
 
 BUILD_DIR=$PWD
-for dir in binutils gcc glibc linux
-do
-    if [ ! -d $dir ]
-    then
-        echo "toolchain directories aren't here"
-        exit 1
-    fi
-done
 
 if [ -z $SYSROOT ]
 then
@@ -151,54 +156,70 @@ then
     exit 2
 fi
 
-echo "clearing out tools, I hope that's what you wanted."
+echo "clearing out old stuff, I hope that's what you wanted."
 rm -rf /tools/*
 rm -rf /cross-tools/*
 rm -rf binutils-build glibc-build gcc-build
-mkdir -p ${BUILD_DIR}/Logs
+if [ -d ${BUILD_DIR}/Logs ]
+then
+    mv ${BUILD_DIR}/Logs ${BUILD_DIR}/Logs-$(date "+%Y-%m-%d-%H%M%S")
+fi
+mkdir ${BUILD_DIR}/Logs
+
+if [ ! -d binutils ]
+then
+    echo "STEP 0"
+    step0_prepare_sources > ${BUILD_DIR}/Logs/step0.txt
+fi
 
 echo "STEP 1"
-pushd linux
+cd linux
 step1_kernel_headers > ${BUILD_DIR}/Logs/step1.txt
-popd
+cd ${BUILD_DIR}
 
 echo "STEP 2"
-mkdir binutils-build && pushd binutils-build
+mkdir binutils-build && cd binutils-build
 step2_binutils > ${BUILD_DIR}/Logs/step2.txt
-popd && rm -rf binutils-build
+cd ${BUILD_DIR}
+rm -rf binutils-build
 
 echo "STEP 3"
-mkdir glibc-build && pushd glibc-build
+mkdir glibc-build && cd glibc-build
 step3_glibc_headers > ${BUILD_DIR}/Logs/step3.txt
-popd && rm -rf glibc-build
+cd ${BUILD_DIR}
+rm -rf glibc-build
 
 echo "STEP 4"
-mkdir gcc-build && pushd gcc-build
+mkdir gcc-build && cd gcc-build
 step4_gcc_bare > ${BUILD_DIR}/Logs/step4.txt
-popd
+cd ${BUILD_DIR}
 
 echo "STEP 5"
-mkdir glibc-build && pushd glibc-build
+mkdir glibc-build && cd glibc-build
 step5_glibc_startup > ${BUILD_DIR}/Logs/step5.txt
-popd && rm -rf glibc-build
+cd ${BUILD_DIR}
+rm -rf glibc-build
 
 echo "STEP 6"
-pushd gcc-build
+cd gcc-build
 step6_gcc_libgcc > ${BUILD_DIR}/Logs/step6.txt
-popd && rm -rf gcc-build
+cd ${BUILD_DIR}
+rm -rf gcc-build
 
 echo "STEP 7"
-mkdir glibc-build && pushd glibc-build
+mkdir glibc-build && cd glibc-build
 step7_glibc_full > ${BUILD_DIR}/Logs/step7.txt
-popd && rm -rf glibc-build
+cd ${BUILD_DIR}
+rm -rf glibc-build
 
 rm -f $CLFS/tools/tools
 ln -s . $CLFS/tools/tools
 
 echo "STEP 8"
-mkdir gcc-build && pushd gcc-build
+mkdir gcc-build && cd gcc-build
 step8_gcc_full > ${BUILD_DIR}/Logs/step8.txt
-popd && rm -rf gcc-build
+cd ${BUILD_DIR}
+rm -rf gcc-build
 
 echo "STEP 9"
 step9_specs > ${BUILD_DIR}/Logs/step9.txt
