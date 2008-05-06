@@ -189,6 +189,8 @@ step3_glibc_headers > ${BUILD_DIR}/Logs/step3.txt
 cd ${BUILD_DIR}
 rm -rf glibc-build
 
+ln -s tools $SYSROOT/usr
+
 echo "STEP 4"
 mkdir gcc-build && cd gcc-build
 step4_gcc_bare > ${BUILD_DIR}/Logs/step4.txt
@@ -211,9 +213,6 @@ mkdir glibc-build && cd glibc-build
 step7_glibc_full > ${BUILD_DIR}/Logs/step7.txt
 cd ${BUILD_DIR}
 rm -rf glibc-build
-
-rm -f $CLFS/tools/tools
-ln -s . $CLFS/tools/tools
 
 echo "STEP 8"
 mkdir gcc-build && cd gcc-build

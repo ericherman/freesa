@@ -170,6 +170,10 @@ The LDFLAGS_FOR_TARGET and CPPFLAGS_FOR_TARGET are from gcc bug #35532 --
 they are mentioned by Carlos O'Donell as the way to use all of the sysroot
 framework.
 
+The symlink from $SYSROOT/usr to $SYSROOT/tools is needed so gcc
+can find the native headers -- it always looks for them in
+$SYSROOT/usr/include, and we are installing them into
+$SYSROOT/tools/include.
 
 ../gcc/configure --prefix=/cross-tools \
   --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
