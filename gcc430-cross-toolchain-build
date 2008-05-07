@@ -41,7 +41,7 @@ building will wind up on the final system.
 Flags for building an x86-to-x86 "faux" cross-toolchain -- put these in the
 building user's .bashrc:
 
-export CLFS=/mnt
+export CLFS=/home/clfs
 export LC_ALL=POSIX
 export PATH=/cross-tools/bin:/bin:/usr/bin
 unset CFLAGS

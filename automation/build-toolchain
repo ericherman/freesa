@@ -1,6 +1,16 @@
 #!/bin/bash
 #
 # TODO: this might be more fun if it were in ruby.
+#
+# This version just installs a standard toolchain into $SYSROOT,
+# wherever that is.  Set SYSROOT to $CLFS since that is the root
+# of our target filesystem.  
+
+# Of course, everything will be set up to expect it is running
+# from /.  We'll have to do something else to work around that
+# later -- probably build a separate glibc that is installed with
+# system root of $CLFS but with a prefix of /tools instead of
+# /usr, and then change the cross-gcc to link against that one.
 
 set -e
 
@@ -20,7 +30,7 @@ function step1_kernel_headers()
 {
 make mrproper &&
 make $KERNEL_ARCH headers_check &&
-make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT/tools &&
+make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT &&
 echo WOOT
 }
 
@@ -37,17 +47,17 @@ echo WOOT
 
 function step3_glibc_headers()
 {
-CC=gcc ../glibc/configure --prefix=/tools \
+CC=gcc ../glibc/configure --prefix=/usr \
   --host=${CLFS_HOST} --build=${CLFS_TARGET} \
   --disable-sanity-checks --enable-kernel=${KERNEL_VERSION} \
-  --with-headers=$SYSROOT/tools/include \
+  --with-headers=$SYSROOT/usr/include \
   --with-binutils=/cross-tools/${CLFS_TARGET}/bin &&
 make cross-compiling=yes install_root=$SYSROOT install-headers &&
-cp -v bits/stdio_lim.h $SYSROOT/tools/include/bits &&
-touch $SYSROOT/tools/include/gnu/stubs.h &&
-cp -v ../glibc*/nptl/sysdeps/pthread/pthread.h $SYSROOT/tools/include &&
+cp -v bits/stdio_lim.h $SYSROOT/usr/include/bits &&
+touch $SYSROOT/usr/include/gnu/stubs.h &&
+cp -v ../glibc*/nptl/sysdeps/pthread/pthread.h $SYSROOT/usr/include &&
 cp -v ../glibc*/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
-  $SYSROOT/tools/include/bits &&
+  $SYSROOT/usr/include/bits &&
 echo WOOT
 }
 
@@ -73,11 +83,11 @@ echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
     CFLAGS="${GLIBCFLAG}" \
-    ../glibc/configure --prefix=/tools \
+    ../glibc/configure --prefix=/usr \
     --host=${CLFS_TARGET} --build=${CLFS_HOST} \
     --disable-profile --enable-add-ons \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
-    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/tools/include \
+    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
     --cache-file=config.cache &&
 make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crt1.o &&
 make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crti.o &&
@@ -101,11 +111,11 @@ echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
     CFLAGS="$GLIBCFLAG" \
-    ../glibc/configure --prefix=/tools \
+    ../glibc/configure --prefix=/usr \
     --host=${CLFS_TARGET} --build=${CLFS_HOST} \
     --disable-profile --enable-add-ons \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
-    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/tools/include \
+    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
     --cache-file=config.cache &&
 make && 
 make install_root=$SYSROOT install && 
@@ -225,7 +235,8 @@ cd ${BUILD_DIR}
 rm -rf gcc-build
 
 echo "STEP 9"
-step9_specs > ${BUILD_DIR}/Logs/step9.txt
+echo "skipping this -- we instead need to have a separate glibc"
+#step9_specs > ${BUILD_DIR}/Logs/step9.txt
 
 echo "WOOT WOOT WOOT WOOT"
 
