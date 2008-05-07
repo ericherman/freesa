@@ -205,7 +205,7 @@ then
 fi
 mkdir ${BUILD_DIR}/Logs
 
-echo "Starting at $DATE" > ${BUILD_DIR}/Logs/timing.txt
+echo "Starting at $(date)" > ${BUILD_DIR}/Logs/timing.txt
 
 if [ ! -d binutils ]
 then
@@ -273,6 +273,6 @@ rm -rf glibc-build
 echo "STEP 11"
 step11_specs > ${BUILD_DIR}/Logs/step11.txt
 
-echo "Ended at $DATE" >> ${BUILD_DIR}/Logs/timing.txt
+echo "Ended at $(date)" >> ${BUILD_DIR}/Logs/timing.txt
 
 echo "WOOT WOOT WOOT WOOT"
