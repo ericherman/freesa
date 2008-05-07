@@ -12,6 +12,18 @@
 # system root of $CLFS but with a prefix of /tools instead of
 # /usr, and then change the cross-gcc to link against that one.
 
+export CLFS=/home/clfs
+export CLFS_HOST=i686-cross-linux-gnu
+export CLFS_TARGET=mipsel-unknown-linux-gnu
+export GLIBCFLAG="-g -O2"
+export KERNEL_ARCH="ARCH=mips"
+export KERNEL_VERSION=2.6.23
+export LC_ALL=POSIX
+export PATH=/cross-tools/bin:/bin:/usr/bin
+export SYSROOT=/tools
+unset CFLAGS
+unset CXXFLAGS
+
 set -e
 
 function step00_prepare_sources()
