@@ -28,6 +28,11 @@ final system, so the temporary system is self-contained within the /tools
 directory and doesn't pay attention to the normal root filesystem locations
 (/usr, /lib, and so on).
 
+Maybe it would make sense for the sysroot to be something like
+/cross-tools/sysroot instead of $CLFS; that way, it wouldn't
+clutter the $CLFS directory with stuff like /usr /lib /etc and
+/sbin that we will have to delete later.
+
 The patches referred to here are included in the "patches" directory.
 
 Note that we are building our cross-glibc with a "minimum kernel version"
@@ -53,7 +58,6 @@ export KERNEL_VERSION=2.6.25
 unset KERNEL_ARCH
 export GLIBCFLAG="-march=$(cut -d- -f1 <<< $CLFS_TARGET) -mtune=generic -g -O2"
 
-
 Flags for building an x86-to-mipsel cross-toolchain:
 
 export CLFS_TARGET=mipsel-unknown-linux-gnu
@@ -61,12 +65,8 @@ export KERNEL_VERSION=2.6.23
 export GLIBCFLAG="-g -O2"
 export KERNEL_ARCH="ARCH=mips"
 
-For each build step, I am copying the script snippets into a
-little script called "b" and then running it with:
-
-time ./b 2>&1 | tee $CLFS/Logs/${NAME_OF_STEP}
-
-where NAME_OF_STEP changes every time, obviously.
+There's a build script in automation that does all the work for you, aside
+from setting those environment variables..
 
 gcc, glibc, and binutils MUST all be built from a separate "build"
 directory, not the source directory.  Normally, the source directory name

@@ -10,7 +10,7 @@ cross-tools.
 
 At this point we're going to FBBG, mostly.
 
-6.4.1 GCC
+6.4 GCC
 
 Build a cross-compiled gmp and mpfr before you try to build GCC
 4.3, because they are dependencies.  Build GMP with:
@@ -30,13 +30,15 @@ make install
 
 Switch to GCC 4.3.0
 
-Install the posix and specs patches.
-Run the sed scripts to change the cpp search path and fixincludes process.
-Configure line should include 
-"--with-gmp=/tools --with-mpfr=/tools"
+* Install the posix and specs patches.
+* Run the sed scripts to change the cpp search path and fixincludes
+  process.
+* Configure line should include "--with-gmp=/tools --with-mpfr=/tools"
 
-It might be necessary to define __WORDSIZE as 32 in
-/usr/include/bits/wordsize.h.
+If things have gone wrong already, you may get an error when including
+bits/types.h because __WORDSIZE isn't defined.  As it happens, it should be
+32; but it should also not crash.  Use this as an indication that the
+toolchain is borked.
 
 6.7 bzip2
 
