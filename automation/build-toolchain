@@ -14,7 +14,7 @@
 
 set -e
 
-function step0_prepare_sources()
+function step00_prepare_sources()
 {
 git clone $CLFS/Toolchain/binutils
 { pushd binutils && git checkout with-clfs-patches && popd ; } 2>&1 
@@ -26,26 +26,26 @@ git clone $CLFS/Toolchain/linux
 { pushd linux && git checkout openwrt-plus-freesa && popd ; } 2>&1
 }
 
-function step1_kernel_headers()
+function step01_kernel_headers()
 {
 make mrproper &&
 make $KERNEL_ARCH headers_check &&
-make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT &&
+make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT/usr &&
 echo WOOT
 }
 
-function step2_binutils()
+function step02_binutils()
 {
 ../binutils/configure --prefix=/cross-tools \
    --build=${CLFS_HOST} --target=${CLFS_TARGET} \
    --disable-nls --enable-shared --disable-multilib \
    --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT &&
 make configure-host && make && make install &&
-cp -v ../binutils*/include/libiberty.h $SYSROOT/tools/include &&
+cp -v ../binutils*/include/libiberty.h $SYSROOT/usr/include &&
 echo WOOT
 }
 
-function step3_glibc_headers()
+function step03_glibc_headers()
 {
 CC=gcc ../glibc/configure --prefix=/usr \
   --host=${CLFS_HOST} --build=${CLFS_TARGET} \
@@ -61,7 +61,7 @@ cp -v ../glibc*/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
 echo WOOT
 }
 
-function step4_gcc_bare()
+function step04_gcc_bare()
 {
 ../gcc/configure --prefix=/cross-tools \
   --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
@@ -76,7 +76,7 @@ make all-gcc && make install-gcc &&
 echo WOOT
 }
 
-function step5_glibc_startup()
+function step05_glibc_startup()
 {
 echo "libc_cv_forced_unwind=yes" > config.cache
 echo "libc_cv_c_cleanup=yes" >> config.cache
@@ -97,14 +97,14 @@ cp csu/crt{1,i,n}.o $SYSROOT/lib &&
 echo WOOT
 }
 
-function step6_gcc_libgcc()
+function step06_gcc_libgcc()
 {
 make all-target-libgcc && make install-target-libgcc && 
 rm -f $SYSROOT/lib/crt{1,i,n}.o &&
 echo WOOT
 }
 
-function step7_glibc_full()
+function step07_glibc_full()
 {
 echo "libc_cv_forced_unwind=yes" > config.cache
 echo "libc_cv_c_cleanup=yes" >> config.cache
@@ -122,7 +122,7 @@ make install_root=$SYSROOT install &&
 echo WOOT
 }
 
-function step8_gcc_full()
+function step08_gcc_full()
 {
 ../gcc/configure --prefix=/cross-tools \
   --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
@@ -138,7 +138,33 @@ make install &&
 echo WOOT
 }
 
-function step9_specs()
+function step09_kernel_headers_for_tools()
+{
+make mrproper &&
+make $KERNEL_ARCH headers_check &&
+make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT/tools &&
+echo WOOT
+}
+
+function step10_glibc_tools()
+{
+echo "libc_cv_forced_unwind=yes" > config.cache
+echo "libc_cv_c_cleanup=yes" >> config.cache
+BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
+    AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
+    CFLAGS="$GLIBCFLAG" \
+    ../glibc/configure --prefix=/tools \
+    --host=${CLFS_TARGET} --build=${CLFS_HOST} \
+    --disable-profile --enable-add-ons \
+    --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
+    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/tools/include \
+    --cache-file=config.cache &&
+make && 
+make install_root=$SYSROOT install && 
+echo WOOT
+}
+
+function step11_specs()
 {
 ${CLFS_TARGET}-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
    $(dirname $(${CLFS_TARGET}-gcc --print-libgcc-file-name))/specs
@@ -167,77 +193,86 @@ then
 fi
 
 echo "clearing out old stuff, I hope that's what you wanted."
-rm -rf /tools/*
-rm -rf /cross-tools/*
+
+rm -rf $CLFS/{etc,lib,sbin,usr,tools,cross-tools}
+mkdir -p $CLFS/tools
+mkdir -p $CLFS/cross-tools
 rm -rf binutils-build glibc-build gcc-build
+
 if [ -d ${BUILD_DIR}/Logs ]
 then
     mv ${BUILD_DIR}/Logs ${BUILD_DIR}/Logs-$(date "+%Y-%m-%d-%H%M%S")
 fi
 mkdir ${BUILD_DIR}/Logs
 
+echo "Starting at $DATE" > ${BUILD_DIR}/Logs/timing.txt
+
 if [ ! -d binutils ]
 then
-    echo "STEP 0"
-    step0_prepare_sources > ${BUILD_DIR}/Logs/step0.txt
+    echo "STEP 00"
+    step00_prepare_sources > ${BUILD_DIR}/Logs/step00.txt
 fi
 
-echo "STEP 1"
+echo "STEP 01"
 cd linux
-step1_kernel_headers > ${BUILD_DIR}/Logs/step1.txt
+step01_kernel_headers > ${BUILD_DIR}/Logs/step01.txt
 cd ${BUILD_DIR}
 
-echo "STEP 2"
+echo "STEP 02"
 mkdir binutils-build && cd binutils-build
-step2_binutils > ${BUILD_DIR}/Logs/step2.txt
+step02_binutils > ${BUILD_DIR}/Logs/step02.txt
 cd ${BUILD_DIR}
 rm -rf binutils-build
 
-echo "STEP 3"
+echo "STEP 03"
 mkdir glibc-build && cd glibc-build
-step3_glibc_headers > ${BUILD_DIR}/Logs/step3.txt
+step03_glibc_headers > ${BUILD_DIR}/Logs/step03.txt
 cd ${BUILD_DIR}
 rm -rf glibc-build
 
-# XXX this is a kludge.  GCC insists on finding things under
-# $SYSROOT/usr -- which is reasonable -- we would like to change
-# this to be $SYSROOT/tools but are unsure how.
-
-ln -s tools $SYSROOT/usr
-
-echo "STEP 4"
+echo "STEP 04"
 mkdir gcc-build && cd gcc-build
-step4_gcc_bare > ${BUILD_DIR}/Logs/step4.txt
+step04_gcc_bare > ${BUILD_DIR}/Logs/step04.txt
 cd ${BUILD_DIR}
 
-echo "STEP 5"
+echo "STEP 05"
 mkdir glibc-build && cd glibc-build
-step5_glibc_startup > ${BUILD_DIR}/Logs/step5.txt
+step05_glibc_startup > ${BUILD_DIR}/Logs/step05.txt
 cd ${BUILD_DIR}
 rm -rf glibc-build
 
-echo "STEP 6"
+echo "STEP 06"
 cd gcc-build
-step6_gcc_libgcc > ${BUILD_DIR}/Logs/step6.txt
+step06_gcc_libgcc > ${BUILD_DIR}/Logs/step06.txt
 cd ${BUILD_DIR}
 rm -rf gcc-build
 
-echo "STEP 7"
+echo "STEP 07"
 mkdir glibc-build && cd glibc-build
-step7_glibc_full > ${BUILD_DIR}/Logs/step7.txt
+step07_glibc_full > ${BUILD_DIR}/Logs/step07.txt
 cd ${BUILD_DIR}
 rm -rf glibc-build
 
-echo "STEP 8"
+echo "STEP 08"
 mkdir gcc-build && cd gcc-build
-step8_gcc_full > ${BUILD_DIR}/Logs/step8.txt
+step08_gcc_full > ${BUILD_DIR}/Logs/step08.txt
 cd ${BUILD_DIR}
 rm -rf gcc-build
 
-echo "STEP 9"
-echo "skipping this -- we instead need to have a separate glibc"
-#step9_specs > ${BUILD_DIR}/Logs/step9.txt
+echo "STEP 09"
+cd linux
+step09_kernel_headers_for_tools > ${BUILD_DIR}/Logs/step09.txt
+cd ${BUILD_DIR}
+
+echo "STEP 10"
+mkdir glibc-build && cd glibc-build
+step10_glibc_tools > ${BUILD_DIR}/Logs/step10.txt
+cd ${BUILD_DIR}
+rm -rf glibc-build
+
+echo "STEP 11"
+step11_specs > ${BUILD_DIR}/Logs/step11.txt
+
+echo "Ended at $DATE" >> ${BUILD_DIR}/Logs/timing.txt
 
 echo "WOOT WOOT WOOT WOOT"
-
-
