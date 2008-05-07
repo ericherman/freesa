@@ -22,4 +22,12 @@ class ExecutionerTest < Test::Unit::TestCase
     assert_equal "/bin/bash: no_such_cmd: command not found\n", 
         File.read(@temp.path)
   end
+
+  def test_run_command_with_mingled_out_and_err
+    out = 'STDOUT.puts("OUT"); STDOUT.flush;'
+    err = 'STDERR.puts("err"); STDERR.flush;'
+    script = "ruby -e \'#{out} #{err} #{out} #{err}\'"
+    assert_equal 0, @exec.execute(script, @temp.path)
+    assert_equal "OUT\nerr\nOUT\nerr\n", File.read(@temp.path)
+  end
 end

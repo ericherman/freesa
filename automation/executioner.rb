@@ -6,8 +6,8 @@ class Executioner
       return $?
     else # this is the child
       Dir.chdir(cwd) if cwd
-      $stdout.reopen(output_file)
-      $stderr.reopen(output_file)
+      $stdout.reopen(output_file, 'a')
+      $stderr.reopen(output_file, 'a')
       exec(shell_command)
     end
   end
