@@ -1,3 +1,16 @@
+From 22b706aac1bddab149f96c8c0710b5374d0c3f07 Mon Sep 17 00:00:00 2001
+From: Brett Neumeier <brett@neumeier.us>
+Date: Thu, 8 May 2008 18:14:36 -0500
+Subject: [PATCH] work around gcc 4.3.0 problem.
+
+GCC 4.3.0 tries to link in something from libgcc that isn't
+provided by the kernel.  The kernel needs to be standalone, so
+that fails.  We can prevent the compiler from building in calls
+to the libgcc functions by turning off an optimization.
+---
+ Makefile |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
 diff --git a/Makefile b/Makefile
 index e8a9b3d..7162c39 100644
 --- a/Makefile
@@ -13,3 +26,6 @@ index e8a9b3d..7162c39 100644
  AFLAGS          := -D__ASSEMBLY__
  
  # Read KERNELRELEASE from include/config/kernel.release (if it exists)
+-- 
+1.5.5
+

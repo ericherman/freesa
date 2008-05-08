@@ -124,11 +124,23 @@ the device to access the hard disk.
 
 
 
+7.5 e2fsprogs
+
+I bumped it to 1.40.9.
+
 7.6 sysvinit
 
 sulogin couldn't be built because it can't find "crypt".  It isn't really
-necessary, though, so just ditch it.  (Remove references to sulogin from 
-src/Makefile.)
+necessary, though, so just ditch it.  The easiest way to do that
+is modify the "sed" script to:
+
+sed -e 's@root@0@g' \
+    -e "s@/dev/initctl@${CLFS}&@g" \
+    -e 's@\(mknod \)-m \([0-9]* \)\(.* \)p@\1\3p; chmod \2\3@g' \
+    -e "s@/usr/lib@/tools/lib@" \
+    -e 's@sulogin @@' \
+    src/Makefile.orig > src/Makefile
+
 
 Uncomment the "if your system has a console port" agetty line
 from the standard clfs inittab, and comment out the section that
@@ -186,6 +198,15 @@ SAVE THE KERNEL SOURCE TREE.  Do not touch it.  Any additional modules,
 like the "diag" module that spins the hard disk, will need to be compiled
 against that kernel tree (with the same compiler).
 
+As far as that goes, we can go ahead and build diag now.  Go to
+the diag directory and:
+
+make ARCH=mips CROSS_COMPILE=${CLFS_TARGET}- KERNELDIR=${CLFS}/Build/linux
+mkdir ${CLFS}/lib/modules/2.6.23.16nb1/kernel/misc
+cp *.ko ${CLFS}/lib/modules/2.6.23.16nb1/kernel/misc
+
+
+
 7.12 colo
 
 Skip colo.  It is irrelevant to Freesa.  We boot using CFE.
@@ -230,7 +251,7 @@ That means, in addition to the stuff we have created so far, we need a telnet
 server (so once the system is booted we can get a prompt on it without
 requiring a serial console).
 
-So.  Inetutils:
+So.  Inetutils (version 1.5):
 
 ./configure --prefix=$CLFS/usr --libexecdir=$CLFS/usr/sbin \
     --sysconfdir=$CLFS/etc --localstatedir=$CLFS/var \
@@ -241,19 +262,19 @@ So.  Inetutils:
 make &&
 make install
 
-Lzma: ...grumble, grumble
+Lzma: 
 
-./configure --prefix=/tools --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
+Use version 4.32.5.  Build with:
+
+./configure \
+    --prefix=/tools --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
 make && make install
 
 vim:
 
-./configure --prefix=$CLFS/usr \
-    --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
-make &&
-make install
-
-psmisc: ...
+Cross-compiling vim is a PITA.  We will have to build it in the
+booted system instead.  At least it will be a good test of the
+native tools in the freesa environment.
 
 
 7.18 making the temporary system bootable
