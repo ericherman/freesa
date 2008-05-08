@@ -20,7 +20,7 @@ export KERNEL_ARCH="ARCH=mips"
 export KERNEL_VERSION=2.6.23
 export LC_ALL=POSIX
 export PATH=/cross-tools/bin:/bin:/usr/bin
-export SYSROOT=/tools
+export SYSROOT=/cross-tools/sysroot
 unset CFLAGS
 unset CXXFLAGS
 
@@ -154,7 +154,7 @@ function step09_kernel_headers_for_tools()
 {
 make mrproper &&
 make $KERNEL_ARCH headers_check &&
-make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT/tools &&
+make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=/tools/usr &&
 echo WOOT
 }
 
@@ -169,10 +169,10 @@ BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     --host=${CLFS_TARGET} --build=${CLFS_HOST} \
     --disable-profile --enable-add-ons \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
-    --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/tools/include \
+    --with-binutils=/cross-tools/bin --with-headers=/tools/usr/include \
     --cache-file=config.cache &&
 make && 
-make install_root=$SYSROOT install && 
+make install_root=$CLFS install && 
 echo WOOT
 }
 
