@@ -186,24 +186,6 @@ unset CC CXX AR AS RANLIB LD STRIP
 
 BUILD_DIR=$PWD
 
-if [ -z $SYSROOT ]
-then
-    echo "environment variables aren't all set"
-    exit 2
-fi
-
-if [ -z ${CLFS_TARGET} ]
-then
-    echo "environment variables aren't all set"
-    exit 2
-fi
-
-if [ -z ${CLFS_HOST} ]
-then
-    echo "environment variables aren't all set"
-    exit 2
-fi
-
 echo "clearing out old stuff, I hope that's what you wanted."
 
 rm -rf $CLFS/{etc,lib,sbin,usr,tools,cross-tools}
