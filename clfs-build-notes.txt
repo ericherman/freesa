@@ -15,30 +15,41 @@ At this point we're going to FBBG, mostly.
 Build a cross-compiled gmp and mpfr before you try to build GCC
 4.3, because they are dependencies.  Build GMP with:
 
-./configure --prefix=/tools --build=${CLFS_HOST} \
+./configure --prefix=/cross-tools/gmp --build=${CLFS_HOST} \
     --host=${CLFS_TARGET} --target=${CLFS_TARGET} &&
 make &&
 make install
 
 Build MPFR with:
 
-./configure --prefix=/tools --build=${CLFS_HOST} \
+./configure --prefix=/cross-tools/gmp --build=${CLFS_HOST} \
     --host=${CLFS_TARGET} --target=${CLFS_TARGET} \
-    --with-gmp=/tools &&
+    --with-gmp=/cross-tools/gmp &&
 make &&
 make install
+
+These libraries can't be installed into /tools because, if they are, it
+breaks the GCC build in the next step.  That's because some compilation
+steps during the GCC build are done with the native compiler, not the
+cross-compiler; those steps use the same GMP include directives as the rest
+of the build, and if those include directories also include the glibc
+headers like stdio.h then the native compiler picks up those versions of
+the header files rather than the native glibc header files.  Hilarity
+ensues.  (The actual failure shows that there is an error when including
+types.h, because _MIPS_SZPTR is not defined.  That's a built-in definition
+in the mips cross-compiler, but not in the native compiler, of course.)
+
+We will install other copies of gmp and mpfr in /tools later on so that the
+gcc we are building here will actually work.
 
 Switch to GCC 4.3.0
 
 * Install the posix and specs patches.
 * Run the sed scripts to change the cpp search path and fixincludes
   process.
-* Configure line should include "--with-gmp=/tools --with-mpfr=/tools"
+* Configure line should include 
+  "--with-gmp=/cross-tools/gmp --with-mpfr=/cross-tools/gmp"
 
-If the glibc that gcc is linked against is the one in $CLFS/tools, and
-knows it is installed in /tools, I consistently get an error when including
-bits/types.h because _MIPS_SZPTR isn't defined.  It's normally a gcc
-builtin, so something has gone awry if it isn't defined.
 
 6.7 bzip2
 
