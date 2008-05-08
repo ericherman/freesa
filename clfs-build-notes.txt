@@ -35,10 +35,10 @@ Switch to GCC 4.3.0
   process.
 * Configure line should include "--with-gmp=/tools --with-mpfr=/tools"
 
-If things have gone wrong already, you may get an error when including
-bits/types.h because __WORDSIZE isn't defined.  As it happens, it should be
-32; but it should also not crash.  Use this as an indication that the
-toolchain is borked.
+If the glibc that gcc is linked against is the one in $CLFS/tools, and
+knows it is installed in /tools, I consistently get an error when including
+bits/types.h because _MIPS_SZPTR isn't defined.  It's normally a gcc
+builtin, so something has gone awry if it isn't defined.
 
 6.7 bzip2
 
