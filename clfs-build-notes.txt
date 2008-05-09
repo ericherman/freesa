@@ -181,6 +181,20 @@ CFLAGS='-I/tools/include' LDFLAGS='-L/tools/lib' ./configure \
 
 Upgrade to 120.
 
+7.10
+
+The password file needs to have a password specified for root; otherwise,
+the ssh server we're going to use to get access to the box will disallow
+logins.
+
+You can use "xx" if you don't want to use the serial console /as well/, or
+you can use an actual MD5 hashed password value if you want to log in both
+using the serial console and via ssh.
+
+cat > ${CLFS}/etc/passwd << "EOF"
+root:xx:0:0:root:/root:/bin/bash
+EOF
+
 7.11 linux kernel
 
 We need the OpenWRT kernel patches.  It sure would be great if we knew 
@@ -222,9 +236,8 @@ As far as that goes, we can go ahead and build diag now.  Go to
 the diag directory and:
 
 make ARCH=mips CROSS_COMPILE=${CLFS_TARGET}- KERNELDIR=${CLFS}/Build/linux
-mkdir ${CLFS}/lib/modules/2.6.23.16nb1/kernel/misc
-cp *.ko ${CLFS}/lib/modules/2.6.23.16nb1/kernel/misc
-
+mkdir ${CLFS}/lib/modules/2.6.23.16nb4/kernel/misc
+cp *.ko ${CLFS}/lib/modules/2.6.23.16nb4/kernel/misc
 
 
 7.12 colo
@@ -241,22 +254,7 @@ The root filesystem will be NFS-mounted.  The appropriate entry in
 
 192.168.236.5:/home/clfs / nfs defaults 0 0
 
-As long as we are creating config files, create an
-/etc/inetd.conf with:
-
-----
-telnet stream tcp nowait root /usr/sbin/telnetd telnetd
-----
-
-And create an /etc/services with:
-
-----
-telnet           23/tcp    # Telnet
-telnet           23/udp    # Telnet
-----
-
-TODO add a boot script that starts inetd and possibly configures
-more network stuff so it works properly.
+TODO add a boot script that starts dropbear ...
 
 7.17 changing ownership
  
@@ -267,48 +265,20 @@ disk, build a partition table, create filesystems and swap, mount the
 filesystems, unpack the stage B tarball onto them, and then chroot into the
 local disk environment and complete the build from there.
 
-That means, in addition to the stuff we have created so far, we need a telnet
-server (so once the system is booted we can get a prompt on it without
-requiring a serial console).
-
-So.  Inetutils (version 1.5):
-
-./configure --prefix=$CLFS/usr --libexecdir=$CLFS/usr/sbin \
-    --sysconfdir=$CLFS/etc --localstatedir=$CLFS/var \
-    --disable-logger --disable-syslogd \
-    --disable-whois --disable-talkd \
-    --disable-talk \
-    --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
-make &&
-make install
-
-Or maybe SSH will work better.  Cross-compiling openssl and openssh is
-tricky, so let's try dropbear:
+That means, in addition to the stuff we have created so far, we need
+something that will let us get access to the box over the network (so we
+can get a shell prompt on the Freesa box without needing a serial console).
+We'll use SSH; specifically, the svelte and easy-to-cross-compile dropbear.
 
 Ignore all the "operation not permitted" when the dropbear installation
 tries to chown everything to root.
 
 dropbear (0.5.1):
+
 ./configure --prefix=/tools --with-zlib=/tools \
     --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
 make &&
 make install
-
-openssl (0.9.8g):
-
-./config --prefix=/tools no-asm
-make CC=${CC} AR="${AR} r" RANLIB=${RANLIB}
-make install
-
-openssh (5.0p1):
-
-./configure --prefix=/tools --with-ssl-dir=/tools \
-    --with-zlib=/tools \
-    --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
-make &&
-make install
-
-
 
 Lzma: 
 
@@ -318,12 +288,26 @@ Use version 4.32.5.  Build with:
     --prefix=/tools --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
 make && make install
 
+"ip" (or "route")
+
+
 vim:
 
 Cross-compiling vim is a PITA.  We will have to build it in the
 booted system instead.  At least it will be a good test of the
 native tools in the freesa environment.
 
+After chowning everything and creating the device nodes, set up the root
+.ssh directory and authorized_keys so we can log in without using a
+password:
+
+mkdir ${CLFS}/root/.ssh
+chmod 700 ${CLFS}/root/.ssh
+
+...and copy your id_rsa.pub to ${CLFS}/root/.ssh/authorized_keys.  Chown it
+600, in case dropbear uses the same paranoiac stance as OpenSSH.
+
+TODO: generate Dropbear host keys?
 
 7.18 making the temporary system bootable
 
@@ -332,6 +316,9 @@ bundle up the current CLFS directory as mips-clfs-C.  Do that.  Then
 restore the mips-clfs-A tarfile and do chapter 8 (chroot) to construct the
 root filesystem that we will install to the internal hard disk of the
 Freesa box.
+
+TODO: AFTER BOOTING THE FREESA SYSTEM ... remember to add instructions on
+adjusting the specs for the native compiler.
 
 NOW WE ARE IN THE mips-clfs-A DIRECTORY AGAIN.  GO TO CHAPTER 8.
 
