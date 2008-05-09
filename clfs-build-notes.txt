@@ -2,18 +2,18 @@ following SVN-20080228-x86 -- EXCEPT for the toolchain
 
 !!! Use the sysroot cross-toolchain build !!!
 
-The main difference is that the /tools directory doesn't contain
-anything after doing the toolchain build -- everything is built
-in the /cross-tools directory.  That's good, though -- that means
-the /tools directory will contain only stuff built using the
-cross-tools.
+The main difference is that the /tools directory doesn't contain anything
+after doing the toolchain build -- everything is built in the /cross-tools
+directory.  That's good, though -- that means the /tools directory will
+contain only stuff built using the cross-tools.
 
 At this point we're going to FBBG, mostly.
 
-6.4 GCC
+6.3 binutils
 
-Build a cross-compiled gmp and mpfr before you try to build GCC
-4.3, because they are dependencies.  Build GMP with:
+Build a cross-compiled gmp and mpfr before you try to build the native
+(target system) tools.  They are needed for GCC, and possibly for the
+binutils as well.  Build GMP with:
 
 ./configure --prefix=/cross-tools/gmp --build=${CLFS_HOST} \
     --host=${CLFS_TARGET} --target=${CLFS_TARGET} &&
@@ -39,8 +39,28 @@ ensues.  (The actual failure shows that there is an error when including
 types.h, because _MIPS_SZPTR is not defined.  That's a built-in definition
 in the mips cross-compiler, but not in the native compiler, of course.)
 
-We will install other copies of gmp and mpfr in /tools later on so that the
-gcc we are building here will actually work.
+After building GMP and MPFR, copy the shared libraries over to /tools/lib
+so that they will be available to gcc and other programs that want them.
+
+pushd /cross-tools/gmp/lib
+cp -a *so* /tools/lib
+
+For some reason, the binutils constructed here like to segfault once the
+freesa system is trying to run them.  That's no fun.  Let's statically link
+them instead:
+
+...maybe "LDFLAGS=-all-static"...
+
+
+../binutils/configure --prefix=/tools \
+    --build=${CLFS_HOST} --host=${CLFS_TARGET} --target=${CLFS_TARGET} \
+    --disable-nls --disable-shared --disable-multilib \
+    --with-gmp=/cross-tools/gmp --with-mpfr=/cross-tools/gmp &&
+make configure-host &&
+make &&
+make install
+
+6.4 GCC
 
 Switch to GCC 4.3.0
 
@@ -261,6 +281,34 @@ So.  Inetutils (version 1.5):
     --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
 make &&
 make install
+
+Or maybe SSH will work better.  Cross-compiling openssl and openssh is
+tricky, so let's try dropbear:
+
+Ignore all the "operation not permitted" when the dropbear installation
+tries to chown everything to root.
+
+dropbear (0.5.1):
+./configure --prefix=/tools --with-zlib=/tools \
+    --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
+make &&
+make install
+
+openssl (0.9.8g):
+
+./config --prefix=/tools no-asm
+make CC=${CC} AR="${AR} r" RANLIB=${RANLIB}
+make install
+
+openssh (5.0p1):
+
+./configure --prefix=/tools --with-ssl-dir=/tools \
+    --with-zlib=/tools \
+    --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
+make &&
+make install
+
+
 
 Lzma: 
 
