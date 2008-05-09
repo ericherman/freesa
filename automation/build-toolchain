@@ -3,17 +3,8 @@
 # TODO: this might be more fun if it were in ruby.
 #
 # This version just installs a standard toolchain into $SYSROOT,
-# wherever that is.  Set SYSROOT to $CLFS since that is the root
-# of our target filesystem.  
-
-# Of course, everything will be set up to expect it is running
-# from /.  We'll have to do something else to work around that
-# later -- probably build a separate glibc that is installed with
-# system root of $CLFS but with a prefix of /tools instead of
-# /usr, and then change the cross-gcc to link against that one.
-
-# TODO: probably we only need the one that is built with a prefix of
-# /tools, in fact.  Let's try getting rid of the other one.
+# wherever that is.  Since we have a /cross-toolchain directory
+# for our cross-tools, let's put it under there.
 
 export CLFS=/home/clfs
 export CLFS_HOST=i686-cross-linux-gnu
@@ -194,7 +185,7 @@ echo "clearing out old stuff, I hope that's what you wanted."
 rm -rf $CLFS/{etc,lib,sbin,usr,tools,cross-tools}
 mkdir -p $CLFS/tools
 mkdir -p $CLFS/cross-tools
-rm -rf binutils-build glibc-build gcc-build
+rm -rf build-binutils build-glibc build-gcc
 
 if [ -d ${BUILD_DIR}/Logs ]
 then
@@ -216,45 +207,45 @@ step01_kernel_headers > ${BUILD_DIR}/Logs/step01.txt
 cd ${BUILD_DIR}
 
 echo "STEP 02"
-mkdir binutils-build && cd binutils-build
+mkdir build-binutils && cd build-binutils
 step02_binutils > ${BUILD_DIR}/Logs/step02.txt
 cd ${BUILD_DIR}
-rm -rf binutils-build
+rm -rf build-binutils
 
 echo "STEP 03"
-mkdir glibc-build && cd glibc-build
+mkdir build-glibc && cd build-glibc
 step03_glibc_headers > ${BUILD_DIR}/Logs/step03.txt
 cd ${BUILD_DIR}
-rm -rf glibc-build
+rm -rf build-glibc
 
 echo "STEP 04"
-mkdir gcc-build && cd gcc-build
+mkdir build-gcc && cd build-gcc
 step04_gcc_bare > ${BUILD_DIR}/Logs/step04.txt
 cd ${BUILD_DIR}
 
 echo "STEP 05"
-mkdir glibc-build && cd glibc-build
+mkdir build-glibc && cd build-glibc
 step05_glibc_startup > ${BUILD_DIR}/Logs/step05.txt
 cd ${BUILD_DIR}
-rm -rf glibc-build
+rm -rf build-glibc
 
 echo "STEP 06"
-cd gcc-build
+cd build-gcc
 step06_gcc_libgcc > ${BUILD_DIR}/Logs/step06.txt
 cd ${BUILD_DIR}
-rm -rf gcc-build
+rm -rf build-gcc
 
 echo "STEP 07"
-mkdir glibc-build && cd glibc-build
+mkdir build-glibc && cd build-glibc
 step07_glibc_full > ${BUILD_DIR}/Logs/step07.txt
 cd ${BUILD_DIR}
-rm -rf glibc-build
+rm -rf build-glibc
 
 echo "STEP 08"
-mkdir gcc-build && cd gcc-build
+mkdir build-gcc && cd build-gcc
 step08_gcc_full > ${BUILD_DIR}/Logs/step08.txt
 cd ${BUILD_DIR}
-rm -rf gcc-build
+rm -rf build-gcc
 
 echo "STEP 09"
 cd linux
@@ -262,10 +253,10 @@ step09_kernel_headers_for_tools > ${BUILD_DIR}/Logs/step09.txt
 cd ${BUILD_DIR}
 
 echo "STEP 10"
-mkdir glibc-build && cd glibc-build
+mkdir build-glibc && cd build-glibc
 step10_glibc_tools > ${BUILD_DIR}/Logs/step10.txt
 cd ${BUILD_DIR}
-rm -rf glibc-build
+rm -rf build-glibc
 
 echo "STEP 11"
 step11_specs > ${BUILD_DIR}/Logs/step11.txt
