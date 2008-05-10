@@ -6,6 +6,9 @@
 # wherever that is.  Since we have a /cross-toolchain directory
 # for our cross-tools, let's put it under there.
 
+# define all these things the way you want them.  it would be
+# better if we just defined the ones that are missing, but that's
+# too much work since we're going to re-implement this in ruby.
 export CLFS=/home/clfs
 export CLFS_HOST=i686-cross-linux-gnu
 export CLFS_TARGET=mipsel-unknown-linux-gnu
@@ -17,6 +20,8 @@ export PATH=/cross-tools/bin:/bin:/usr/bin
 export SYSROOT=/cross-tools/sysroot
 unset CFLAGS
 unset CXXFLAGS
+unset CC CXX AR AS RANLIB LD STRIP
+
 
 set -e
 
@@ -175,8 +180,6 @@ function step11_specs()
 ${CLFS_TARGET}-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
    $(dirname $(${CLFS_TARGET}-gcc --print-libgcc-file-name))/specs
 }
-
-unset CC CXX AR AS RANLIB LD STRIP
 
 BUILD_DIR=$PWD
 

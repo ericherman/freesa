@@ -114,18 +114,18 @@ LDFLAGS="-L/tools/lib" ./configure --prefix=/tools \
 Something like this text will wind up in the Freesa book.
 
 For the FREESA build: AT THE END OF CHAPTER 6 -- when given the boot/chroot
-decision -- tar up the current state as mips-clfs-A.  Then execute chapter
-7 (boot).  Then tar up the current state again as mips-clfs-C.  Then
-restore mips-clfs-A and execute chapter 8 (chroot).  Then tar up the
-current state again as mips-clfs-B.
+decision -- tar up the current state as checkpoint-A.  Then execute chapter
+7 (boot).  Then tar up the current state again as bootstrap-C.  Then
+restore checkpoint-A and execute chapter 8 (chroot).  Then tar up the
+current state again as chrootable-B.
 
-mips-clfs-B (chroot) is a tarball that will be extracted onto the Freesa
-hard disk.  The Freesa final system build will be conducted when chrooted
-into that environment.
+B (chroot) is a tarball that will be extracted onto the Freesa hard disk.
+The Freesa final system build will be conducted when chrooted into that
+environment.
 
-mips-clfs-C (boot) is a tarball that will be extracted onto an NFS server.
-The Freesa box will be booted with a kernel that NFS-mounts the root
-filesystem from that NFS server.
+C (boot) is a tarball that will be extracted onto an NFS server.  The
+Freesa box will be booted with a kernel that NFS-mounts the root filesystem
+from that NFS server.
 
 Rationale:  in order to make the temporary tools system bootable, some
 programs are needed in the final filesystem hierarchy.  These make it more
@@ -141,7 +141,6 @@ utilities that can package the kernel into a TRX image that can be flashed
 into the Freesa; and adequate kernel modules on the mips-clfs-C system for
 the device to access the hard disk.
 -------------PROCEED------------------------
-
 
 
 7.5 e2fsprogs
@@ -290,6 +289,17 @@ make && make install
 
 "ip" (or "route")
 
+reiserfsprogs (3.6.19):
+
+The reiserfs programs are invasive little buggers; they want access to the
+raw kernel headers, rather than the userspace headers that, you know,
+userspace programs are supposed to use.  So use CFLAGS to tell it where the
+real kernel headers are.
+
+CFLAGS="$CFLAGS -I$HOME/Build/linux/include" ./configure \
+    --prefix=/tools --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
+make && make install
+
 
 vim:
 
@@ -322,6 +332,10 @@ adjusting the specs for the native compiler.
 
 NOW WE ARE IN THE mips-clfs-A DIRECTORY AGAIN.  GO TO CHAPTER 8.
 
+8.2 e2fsprogs
+
+I bumped this up to 1.40.9.
+
 8.3 util-linux-ng
 
 Change configuration line so the libraries we built in /tools will be
@@ -333,7 +347,8 @@ CFLAGS='-I/tools/include' LDFLAGS='-L/tools/lib' \
 
 8.4 mounting filesystems (and on from there)
 
-Bail out at this point.  Tar up the current CLFS state as mips-clfs-C.
+Bail out at this point.  Tar up the current CLFS state as
+chrootable-B.
 
 9.1 
 
