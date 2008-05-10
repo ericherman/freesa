@@ -44,13 +44,11 @@ so that they will be available to gcc and other programs that want them.
 
 pushd /cross-tools/gmp/lib
 cp -a *so* /tools/lib
+popd
 
 For some reason, the binutils constructed here like to segfault once the
 freesa system is trying to run them.  That's no fun.  Let's statically link
 them instead:
-
-...maybe "LDFLAGS=-all-static"...
-
 
 ../binutils/configure --prefix=/tools \
     --build=${CLFS_HOST} --host=${CLFS_TARGET} --target=${CLFS_TARGET} \
@@ -70,6 +68,14 @@ Switch to GCC 4.3.0
 * Configure line should include 
   "--with-gmp=/cross-tools/gmp --with-mpfr=/cross-tools/gmp"
 
+../gcc/configure --prefix=/tools \
+    --build=${CLFS_HOST} --host=${CLFS_TARGET} --target=${CLFS_TARGET} \
+    --with-local-prefix=/tools --enable-long-long --enable-c99 \
+    --enable-shared --enable-threads=posix --enable-__cxa_atexit \
+    --disable-nls --enable-languages=c,c++ --disable-libstdcxx-pch \
+    --with-gmp=/cross-tools/gmp --with-mpfr=/cross-tools/gmp &&
+make AS_FOR_TARGET="${AS}" LD_FOR_TARGET="${LD}" &&
+make install
 
 6.7 bzip2
 
