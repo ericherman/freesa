@@ -259,14 +259,47 @@ The root filesystem will be NFS-mounted.  The appropriate entry in
 
 192.168.236.5:/home/clfs / nfs defaults 0 0
 
-TODO add a boot script that starts dropbear ...
+7.15 boot scripts
 
-7.17 changing ownership
- 
-Before chowning anything, we need to build a couple more things.
+In addition to the normal boot scripts, we need to start the dropbear ssh
+server (and create a host key if there isn't one already).
 
-The point of the NFS-root-mounted filesystem is to allow us to access the hard
-disk, build a partition table, create filesystems and swap, mount the
+cat > $CLFS/etc/rc.d/init.d/dropbear <<EOF
+#!/bin/bash
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+export PATH=/tools/sbin:/tools/bin:$PATH
+
+case "${1}" in
+    start)
+        boot_mesg "Starting the dropbear SSH server"
+        if [ ! -f /etc/dropbear/dropbear_rsa_host_key ]
+        then
+            dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key
+        fi
+        dropbear -E 2> /tmp/dropbear.log
+        evaluate_retval
+        ;;
+    *)
+        echo "Usage: ${0} start"
+        exit 1
+        ;;
+esac
+EOF
+chmod 775 $CLFS/etc/rc.d/init.d/dropbear
+ln -s ../init.d/dropbear $CLFS/etc/rc.d/rcsysinit.d/S70dropbear
+
+
+7.16 populating dev
+
+We're not going  to do this yet.  Instead, we're going to pack up the
+bootable-C tarball; we'll create device nodes and chown everything once
+we've set things up on the NFS server.  But before we even do that, we have
+a few more things to build.
+
+The point of the NFS-root-mounted filesystem is to allow us to access the
+hard disk, build a partition table, create filesystems and swap, mount the
 filesystems, unpack the stage B tarball onto them, and then chroot into the
 local disk environment and complete the build from there.
 
@@ -275,8 +308,8 @@ something that will let us get access to the box over the network (so we
 can get a shell prompt on the Freesa box without needing a serial console).
 We'll use SSH; specifically, the svelte and easy-to-cross-compile dropbear.
 
-Ignore all the "operation not permitted" when the dropbear installation
-tries to chown everything to root.
+Ignore all the "operation not permitted" messages that happen when the
+dropbear installation tries to chown everything to root.
 
 dropbear (0.5.1):
 
@@ -293,8 +326,6 @@ Use version 4.32.5.  Build with:
     --prefix=/tools --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
 make && make install
 
-"ip" (or "route")
-
 reiserfsprogs (3.6.19):
 
 The reiserfs programs are invasive little buggers; they want access to the
@@ -306,16 +337,14 @@ CFLAGS="$CFLAGS -I$HOME/Build/linux/include" ./configure \
     --prefix=/tools --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
 make && make install
 
+vim and iproute2:
 
-vim:
+Cross-compiling these is a PITA.  We will have to build them in the booted
+system instead.  At least it will be a good test of the native tools in the
+freesa environment.
 
-Cross-compiling vim is a PITA.  We will have to build it in the
-booted system instead.  At least it will be a good test of the
-native tools in the freesa environment.
-
-After chowning everything and creating the device nodes, set up the root
-.ssh directory and authorized_keys so we can log in without using a
-password:
+Final setup:  set things up so that you'll be able to ssh to root on the
+freesa box:
 
 mkdir ${CLFS}/root/.ssh
 chmod 700 ${CLFS}/root/.ssh
@@ -323,20 +352,15 @@ chmod 700 ${CLFS}/root/.ssh
 ...and copy your id_rsa.pub to ${CLFS}/root/.ssh/authorized_keys.  Chown it
 600, in case dropbear uses the same paranoiac stance as OpenSSH.
 
-TODO: generate Dropbear host keys?
-
-7.18 making the temporary system bootable
-
-This section is irrelevant to us.  But it is a convenient location to
-bundle up the current CLFS directory as mips-clfs-C.  Do that.  Then
-restore the mips-clfs-A tarfile and do chapter 8 (chroot) to construct the
-root filesystem that we will install to the internal hard disk of the
-Freesa box.
+Now we are ready to bundle up the current CLFS directory as bootable-C.tar.
+Do that.  Then restore the checkpoint-A tarfile and perform chapter 8 (if
+you're going to chroot) to construct the root filesystem we'll install to
+the internal hard disk of the freesa box.
 
 TODO: AFTER BOOTING THE FREESA SYSTEM ... remember to add instructions on
 adjusting the specs for the native compiler.
 
-NOW WE ARE IN THE mips-clfs-A DIRECTORY AGAIN.  GO TO CHAPTER 8.
+NOW WE ARE IN THE checkpoint-A DIRECTORY AGAIN.  GO TO CHAPTER 8.
 
 8.2 e2fsprogs
 
