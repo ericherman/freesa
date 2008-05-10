@@ -171,15 +171,14 @@ sed -e 's@root@0@g' \
     src/Makefile.orig > src/Makefile
 
 
-Uncomment the "if your system has a console port" agetty line
-from the standard clfs inittab, and comment out the section that
-says "comment this out if your system only has a serial console."
-Duh.
+Uncomment the "if your system has a console port" agetty line from the
+standard clfs inittab, and comment out the section that says "comment this
+out if your system only has a serial console." Duh.
 
 7.8 util-linux-ng
 
-Change configuration line so the libraries we built stuff under /tools will
-be found:
+Change the configuration line the libraries we built under /tools will be
+found.
 
 CFLAGS='-I/tools/include' LDFLAGS='-L/tools/lib' ./configure \
     --build=${CLFS_HOST} \
@@ -208,7 +207,7 @@ EOF
 
 7.11 linux kernel
 
-We need the OpenWRT kernel patches.  It sure would be great if we knew 
+We need the OpenWRT kernel patches.  It sure would be great if we knew
 which ones are actually necessary.  Alas!  We don't, yet.
 
 The basic kernel version we're using is 2.6.23.16.  Added to this are lots
@@ -273,11 +272,14 @@ server (and create a host key if there isn't one already).
 cat > $CLFS/etc/rc.d/init.d/dropbear <<EOF
 #!/bin/bash
 . /etc/sysconfig/rc
-. ${rc_functions}
+. \${rc_functions}
 
-export PATH=/tools/sbin:/tools/bin:$PATH
+export PATH=/tools/sbin:/tools/bin:\$PATH
 
-case "${1}" in
+# let's write IP configuration to a file.
+ifconfig > /tmp/freesa-ip-configuration 2>&1
+
+case "\${1}" in
     start)
         boot_mesg "Starting the dropbear SSH server"
         if [ ! -f /etc/dropbear/dropbear_rsa_host_key ]
@@ -288,7 +290,7 @@ case "${1}" in
         evaluate_retval
         ;;
     *)
-        echo "Usage: ${0} start"
+        echo "Usage: \${0} start"
         exit 1
         ;;
 esac
@@ -358,6 +360,16 @@ chmod 700 ${CLFS}/root/.ssh
 
 ...and copy your id_rsa.pub to ${CLFS}/root/.ssh/authorized_keys.  Chown it
 600, in case dropbear uses the same paranoiac stance as OpenSSH.
+
+Also create an /etc/shells:
+
+cat > $CLFS/etc/shells <<EOF
+/bin/bash
+EOF
+
+Create a location for dropbear's host key file:
+
+mkdir -p $CLFS/etc/dropbear
 
 Now we are ready to bundle up the current CLFS directory as bootable-C.tar.
 Do that.  Then restore the checkpoint-A tarfile and perform chapter 8 (if
