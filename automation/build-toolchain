@@ -27,14 +27,10 @@ set -e
 
 function step00_prepare_sources()
 {
-git clone $CLFS/Toolchain/binutils
-{ pushd binutils && git checkout with-clfs-patches && popd ; } 2>&1 
-git clone $CLFS/Toolchain/gcc
-{ pushd gcc && git checkout with-posix-patch && popd ; } 2>&1
-git clone $CLFS/Toolchain/glibc
-{ pushd glibc && git checkout with-clfs-and-gcc430-patches && popd ; } 2>&1
-git clone $CLFS/Toolchain/linux
-{ pushd linux && git checkout openwrt-plus-freesa && popd ; } 2>&1
+lzma -d < ../Sources/binutils*tar.lzma | tar xf -
+lzma -d < ../Sources/gcc*tar.lzma | tar xf -
+lzma -d < ../Sources/glibc*tar.lzma | tar xf -
+lzma -d < ../Sources/linux*tar.lzma | tar xf -
 }
 
 function step01_kernel_headers()
@@ -47,7 +43,7 @@ echo WOOT
 
 function step02_binutils()
 {
-../binutils/configure --prefix=/cross-tools \
+../binutils*/configure --prefix=/cross-tools \
    --build=${CLFS_HOST} --target=${CLFS_TARGET} \
    --disable-nls --enable-shared --disable-multilib \
    --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT &&
@@ -58,7 +54,7 @@ echo WOOT
 
 function step03_glibc_headers()
 {
-CC=gcc ../glibc/configure --prefix=/usr \
+CC=gcc ../glibc*/configure --prefix=/usr \
   --host=${CLFS_HOST} --build=${CLFS_TARGET} \
   --disable-sanity-checks --enable-kernel=${KERNEL_VERSION} \
   --with-headers=$SYSROOT/usr/include \
@@ -74,7 +70,7 @@ echo WOOT
 
 function step04_gcc_bare()
 {
-../gcc/configure --prefix=/cross-tools \
+../gcc*/configure --prefix=/cross-tools \
   --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
   --disable-multilib \
   --disable-nls --disable-shared \
@@ -94,7 +90,7 @@ echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
     CFLAGS="${GLIBCFLAG}" \
-    ../glibc/configure --prefix=/usr \
+    ../glibc*/configure --prefix=/usr \
     --host=${CLFS_TARGET} --build=${CLFS_HOST} \
     --disable-profile --enable-add-ons \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
@@ -122,7 +118,7 @@ echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
     CFLAGS="$GLIBCFLAG" \
-    ../glibc/configure --prefix=/usr \
+    ../glibc*/configure --prefix=/usr \
     --host=${CLFS_TARGET} --build=${CLFS_HOST} \
     --disable-profile --enable-add-ons \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
@@ -135,7 +131,7 @@ echo WOOT
 
 function step08_gcc_full()
 {
-../gcc/configure --prefix=/cross-tools \
+../gcc*/configure --prefix=/cross-tools \
   --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
   --disable-multilib \
   --disable-nls --enable-shared \
@@ -153,7 +149,7 @@ function step09_kernel_headers_for_tools()
 {
 make mrproper &&
 make $KERNEL_ARCH headers_check &&
-make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=/tools/usr &&
+make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=/tools &&
 echo WOOT
 }
 
@@ -164,11 +160,11 @@ echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
     CFLAGS="$GLIBCFLAG" \
-    ../glibc/configure --prefix=/tools \
+    ../glibc*/configure --prefix=/tools \
     --host=${CLFS_TARGET} --build=${CLFS_HOST} \
     --disable-profile --enable-add-ons \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
-    --with-binutils=/cross-tools/bin --with-headers=/tools/usr/include \
+    --with-binutils=/cross-tools/bin --with-headers=/tools/include \
     --cache-file=config.cache &&
 make && 
 make install_root=$CLFS install && 
@@ -205,7 +201,7 @@ then
 fi
 
 echo "STEP 01"
-cd linux
+cd linux*
 step01_kernel_headers > ${BUILD_DIR}/Logs/step01.txt
 cd ${BUILD_DIR}
 
@@ -251,7 +247,7 @@ cd ${BUILD_DIR}
 rm -rf build-gcc
 
 echo "STEP 09"
-cd linux
+cd linux*
 step09_kernel_headers_for_tools > ${BUILD_DIR}/Logs/step09.txt
 cd ${BUILD_DIR}
 

@@ -65,12 +65,13 @@ from setting those environment variables..
 
 gcc, glibc, and binutils MUST all be built from a separate "build"
 directory, not the source directory.  Normally, the source directory name
-includes the version number (e.g. binutils-2.18); I'm using my git
-repositories for the toolchain components, so the version number isn't in
-the directory name.  All of the scriptlets in the separate automated build
-script contain commands that work for me, using my git toolchain
-components; you'll have to adjust them if you're working from released
-source tarballs.
+includes the version number (e.g. binutils-2.18); I'm using pre-patched
+versions that already have the appropriate CLFS and other patches applied,
+and I used the convention of giving the source directory an additional "-p"
+to signal that.  The build script will work as long as the source directory
+starts out with the correct string ("gcc" or "binutils" or whatever) and
+there aren't any other directories in the build directory with those
+prefixes.
 
 The notes here are meant to be read along with the automated script.  Gosh,
 it sure would be cool if the whole thing had been written using literate
