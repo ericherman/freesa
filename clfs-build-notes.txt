@@ -97,8 +97,8 @@ And add --cache-file=config.cache to the configure line, of course.
 
 6.12 file
 
-I switched to file 4.24.  In the middle of the build, it crashed with
-"no rule to make target file"; I got it to finish by doing:
+I switched to file 4.24.  In the middle of the build, it crashed with "no
+rule to make target file"; I got it to finish by doing:
 
 "cp src/.libs/file magic"
 
@@ -110,8 +110,8 @@ I switched to tar 1.20.
 
 6.21 texinfo
 
-On one of these builds, the texinfo build failed because it couldn't find the
-curses library.  Change the configure line:
+On one of these builds, the texinfo build failed because it couldn't find
+the curses library.  Change the configure line:
 
 LDFLAGS="-L/tools/lib" ./configure --prefix=/tools \
     --build=${CLFS_HOST} --host=${CLFS_TARGET}
@@ -277,7 +277,7 @@ cat > $CLFS/etc/rc.d/init.d/dropbear <<EOF
 export PATH=/tools/sbin:/tools/bin:\$PATH
 
 # let's write IP configuration to a file.
-ifconfig > /tmp/freesa-ip-configuration 2>&1
+/usr/bin/ifconfig > /tmp/freesa-ip-configuration 2>&1
 
 case "\${1}" in
     start)
@@ -301,7 +301,7 @@ ln -s ../init.d/dropbear $CLFS/etc/rc.d/rcsysinit.d/S70dropbear
 
 7.16 populating dev
 
-We're not going  to do this yet.  Instead, we're going to pack up the
+We're not going to do this yet.  Instead, we're going to pack up the
 bootable-C tarball; we'll create device nodes and chown everything once
 we've set things up on the NFS server.  But before we even do that, we have
 a few more things to build.
@@ -376,9 +376,6 @@ Do that.  Then restore the checkpoint-A tarfile and perform chapter 8 (if
 you're going to chroot) to construct the root filesystem we'll install to
 the internal hard disk of the freesa box.
 
-TODO: AFTER BOOTING THE FREESA SYSTEM ... remember to add instructions on
-adjusting the specs for the native compiler.
-
 NOW WE ARE IN THE checkpoint-A DIRECTORY AGAIN.  GO TO CHAPTER 8.
 
 8.2 e2fsprogs
@@ -415,26 +412,29 @@ Do the boot
 After a while, the thing should create a dropbear log file under
 $NFSROOT/tmp.  That means it's ready for action.
 
-ssh to root@ whatever IP address the freesa box has.  It is configured
-using DHCP; the DHCP server log should tell you what IP address it has.
-(Maybe log additional stuff to a file on the NFS server.)
+ssh to root@ whatever IP address the freesa box has.  You can look in the
+/tmp directory on the NFS server to find out what IP address it has.
 
 Change the specs file for the native compiler:
 
 gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
    $(dirname $(gcc --print-libgcc-file-name))/specs
 
-Create a partition table.  Mkswap, mkfs.  Mount stuff under /mnt.  Untar
-the chrootable-B tarball into /mnt.  THEN:
+Create a partition table.  Mkswap, mkfs.  Mount stuff under whatever
+directory name is at the top of the tarball -- like, if you created the
+CLFS system in /home/clfs, and you tarred it up from /home, then mount the
+partitions with the root directory at /clfs.  Delete all of the dotfiles
+from your sparkly-new root directory (.bashrc, .bash_profile, whatever is
+left over from before).  THEN:
 
-Set CLFS=/mnt
+Set CLFS=/whatever-directory (/mnt or /clfs or whatever)...
 
 Follow the chroot directions from CLFS (8.4 and later)... 
 
 and we are in chapter 9 at last.
 
 After chrooting, adjust the specs file for the native compiler in this
-environment:
+environment as well:
 
 gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
    $(dirname $(gcc --print-libgcc-file-name))/specs
@@ -453,21 +453,44 @@ package owners stuff):
    --without-libpam --disable-nls --without-audit  &&
 make && make install
 
-also change the "chroot" command so that it adds /tools/sbin to
-the PATH in the chrooted environment; or set it up that way in
-/root/.bashrc or whatever.
-
 and vim (so we can edit options files):
 
 ./configure --prefix=/tools && make && make install
 
+also change the "chroot" command so that it adds /tools/sbin to
+the PATH in the chrooted environment; or set it up that way in
+/root/.bashrc or whatever.
+
 9.2 tcl
 
-Bump to 8.5.0.
+Bump to 8.5.2.
+
+This is the latest stable release, and I really like using the
+latest stable release of everything -- otherwise I wouldn't have
+spent a month getting a gcc 4.3.0 cross-toolchain to go -- but,
+alas, the latest stable expect (5.43.0) doesn't build against it
+without some work.  If you want to use something more
+well-tested, you might want to stay with tcl 8.4.x.
+
+9.3 expect
+
+Assuming you're using tcl 8.5.x (brave soul!  I commend you!),
+you'll need to apply a couple additional patches:
+
+expect-5.43.0-avoid-tcl-internals-1.patch
+expect-5.43.0-tcl85-fixup-2.patch
+
+It should then build fine using the book instructions.
 
 10.3 set CFLAGS and CXXFLAGS:
 
-export CFLAGS="-march=prescott -O3 -pipe -fomit-frame-pointer"
+For core processors, -march is probably prescott.
+
+For mips, of course, don't worry about architecture.  We should
+still be able to omit frame pointers and use a reasonably high
+optimization level.
+
+export CFLAGS="-O3 -pipe -fomit-frame-pointer"
 export CXXFLAGS="${CFLAGS}"
 
 Override these in the "options" file for each package user if
