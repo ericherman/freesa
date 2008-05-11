@@ -65,8 +65,8 @@ Switch to GCC 4.3.0
 * Install the posix and specs patches.
 * Run the sed scripts to change the cpp search path and fixincludes
   process.
-* Configure line should include 
-  "--with-gmp=/cross-tools/gmp --with-mpfr=/cross-tools/gmp"
+
+Change the configure line to include the GMP and MPFR; I wound up with:
 
 ../gcc/configure --prefix=/tools \
     --build=${CLFS_HOST} --host=${CLFS_TARGET} --target=${CLFS_TARGET} \
@@ -415,7 +415,11 @@ $NFSROOT/tmp.  That means it's ready for action.
 ssh to root@ whatever IP address the freesa box has.  You can look in the
 /tmp directory on the NFS server to find out what IP address it has.
 
-Change the specs file for the native compiler:
+If you need to compile anything in this environment, you may need to adjust
+the specs for the compiler.  Try compiling a "Hello, world" program and see
+if it works.  If it doesn't, you can "readelf -a" the compiled program and
+see if it is requesting /lib/ld.so.1 as the dynamic linker; if so, adjust
+the specs with:
 
 gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
    $(dirname $(gcc --print-libgcc-file-name))/specs
@@ -433,8 +437,11 @@ Follow the chroot directions from CLFS (8.4 and later)...
 
 and we are in chapter 9 at last.
 
-After chrooting, adjust the specs file for the native compiler in this
-environment as well:
+After chrooting, you may need to adjust the specs file for the native
+compiler in this environment as well.  Try compiling a "Hello, world"
+program and see if it works.  If it doesn't, you can "readelf -a" the
+compiled program and see if it is requesting /lib/ld.so.1 as the dynamic
+linker; if so, adjust the specs with:
 
 gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
    $(dirname $(gcc --print-libgcc-file-name))/specs
