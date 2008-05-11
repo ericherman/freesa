@@ -461,6 +461,9 @@ and vim (so we can edit options files):
 
 ./configure --prefix=/tools && make && make install
 
+9.2 tcl
+
+Bump to 8.5.0.
 
 10.3 set CFLAGS and CXXFLAGS:
 

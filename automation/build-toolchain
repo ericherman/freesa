@@ -194,7 +194,7 @@ mkdir ${BUILD_DIR}/Logs
 
 echo "Starting at $(date)" > ${BUILD_DIR}/Logs/timing.txt
 
-if [ ! -d binutils ]
+if [ ! -d binutils* ]
 then
     echo "STEP 00"
     step00_prepare_sources > ${BUILD_DIR}/Logs/step00.txt
