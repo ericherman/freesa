@@ -417,28 +417,37 @@ $NFSROOT/tmp.  That means it's ready for action.
 
 ssh to root@ whatever IP address the freesa box has.  It is configured
 using DHCP; the DHCP server log should tell you what IP address it has.
-(Maybe we should have a boot script that does 'ifconfig' >
-/tmp/freesa-ip-address so that we can just look on the NFS server file
-system for information?  Also maybe log additional stuff to a file on the
-NFS server.)
+(Maybe log additional stuff to a file on the NFS server.)
 
-Change the specs file for the native compiler.
+Change the specs file for the native compiler:
 
-Create a partition table.  Mkswap, mkfs.  Mount stuff under /mnt.
-Untar the chrootable-B tarball into /mnt.  THEN follow the chroot
-directions from CLFS... and we are in chapter 9 at last.
+gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
+   $(dirname $(gcc --print-libgcc-file-name))/specs
+
+Create a partition table.  Mkswap, mkfs.  Mount stuff under /mnt.  Untar
+the chrootable-B tarball into /mnt.  THEN:
+
+Set CLFS=/mnt
+
+Follow the chroot directions from CLFS (8.4 and later)... 
+
+and we are in chapter 9 at last.
+
+After chrooting, adjust the specs file for the native compiler in this
+environment:
+
+gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
+   $(dirname $(gcc --print-libgcc-file-name))/specs
 
 9.1 
 
-Prior to doing tool builds (tcl etc), build lzma so
-lzma-compressed packages can be uncompressed.  This is a normal:
+Prior to doing tool builds (tcl etc), build lzma so lzma-compressed
+packages can be uncompressed.  This is a normal:
 
 ./configure --prefix=/tools && make && make install
 
 Also build shadow (so that we have adduser and addgroup and su for the
 package owners stuff):
-
-Apply the same patch as in section 10.46, and build with:
 
 ./configure --prefix=/tools --sysconfdir=/etc --without-selinux \
    --without-libpam --disable-nls --without-audit  &&

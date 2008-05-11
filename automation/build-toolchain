@@ -96,9 +96,9 @@ BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     --with-tls --enable-kernel=${KERNEL_VERSION} --with-__thread \
     --with-binutils=/cross-tools/bin --with-headers=$SYSROOT/usr/include \
     --cache-file=config.cache &&
-make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crt1.o &&
-make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crti.o &&
-make -r -C ../glibc/csu objdir=$(pwd) $(pwd)/csu/crtn.o &&
+make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crt1.o &&
+make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crti.o &&
+make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crtn.o &&
 mkdir -p $SYSROOT/lib &&
 cp csu/crt{1,i,n}.o $SYSROOT/lib &&
 echo WOOT
