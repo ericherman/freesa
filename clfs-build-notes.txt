@@ -496,6 +496,20 @@ export CXXFLAGS="${CFLAGS}"
 Override these in the "options" file for each package user if
 necessary.
 
+10.4 temporary perl
+
+Why this wasn't built along with the other test tools at the end
+of chapter 9 is a mystery to me.  It's installed in /tools along
+with the other temp stuff.
+
+Bump to perl 5.10.0.  I kind of hate perl, so I'm tempted to just
+leave it at 5.8.8, but let's have a go with 5.10 and see how that
+works out.
+
+The gcc42 fix has been incorporated into perl 5.10.0, but the
+libc hard-wired paths are still there.  I respun the 5.8.8-libc-2
+patch into 5.10.0-libc-1.
+
 10.5 
 
 *******
