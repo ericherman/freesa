@@ -464,25 +464,24 @@ and vim (so we can edit options files):
 
 ./configure --prefix=/tools && make && make install
 
-also change the "chroot" command so that it adds /tools/sbin to
-the PATH in the chrooted environment; or set it up that way in
-/root/.bashrc or whatever.
+also change the "chroot" command so that it adds /tools/sbin to the PATH in
+the chrooted environment; or set it up that way in /root/.bashrc or
+whatever.
 
 9.2 tcl
 
 Bump to 8.5.2.
 
-This is the latest stable release, and I really like using the
-latest stable release of everything -- otherwise I wouldn't have
-spent a month getting a gcc 4.3.0 cross-toolchain to go -- but,
-alas, the latest stable expect (5.43.0) doesn't build against it
-without some work.  If you want to use something more
-well-tested, you might want to stay with tcl 8.4.x.
+This is the latest stable release, and I really like using the latest
+stable release of everything -- otherwise I wouldn't have spent a month
+getting a gcc 4.3.0 cross-toolchain to go -- but, alas, the latest stable
+expect (5.43.0) doesn't build against it without some work.  If you want to
+use something more well-tested, you might want to stay with tcl 8.4.x.
 
 9.3 expect
 
-Assuming you're using tcl 8.5.x (brave soul!  I commend you!),
-you'll need to apply a couple additional patches:
+Assuming you're using tcl 8.5.x (brave soul!  I commend you!), you'll need
+to apply a couple additional patches:
 
 expect-5.43.0-avoid-tcl-internals-1.patch
 expect-5.43.0-tcl85-fixup-2.patch
@@ -493,29 +492,26 @@ It should then build fine using the book instructions.
 
 For core processors, -march is probably prescott.
 
-For mips, of course, don't worry about architecture.  We should
-still be able to omit frame pointers and use a reasonably high
-optimization level.
+For mips, of course, don't worry about architecture.  We should still be
+able to omit frame pointers and use a reasonably high optimization level.
 
 export CFLAGS="-O3 -pipe -fomit-frame-pointer"
 export CXXFLAGS="${CFLAGS}"
 
-Override these in the "options" file for each package user if
-necessary.
+Override these in the "options" file for each package user if necessary.
 
 10.4 temporary perl
 
-Why this wasn't built along with the other test tools at the end
-of chapter 9 is a mystery to me.  It's installed in /tools along
-with the other temp stuff.
+Why this wasn't built along with the other test tools at the end of chapter
+9 is a mystery to me.  It's installed in /tools along with the other temp
+stuff.
 
-Bump to perl 5.10.0.  I kind of hate perl, so I'm tempted to just
-leave it at 5.8.8, but let's have a go with 5.10 and see how that
-works out.
+Bump to perl 5.10.0.  I kind of hate perl, so I'm tempted to just leave it
+at 5.8.8, but let's have a go with 5.10 and see how that works out.
 
-The gcc42 fix has been incorporated into perl 5.10.0, but the
-libc hard-wired paths are still there.  I respun the 5.8.8-libc-2
-patch into 5.10.0-libc-1.
+The gcc42 fix has been incorporated into perl 5.10.0, but the libc
+hard-wired paths are still there.  I respun the 5.8.8-libc-2 patch into
+5.10.0-libc-1.
 
 10.5 
 
@@ -528,36 +524,37 @@ See "README" in the package-users tarball for instructions.
 
 AFTER INSTALLING LINUX KERNEL HEADERS
 
-Move /usr/include/scsi to /usr/include/linux/scsi (or just rename
-them?) -- glibc needs to install files with the same names to
-/usr/include/scsi.
+Move /usr/include/scsi to /usr/include/linux/scsi (or just rename them?) --
+glibc needs to install files with the same names to /usr/include/scsi.
 
 10.6
 
 man-pages
 
-If you want the posix man pages, pre-create 
-/usr/share/man/{man0p,man1p,man3p} and make them install dirs.
+Bump to version 2.79.
 
+If you want the posix man pages, pre-create
+/usr/share/man/{man0p,man1p,man3p} and make them install dirs.
 
 10.7
 
 glibc
 
-The CLFS book suggests setting CFLAGS in the configure command
-line to something like "-march=i686 -mtune=generic -g -O2"; that
-is probably a good idea.  I always add -pipe and
--fomit-frame-pointer and have never had problems as a result.
+On the Freesa (MIPS) box, use CFLAGS "-g -O2 -pipe -fomit-frame-pointer".
 
-After installing glibc, you can allow all package users to re-run
-ldconfig by setting a special user "ldconfig" in the install
-group, and making /sbin/ldconfig owned by ldconfig, in the
-install group, with mode 6750.  (Or you can leave the owner as
-glibc, if you don't mind ldconfig running with glibc's
-privileges.)
+The CLFS book suggests setting CFLAGS in the configure command line to
+something like "-march=i686 -mtune=generic -g -O2"; that is probably a good
+idea.  I always add -pipe and -fomit-frame-pointer and have never had
+problems as a result.
 
-Many other packages will need to write to /usr/info/dir, which is
-onwed by glibc.  Put it in the install group and chmod 664 it.
+After installing glibc, you can allow all package users to re-run ldconfig
+by setting a special user "ldconfig" in the install group, and making
+/sbin/ldconfig owned by ldconfig, in the install group, with mode 6750.
+(Or you can leave the owner as glibc, if you don't mind ldconfig running
+with glibc's privileges.)
+
+Many other packages will need to write to /usr/info/dir, which is onwed by
+glibc.  Put it in the install group and chmod 664 it.
 
 10.9
 
