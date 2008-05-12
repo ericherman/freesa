@@ -415,14 +415,19 @@ $NFSROOT/tmp.  That means it's ready for action.
 ssh to root@ whatever IP address the freesa box has.  You can look in the
 /tmp directory on the NFS server to find out what IP address it has.
 
-If you need to compile anything in this environment, you may need to adjust
-the specs for the compiler.  Try compiling a "Hello, world" program and see
-if it works.  If it doesn't, you can "readelf -a" the compiled program and
-see if it is requesting /lib/ld.so.1 as the dynamic linker; if so, adjust
-the specs with:
+When compiling things in this environment, you may need to adjust the specs
+for the compiler.  Try compiling a "Hello, world" program and see if it
+works.  If it doesn't, you can "readelf -a" the compiled program and see if
+it is requesting /lib/ld.so.1 as the dynamic linker; if so, adjust the
+specs with:
 
 gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
    $(dirname $(gcc --print-libgcc-file-name))/specs
+
+You might want to install procps so you have programs like "ps" and "top."
+It's a simple "make && make install" -- not even a configure is needed.
+
+What you must do here is:
 
 Create a partition table.  Mkswap, mkfs.  Mount stuff under whatever
 directory name is at the top of the tarball -- like, if you created the
@@ -546,6 +551,9 @@ The CLFS book suggests setting CFLAGS in the configure command line to
 something like "-march=i686 -mtune=generic -g -O2"; that is probably a good
 idea.  I always add -pipe and -fomit-frame-pointer and have never had
 problems as a result.
+
+The first time I tried the build, it hung during the compilation of
+(something or other)
 
 After installing glibc, you can allow all package users to re-run ldconfig
 by setting a special user "ldconfig" in the install group, and making
