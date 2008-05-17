@@ -123,9 +123,9 @@ Something like this text will wind up in the Freesa book.
 
 For the FREESA build: AT THE END OF CHAPTER 6 -- when given the boot/chroot
 decision -- tar up the current state as checkpoint-A.  Then execute chapter
-7 (boot).  Then tar up the current state again as bootstrap-C.  Then
-restore checkpoint-A and execute chapter 8 (chroot).  Then tar up the
-current state again as chrootable-B.
+8 (chroot).  Then tar up the current state as chrootable-B.  Then restore
+checkpoint-A and execute chapter 7 (boot).  Then tar up the current state
+again as bootstrap-C.
 
 B (chroot) is a tarball that will be extracted onto the Freesa hard disk.
 The Freesa final system build will be conducted when chrooted into that
@@ -154,6 +154,29 @@ into the Freesa; and adequate kernel modules on the bootable-C system for
 the device to access the hard disk.
 -------------PROCEED------------------------
 
+Stage B: chroot tarball.
+
+There is really not very much here at all.
+
+8.2 e2fsprogs
+
+I bumped this up to 1.40.9.
+
+8.3 util-linux-ng
+
+Change configuration line so the libraries we built in /tools will be
+found:
+
+CFLAGS='-I/tools/include' LDFLAGS='-L/tools/lib' \
+   ./configure --prefix=/tools \
+    --build=${CLFS_HOST} --host=${CLFS_TARGET}
+
+8.4 mounting filesystems (and on from there)
+
+Don't do these things.  Bail out.  Tar up the current CLFS state as
+chrootable-B.  Then restore checkpoint-A.
+
+NOW WE ARE IN THE checkpoint-A DIRECTORY AGAIN.  GO TO CHAPTER 7.
 
 7.5 e2fsprogs
 
@@ -251,6 +274,10 @@ make ARCH=mips CROSS_COMPILE=${CLFS_TARGET}- KERNELDIR=${CLFS}/Build/linux
 mkdir ${CLFS}/lib/modules/2.6.23.16nb4/kernel/misc
 cp *.ko ${CLFS}/lib/modules/2.6.23.16nb4/kernel/misc
 
+Also, make sure there are no "modules*" files in the
+$CLFS/lib/modules/$(uname -r) directory.  If there are, they will cause
+modules (like the ide device drivers) to be loaded automatically before
+they will work.
 
 7.12 colo
 
@@ -337,7 +364,7 @@ Use version 4.32.5.  Build with:
     --prefix=/tools --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
 make && make install
 
-reiserfsprogs (3.6.19):
+Reiserfsprogs (3.6.19):
 
 The reiserfs programs are invasive little buggers; they want access to the
 raw kernel headers, rather than the userspace headers that, you know,
@@ -347,6 +374,11 @@ real kernel headers are.
 CFLAGS="$CFLAGS -I$HOME/Build/linux/include" ./configure \
     --prefix=/tools --build=${CLFS_HOST} --host=${CLFS_TARGET} &&
 make && make install
+
+Inet-utils:
+
+TODO fill me in.  We want to be able to run "ifconfig" on the freesa
+NFS-booted system.
 
 vim and iproute2:
 
@@ -374,29 +406,9 @@ Create a location for dropbear's host key file:
 mkdir -p $CLFS/etc/dropbear
 
 Now we are ready to bundle up the current CLFS directory as bootable-C.tar.
-Do that.  Then restore the checkpoint-A tarfile and perform chapter 8 (if
-you're going to chroot) to construct the root filesystem we'll install to
-the internal hard disk of the freesa box.
-
-NOW WE ARE IN THE checkpoint-A DIRECTORY AGAIN.  GO TO CHAPTER 8.
-
-8.2 e2fsprogs
-
-I bumped this up to 1.40.9.
-
-8.3 util-linux-ng
-
-Change configuration line so the libraries we built in /tools will be
-found:
-
-CFLAGS='-I/tools/include' LDFLAGS='-L/tools/lib' \
-   ./configure --prefix=/tools \
-    --build=${CLFS_HOST} --host=${CLFS_TARGET}
-
-8.4 mounting filesystems (and on from there)
-
-Don't do these things.  Bail out.  Tar up the current CLFS state as
-chrootable-B.
+Do that.  We are now done with the CLFS directory.  If you are keen to save
+disk space, you can delete the checkpoint-A tarball at this point; we
+should not need it again.
 
 NOW WE NEED TO BUILD A TRX IMAGE THAT WE CAN FLASH ONTO THE FREESA UNIT.
 Or, if you've hacked yours so it has a serial console, you can tftp-boot
