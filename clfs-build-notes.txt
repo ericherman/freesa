@@ -47,8 +47,10 @@ cp -a *so* /tools/lib
 popd
 
 For some reason, the binutils constructed here like to segfault once the
-freesa system is trying to run them.  That's no fun.  Let's statically link
-them instead:
+freesa system is trying to run them.  That's no fun.  We can avoid the
+problem by building only static versions of the library components of
+binutils (e.g. libbfd).  This is accomplished with --disable-shared in the
+configure line.
 
 ../binutils/configure --prefix=/tools \
     --build=${CLFS_HOST} --host=${CLFS_TARGET} --target=${CLFS_TARGET} \
@@ -559,15 +561,24 @@ After installing glibc, you can allow all package users to re-run ldconfig
 by setting a special user "ldconfig" in the install group, and making
 /sbin/ldconfig owned by ldconfig, in the install group, with mode 6750.
 (Or you can leave the owner as glibc, if you don't mind ldconfig running
-with glibc's privileges.)
+with glibc's privileges.)  This user exists only to provide a separate
+privilege domain and will never login, so you might want to set its home
+directory to /nowhere and its shell to /bin/false -- that's what I do to
+indicate that a user is really /not/ supposed to log in ever.
 
 Many other packages will need to write to /usr/info/dir, which is onwed by
 glibc.  Put it in the install group and chmod 664 it.
 
 10.9
 
-Binutils build fails in gas/read.c in "equals".  Fixed with an
-additional patch (fix-werror-1).
+Just like in 6.3 so long ago, the binutils constructed here segfault.
+Again change the "--enable-shared" line to "--disable-shared".  Perhaps
+later they can be rebuilt with --enable-shared.
+
+The binutils source files are compiled with -Werror, which treats warnings
+as errors.  This is problematic for tc-mips.c, which produces a couple of
+different compiler warnings when compiled with gcc 4.3.0.  There's a
+configure option "--disable-werror" that we might as well try.
 
 10.10
 
