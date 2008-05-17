@@ -569,7 +569,7 @@ indicate that a user is really /not/ supposed to log in ever.
 Many other packages will need to write to /usr/info/dir, which is onwed by
 glibc.  Put it in the install group and chmod 664 it.
 
-10.9
+10.9 binutils
 
 Just like in 6.3 so long ago, the binutils constructed here segfault.
 Again change the "--enable-shared" line to "--disable-shared".  Perhaps
@@ -580,12 +580,18 @@ as errors.  This is problematic for tc-mips.c, which produces a couple of
 different compiler warnings when compiled with gcc 4.3.0.  There's a
 configure option "--disable-werror" that we might as well try.
 
-10.10
+10.10 gcc
 
 GCC installation will require the removal of a bunch of symlinks
 in /usr/lib owned by root pointing into the /tools directory,
 e.g. libgcc_s.so, libgcc_s.so.1, libstdc++.* -- chown these to 
-gcc before doing the build/test/install cycle.
+gcc before doing the build/test/install cycle, if you haven't
+already.
+
+Before building gcc we need gmp and mpfr, as before.  Those are
+quite standard ./configure && make && make install at this point.
+However, since gmp requires m4, move 10.15 (m4) up before gcc as
+well.
 
 10.12
 

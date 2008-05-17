@@ -23,12 +23,16 @@ be visible to userspace programs.  The Makefile target
 "headers_install" installs only the public header files, not
 these private internal headers.
 
+The makefile target "headers_check" presumably makes sure that
+the public header files are OK.  We haven't really looked at it,
+though.  If you know what it really does, please tell us.
+
+build-dir: . (probably that's the default])
+
 prepare-source:
 
 - unpack kernel-2.6.23.16
 - apply-patches(???)
-
-build-dir: . (probably that's the default])
 
 configure-commands:
 - make mrproper
