@@ -1,0 +1,30 @@
+#!/bin/bash
+# This activates the hard disk.
+# The timing is quite sensitive.  Shorter sleeps will certainly
+# work but removing the sleeps entirely prevents the hard disk
+# from being recognized.  We do not yet understand why.
+
+cd /lib/modules/$(uname -r)/kernel
+insmod misc/diag.ko
+
+sleep 10
+
+pushd /sys/devices/pci0000:00
+for FILE in */enable
+do 
+    echo -n 1 > $FILE
+done
+popd
+
+sleep 5
+
+insmod drivers/ide/ide-core.ko
+
+sleep 5
+
+insmod drivers/ide/ide-disk.ko
+
+sleep 5
+
+insmod drivers/ide/pci/aec62xx.ko
+

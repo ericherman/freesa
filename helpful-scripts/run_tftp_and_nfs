@@ -1,0 +1,16 @@
+#!/bin/bash
+# This is for the host environment, not the freesa environment.
+# It starts the tftpd and NFS servers.
+#
+# Adjust the echo command to be appropriate for your computer.
+
+in.tftpd -l -s -B 1400 /home/clfs/boot
+portmap
+rpc.mountd
+rpc.nfsd
+rpc.statd
+rpc.lockd
+rpc.rquotad
+
+echo "in CFE console use:"
+echo "boot -addr=0x80001000 -max=0x800000 -tftp 192.168.236.5:vmlinux"

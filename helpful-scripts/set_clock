@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# Neat little hack (though I say so myself) to synchronize the
+# Freesa system clock with the NFS server machine's clock.
+
+touch /tmp/xx-clockfile
+date -s "$(date -r /tmp/xx-clockfile)"
+rm /tmp/xx-clockfile

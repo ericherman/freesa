@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# These are the "mount kernel file system" commands from 8.4.
+
+mount -vt proc proc /mnt/proc
+mount -vt sysfs sysfs /sys
+
+mount -v -o bind /dev /mnt/dev
+mount -f -vt tmpfs tmpfs /mnt/dev/shm
+mount -f -vt devpts -o gid=4,mode=620 devpts /mnt/dev/pts
