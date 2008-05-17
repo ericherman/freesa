@@ -88,6 +88,8 @@ it sure would be cool if the whole thing had been written using literate
 programming style a la Knuth; then you could read it like a narrative or
 run it like a program, depending on your personal needs.
 
+[[packages gmp mpfr kernel-headers blah, blah, blah]]
+
 STEP 0 host system dependencies
 
 Build and install gmp and mpfr.  I used gmp 4.2.2 and mpfr 2.3.1.  You can

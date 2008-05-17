@@ -1,0 +1,42 @@
+name: linux kernel headers
+version: 2.6.23.16
+url: http://www.kernel.org/
+
+The way that programs in UNIX-style operating systems access
+system resources is by calling kernel functions called "system
+calls."  The Linux kernel has header files that define all of the
+system calls exposed to userspace programs.
+
+Userspace programs don't usually invoke system calls themselves.
+Instead, they invoke system library functions (such as the ones
+defined in the standard C library, which on GNU/Linux systems is
+typically glibc or uClibc) that invoke system calls as needed to
+accomplish their work.
+
+This step installs all of the Linux kernel header files that the
+C library needs.
+
+The kernel source tree also includes a number of other, private,
+header files -- these define data structures and functions that
+are used only within the kernel itself, and are not intended to
+be visible to userspace programs.  The Makefile target
+"headers_install" installs only the public header files, not
+these private internal headers.
+
+prepare-source:
+
+- unpack kernel-2.6.23.16
+- apply-patches(???)
+
+build-dir: . (probably that's the default])
+
+configure-commands:
+- make mrproper
+
+make-commands:
+- make ENV[KERNEL_ARCH] headers_check
+
+test-commands:
+
+install-commands:
+- make ENV[KERNEL_ARCH] headers_install INSTALL_HDR_PATH=ENV[SYSROOT]/usr
