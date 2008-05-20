@@ -513,11 +513,14 @@ For core processors, -march is probably prescott.
 
 For mips, of course, don't worry about architecture.  We should still be
 able to omit frame pointers and use a reasonably high optimization level.
+You can use -O3, or -O2, or -Os.  -Os is probably the best option, since
+the freesa box has little RAM and cache.
 
-export CFLAGS="-O3 -pipe -fomit-frame-pointer"
+export CFLAGS="-Os -pipe -fomit-frame-pointer"
 export CXXFLAGS="${CFLAGS}"
 
 Override these in the "options" file for each package user if necessary.
+Set the defaults in /etc/pkgusr/bash_profile.
 
 10.4 temporary perl
 
@@ -560,6 +563,7 @@ If you want the posix man pages, pre-create
 glibc
 
 On the Freesa (MIPS) box, use CFLAGS "-g -O2 -pipe -fomit-frame-pointer".
+That's really important!  You can't mess with glibc.
 
 The CLFS book suggests setting CFLAGS in the configure command line to
 something like "-march=i686 -mtune=generic -g -O2"; that is probably a good
