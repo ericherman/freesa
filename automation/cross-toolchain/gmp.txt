@@ -1,0 +1,38 @@
+name: GNU MP Library
+version: 4.2.2
+project_url: http://swox.com/gmp/
+
+GMP, the GNU Multi-Precision arithmetic library, is a new
+component in -- or perhaps it is more properly called a
+dependency of -- the GNU toolchain.  It allows arithmetic
+operations to be performed with levels of precision other than
+the standard integer and floating-point types.  Applications can
+use GMP to provide arithmetic with thousands or millions of
+digits of precision if that's what they need.
+
+GMP has been needed by the Fortran GCC front-end for some time,
+but starting with release 4.3.0 of GCC it is needed for C as
+well.
+
+If your system already has GMP installed, this step can be
+skipped.
+
+[these are probably all defaults except maybe the configure
+command, so they should probably be omitted altogether.]
+
+build-dir: .
+
+prepare-source:
+- unpack tarball
+
+configure-commands:
+- ./configure --prefix=/usr/local
+
+make-commands:
+- make
+
+test-commands:
+- make check
+
+install-commands:
+- make install

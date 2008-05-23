@@ -1,6 +1,6 @@
 name: linux kernel headers
 version: 2.6.23.16
-url: http://www.kernel.org/
+project_url: http://www.kernel.org/
 
 The way that programs in UNIX-style operating systems access
 system resources is by calling kernel functions called "system
@@ -27,11 +27,10 @@ The makefile target "headers_check" presumably makes sure that
 the public header files are OK.  We haven't really looked at it,
 though.  If you know what it really does, please tell us.
 
-build-dir: . (probably that's the default])
+build-dir: . (probably that's the default)
 
 prepare-source:
-
-- unpack kernel-2.6.23.16
+- unpack tarball
 - apply-patches(???)
 
 configure-commands:

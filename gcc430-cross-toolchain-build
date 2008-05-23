@@ -1,9 +1,10 @@
 Here are notes and scripts and things related to my efforts to build a
-cross-toolchain using current tools, by which I mean:
+cross-toolchain using the latest released versions of all tools, by which I
+mean:
 
 binutils 2.18
 gcc 4.3.0
-glibc 2.7
+glibc 2.7 or uClibc 0.9.29
 gmp 4.2.2
 linux 2.6.25 (or, for mips, 2.6.23.16)
 mpfr 2.3.1
@@ -22,11 +23,11 @@ perfect for us, since we want to ensure that components of the host system
 are ignored by our cross-tools, whether we're doing a real cross-toolchain
 or a faux cross-toolchain (like an x86-to-x86 cross).
 
-These instructions are very conservative, and include building glibc in the
-sysroot as well as everything else.  The /tools directory is where we
-eventually need to install the glibc that we're going to link against; but
-we're going to build that separately after the cross-toolchain build is
-complete.
+These instructions are very conservative, and include building the C
+library in the sysroot as well as everything else.  For CLFS, we eventually
+need to install glibc in the /tools directory, so that we have an entirely
+self-contained set of utilities under /tools; but we're going to build that
+separately after the cross-toolchain build is complete.
 
 The patches referred to here are included in the "patches" directory.
 
@@ -48,7 +49,7 @@ unset CFLAGS
 unset CXXFLAGS
 export CLFS_HOST=i686-cross-linux-gnu
 export CLFS_TARGET=i686-pc-linux-gnu
-export SYSROOT=$CLFS
+export SYSROOT=/cross-tools/sysroot
 export KERNEL_VERSION=2.6.25
 unset KERNEL_ARCH
 export GLIBCFLAG="-march=$(cut -d- -f1 <<< $CLFS_TARGET) -mtune=generic -g -O2"
@@ -64,19 +65,12 @@ There's a build script in automation that does all the work for you, aside
 from setting those environment variables..
 
 gcc, glibc, and binutils MUST all be built from a separate "build"
-directory, not the source directory.  Normally, the source directory name
-includes the version number (e.g. binutils-2.18); I'm using pre-patched
-versions that already have the appropriate CLFS and other patches applied,
-and I used the convention of giving the source directory an additional "-p"
-to signal that.  The build script will work as long as the source directory
-starts out with the correct string ("gcc" or "binutils" or whatever) and
-there aren't any other directories in the build directory with those
-prefixes.
+directory, not the source directory.
 
 The notes here are meant to be read along with the automated script.  Gosh,
 it sure would be cool if the whole thing had been written using literate
 programming style a la Knuth; then you could read it like a narrative or
-run it like a program, depending on your personal needs.
+run it like a program, depending on your personal needs.  Maybe someday.
 
 STEP 0 host system dependencies
 
@@ -121,6 +115,17 @@ source directory around for now:  we will need it again a little later.
 
 [On digad: 0:49 azoth: 0:30]
 
+STEP 3b uclibc headers
+
+uClibc is a small C library designed expressly for situations in which
+glibc is too large.  That's the case when building tools for a
+resource-constrained environment like the flash EPROM on the WL-700gE.
+
+uClibc doesn't need any patches.
+
+After this step, keep the uClibc directory around -- the same configuration
+will be used in a later step.
+
 STEP 4 gcc (bare compiler)
 
 Apply only the posix patch -- originally from CLFS.
@@ -141,10 +146,10 @@ GCC can't create programs unless it has access to a support library called
 libgcc.  (There are other support libraries as well, like libgcc_eh; I
 don't know what they are for.)  We can't build libgcc, because it has to be
 linked against some C runtime startup files (crti.o and a couple others)
-from glibc.  I'm not sure why; it's not a program, just a library.  But
-nevertheless, they are.  So all we can do at this point is build a "bare"
-compiler: just the gcc program per se.  We can use that bare compiler to
-produce the C startup files.
+from the C library.  I'm not sure why; it's not a program, just a library.
+But nevertheless, they are.  So all we can do at this point is build a
+"bare" compiler: just the gcc program per se.  We can use that bare
+compiler to produce the C startup files.
 
 After we build the crt?.o files, we can then build libgcc; and then we'll
 be able to build glibc.  After that, we'll build the full gcc.
@@ -176,6 +181,33 @@ keep the source directory around.
 (SEE SCRIPT FOR COMMANDS)
 
 [On digad: 0:12 azoth: 0:20]
+
+STEP 5b uclibc
+
+Unlike glibc, uClibc can be built without libgcc; so instead of building
+just the startup files initially, we can build and install the entire C
+library.  That makes steps 6 and 7 unnecessary when using uClibc; and also
+means that the gcc build directory from step 4 can be deleted now.
+
+However, uClibc does require an additional step after building the full gcc
+compiler:  the utilities it provides, such things as ldd and ldconfig, need
+to be built separately.
+
+There is something wrong with the uClibc installation -- or, more likely,
+the flaw is with these instructions and I simply don't know enough to
+correct the real problem.  In either case, a header file "fenv.h" that
+should be produced is not; the only fenv.h provided is in the "bits"
+subdirectory and has a guard clause that prevents it from being included 
+directly.  The bits/fenv.h file comes from glibc, and the original glibc
+version gets most of its content from math/fenv.h before including
+bits/fenv.h.  uClibc doesn't have the top-level fenv.h or math/fenv.h.  To
+get around the downstream build failure (when building the full gcc), we
+simply synthesize a very basic fenv.h that just gets bits/fenv.h included.
+
+fenv.h is a header file related to ISO C99 floating-point arithmetic (it
+means "floating-point environment"). If problems occur when using the
+uClibc-based toolchain to compile or run programs that use floating-point
+math, this is probably the reason.
 
 STEP 6 gcc (libgcc)
 
@@ -248,6 +280,11 @@ couldn't we?  Yes, of course we could.  But it only takes about a third of
 a minute to install them, so why sweat it?
 
 (SEE SCRIPT FOR COMMANDS)
+
+STEP 9b uclibc utilities
+
+As mentioned earlier, some uclibc utility programs (ldd and ldconfig, and
+possibly others) weren't built earlier.  Build them now.
 
 STEP 10 glibc (in /tools)
 

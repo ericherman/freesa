@@ -1,0 +1,36 @@
+name: MPFR library
+version: 2.3.1
+project_url: http://www.mpfr.org/
+
+MPFR is a library for arbitrary-precision floating-point
+arithmetic.  It uses GMP internally, but provides any level of
+precision (including very small precision) and provides the four
+rounding modes from the IEEE 754-1985 standard.
+
+Like GMP, MPFR is a new component in, or dependency of, the GNU
+toolchain.  It has been needed by the Fortran GCC front-end for
+some time, but starting with release 4.3.0 of GCC, MPFR is needed
+for C as well.
+
+If your system already has MPFR installed, this step can be
+skipped.
+
+[these are probably all defaults except maybe the configure
+command, so they should probably be omitted altogether.]
+
+build-dir: .
+
+prepare-source:
+- unpack tarball
+
+configure-commands:
+- ./configure --prefix=/usr/local
+
+make-commands:
+- make
+
+test-commands:
+- make check
+
+install-commands:
+- make install

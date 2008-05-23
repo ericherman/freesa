@@ -31,6 +31,7 @@ lzma -d < ../Sources/binutils*tar.lzma | tar xf -
 lzma -d < ../Sources/gcc*tar.lzma | tar xf -
 lzma -d < ../Sources/glibc*tar.lzma | tar xf -
 lzma -d < ../Sources/linux*tar.lzma | tar xf -
+lzma -d < ../Sources/uclibc*tar.lzma | tar xf -
 }
 
 function step01_kernel_headers()
@@ -68,6 +69,21 @@ cp -v ../glibc*/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
 echo WOOT
 }
 
+function step03b_uclibc_headers()
+{
+make distclean
+rm -f extra/config/.depend
+cp ${CONFIG_DIR}/uclibc-config .config
+cat >> .config <<EOF
+KERNEL_HEADERS="/cross-tools/sysroot/usr/include"
+SHARED_LIB_LOADER_PREFIX="/lib"
+RUNTIME_PREFIX="/"
+DEVEL_PREFIX="/usr"
+EOF
+make oldconfig
+make PREFIX=$SYSROOT install_headers
+}
+
 function step04_gcc_bare()
 {
 ../gcc*/configure --prefix=/cross-tools \
@@ -102,6 +118,18 @@ make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crtn.o &&
 mkdir -p $SYSROOT/lib &&
 cp csu/crt{1,i,n}.o $SYSROOT/lib &&
 echo WOOT
+}
+
+function step05b_uclibc()
+{
+    # for mips, specify CROSS=${CLFS_TARGET}-
+    make # CROSS=${CLFS_TARGET}-
+    make PREFIX=$SYSROOT install
+    # for some reason, fenv.h doesn't get set up properly
+    cat > $SYSROOT/usr/include/fenv.h <<EOF
+#define _FENV_H
+#include <bits/fenv.h>
+EOF
 }
 
 function step06_gcc_libgcc()
@@ -145,6 +173,13 @@ make install &&
 echo WOOT
 }
 
+function step09b_uclibc_utilities()
+{
+    make utils &&
+    make PREFIX=$SYSROOT install_utils &&
+    echo WOOT
+}
+
 function step09_kernel_headers_for_tools()
 {
 make mrproper &&
@@ -181,7 +216,7 @@ BUILD_DIR=$PWD
 
 echo "clearing out old stuff, I hope that's what you wanted."
 
-rm -rf $CLFS/{etc,lib,sbin,usr,tools,cross-tools}
+rm -rf $CLFS/{etc,lib,sbin,usr,tools,cross-tools,uclibc}
 mkdir -p $CLFS/tools
 mkdir -p $CLFS/cross-tools
 rm -rf build-binutils build-glibc build-gcc

@@ -5,14 +5,6 @@ all toolchain components as of May 2008.  That means:
 
 [[package-list]]
 
-GMP and MPFR are new pieces of the GNU toolchain; MPFR is
-especially interesting since it is not a GNU package.  They are
-both math libraries providing multiple-precision facilities.
-Both have been needed for the Fortran GCC front-end for some
-time, but starting with release 4.3.0 of GCC they are needed for
-C as well and are therefore required components of all GNU
-toolchains.
-
 The cross-toolchain built here uses a standard sysroot approach,
 as recommended by the GCC developers.  That means means that a
 directory on the host system (the "sysroot" directory) is set up
@@ -70,8 +62,6 @@ export KERNEL_VERSION=2.6.23
 export GLIBCFLAG="-g -O2"
 export KERNEL_ARCH="ARCH=mips"
 
-There's a build script in automation that does all the work for you, aside
-from setting those environment variables..
 
 gcc, glibc, and binutils MUST all be built from a separate "build"
 directory, not the source directory.  Normally, the source directory name
