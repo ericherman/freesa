@@ -1,8 +1,8 @@
 name: GNU MP Library
 version: 4.2.2
-project_url: http://swox.com/gmp/
+project_url: http://gmplib.org/
 
-configuration_parameters:
+configuration_defaults:
  - INSTALL_GMP: true
  - GMP_PREFIX: /usr/local
 
@@ -15,8 +15,8 @@ use GMP to provide arithmetic with thousands or millions of
 digits of precision if that's what they need.
 
 GMP has been needed by the Fortran GCC front-end for some time,
-but starting with release 4.3.0 of GCC it is needed for C as
-well.
+but starting with release 4.3.0 of GCC it is needed for C (and
+C++) as well.
 
 If your system already has GMP installed, this step can be
 skipped.

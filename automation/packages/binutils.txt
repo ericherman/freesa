@@ -1,13 +1,48 @@
+name: GNU binutils
+version: 2.18
 
-STEP 2 binutils
+configuration_defaults:
+ - HOST
+ - TARGET
+ - SYSROOT
 
-Apply the posix and branch_update-3 patches, originally from CLFS, that you
-can find in the patch directory.
+The GNU binary utilities are a collection of programs and
+libraries that produce and operate on object files.  The primary
+ones are +as+ (the assembler, which transforms assembly source
+code into object code) and +ld+ (the linker, which combines
+multiple object files into an executable program); but there are
+a bunch of others including +addr2line+, +ar+, +c++filt+,
++gprof+, +nm+, +objcopy+, +objdump+, +ranlib+, +readelf+, +size+,
++strings+, and +strip+; and there are a couple of shared
+libraries as well (+libbfd+ and +libopcodes+).  All of the
+utility programs are documented in man pages and the binutils
+info file.
 
-You can clean up the source directory for this immediately after the build,
-if you'd like.  You won't use it again in this process.
+You won't need to invoke any of these programs manually.  The
++gcc+ driver program calls +as+ and +ld+ as necessary to do its
+work, and several of the other utility programs are used
+internally during the build process of the rest of the toolchain
+(and beyond).
 
-(SEE SCRIPT FOR COMMANDS)
+patches:
+ - posix-1
+ - branch_update-3
 
-[On digad: 2:30 azoth 2:00]
+build-dir: ../build-binutils
+
+configure-commands:
+ - ../binutils*/configure --prefix=/cross-tools \
+     --build=${CLFS_HOST} --target=${CLFS_TARGET} \
+     --disable-nls --enable-shared --disable-multilib \
+     --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT 
+ - make configure-host
+
+make-commands:
+ - make
+
+test-commands:
+
+install-commands:
+ - make install
+ - cp -v ../binutils*/include/libiberty.h $SYSROOT/usr/include
 

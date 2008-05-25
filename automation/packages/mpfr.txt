@@ -2,7 +2,7 @@ name: MPFR library
 version: 2.3.1
 project_url: http://www.mpfr.org/
 
-configuration_parameters:
+configuration_defaults:
  - INSTALL_MPFR: true
  - MPFR_PREFIX: /usr/local
 
@@ -14,7 +14,13 @@ rounding modes from the IEEE 754-1985 standard.
 Like GMP, MPFR is a new component in, or dependency of, the GNU
 toolchain.  It has been needed by the Fortran GCC front-end for
 some time, but starting with release 4.3.0 of GCC, MPFR is needed
-for C as well.
+for C and C++ as well.  GCC uses MPFR to pre-calculate the result
+of some mathematic functions when those functions have constant
+arguments, and produces the same results regardless of the math
+library or floating point engine used on the runtime system.
+This occurs in what is called the GCC "middle-end," which is kind
+of a silly name since it's not an end.
 
 If your system already has MPFR installed, this step can be
 skipped.
+

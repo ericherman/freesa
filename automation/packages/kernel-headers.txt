@@ -2,14 +2,14 @@ name: linux kernel headers
 version: 2.6.23.16
 project_url: http://www.kernel.org/
 
-configuration_parameters:
+configuration_defaults:
  - KERNEL_ARCH_PARAM: ARCH=mips
  - KERNEL_HEADER_PATH: CONFIG[SYSROOT]/usr
 
 The way that programs in UNIX-style operating systems access
-system resources is by calling kernel functions called "system
-calls."  The Linux kernel has header files that define all of the
-system calls exposed to userspace programs.
+system resources is by invoking kernel functions that are called
+"system calls."  The Linux kernel has header files that define
+all of the system calls exposed to userspace programs.
 
 Userspace programs don't usually invoke system calls themselves.
 Instead, they invoke system library functions (such as the ones

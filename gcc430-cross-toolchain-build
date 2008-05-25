@@ -61,8 +61,7 @@ export KERNEL_VERSION=2.6.23
 export GLIBCFLAG="-g -O2"
 export KERNEL_ARCH="ARCH=mips"
 
-There's a build script in automation that does all the work for you, aside
-from setting those environment variables..
+There's a build script in automation that does all the work for you.
 
 gcc, glibc, and binutils MUST all be built from a separate "build"
 directory, not the source directory.

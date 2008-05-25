@@ -12,7 +12,7 @@ Therefore, we need to build an alternative C library that is set
 up to have a runtime search path of /tools.
 
 [Set up configuration parameters so that the stuff is installed
-under /tools instead of $SYSROOT]
+under /tools instead of $SYSROOT this time]
 
 - [[kernel-headers]]
 - [[glibc]]
