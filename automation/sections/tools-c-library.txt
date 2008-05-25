@@ -1,0 +1,18 @@
+The cross-toolchain section builds a standard sysroot-style
+cross-toolchain, which is fine for normal purposes.  The programs
+constructed with that toolchain will be set up to link against a
+dynamic loader in the standard location (/lib), and the C library
+we built there has a dynamic loader that expects libraries to be
+in the standard locations (/lib and /usr/lib).  To bootstrap the
+freesa system, we need to build a set of temporary programs and
+libraries that are self-contained within the /tools directory
+instead.
+
+Therefore, we need to build an alternative C library that is set
+up to have a runtime search path of /tools.
+
+[Set up configuration parameters so that the stuff is installed
+under /tools instead of $SYSROOT]
+
+- [[kernel-headers]]
+- [[glibc]]

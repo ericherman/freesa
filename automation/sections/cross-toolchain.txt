@@ -1,0 +1,79 @@
+This section describes how to build a GNU cross-toolchain that
+runs on x86 machines and constructs programs that will run on
+MIPS boxes.  The result is composed of current stable versions of
+all toolchain components as of May 2008.  That means:
+
+[[package-list]]
+
+The cross-toolchain built here uses a standard sysroot approach,
+as recommended by the GCC developers.  That means means that a
+directory on the host system (the "sysroot" directory) is set up
+to contain a subset of the root filesystem of the target system:
+/bin, /lib, /usr/lib, /etc, that sort of thing.  Include files
+and libraries will be used only from the sysroot location, not
+from the normal host system locations.
+
+Essentially the same process can be used to build a "faux"
+cross-toolchain -- that is, a set of tools that runs on x86
+computers and builds binaries on x86 systems.  That seems
+pointless, but is useful if you want to ensure that you are
+building all system components from source code and those
+components are entirely independent of the original build system.
+
+Note that we are building our cross-glibc with a "minimum kernel
+version" set to the version of the actual runtime kernel that we
+will use to construct the real LFS system using the programs in
+/tools.  It's kind of unnecessary to worry about optimizing the
+glibc here that way, since it won't wind up on the final system,
+but it won't hurt anything and is good practice in general.
+According to the glibc documentation, the higher the kernel
+version number, the less unnecessary compatibility code is built
+into the C library.
+
+EDITPOINT
+
+Flags for building an x86-to-x86 "faux" cross-toolchain -- put these in the
+building user's .bashrc:
+
+export CLFS=/home/clfs
+export LC_ALL=POSIX
+export PATH=/cross-tools/bin:/bin:/usr/bin
+unset CFLAGS
+unset CXXFLAGS
+export CLFS_HOST=i686-cross-linux-gnu
+export CLFS_TARGET=i686-pc-linux-gnu
+export SYSROOT=$CLFS
+export KERNEL_VERSION=2.6.25
+unset KERNEL_ARCH
+export GLIBCFLAG="-march=$(cut -d- -f1 <<< $CLFS_TARGET) -mtune=generic -g -O2"
+
+Flags for building an x86-to-mipsel cross-toolchain:
+
+export CLFS_TARGET=mipsel-unknown-linux-gnu
+export KERNEL_VERSION=2.6.23
+export GLIBCFLAG="-g -O2"
+export KERNEL_ARCH="ARCH=mips"
+
+variant: glibc
+ - [[gmp]]
+ - [[mpfr]]
+ - [[kernel-headers]]
+ - [[binutils]]
+ - [[glibc: headers]]
+ - [[gcc: bare compiler]]
+ - [[glibc: startup]]
+ - [[gcc: libgcc]]
+ - [[glibc]]
+ - [[gcc]]
+
+variant: uclibc
+ - [[gmp]]
+ - [[mpfr]]
+ - [[kernel-headers]]
+ - [[binutils]]
+ - [[uclibc: headers]]
+ - [[gcc: bare compiler]]
+ - [[uclibc: library]]
+ - [[gcc]]
+ - [[uclibc: utilities]]
+

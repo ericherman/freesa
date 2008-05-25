@@ -1,0 +1,41 @@
+
+STEP 3 glibc headers
+
+Apply the patches: libgcc_eh, localedef_segfault, i586_chk, and
+fixup_for_gcc43.  The first three are from CLFS; the last one corrects the
+glibc build so it works with GCC 4.3 (and is already in glibc CVS).
+
+After doing this build, get rid of the glibc-build directory but keep the
+source directory around for now:  we will need it again a little later.
+
+(SEE SCRIPT FOR COMMANDS)
+
+[On digad: 0:49 azoth: 0:30]
+
+
+STEP 5 glibc (startup files)
+
+If you kept around the source directory from step 3, just use it again
+here.  If not, remember to apply the patches: libgcc_eh,
+localedef_segfault, i586_chk, and fixup_for_gcc43.  
+
+The build commands here just build the startup files we need.  We'll build
+the rest of glibc after we build libgcc.
+
+Again, when this step is complete, delete the glibc-build directory but
+keep the source directory around.
+
+(SEE SCRIPT FOR COMMANDS)
+
+[On digad: 0:12 azoth: 0:20]
+
+STEP 7 glibc
+
+Now we have a usable GCC, complete with libgcc, and we can build glibc at
+last!  Use the same glibc source directory as before, or re-apply all the
+patches that were used previously; but use a fresh glibc-build directory.
+
+(SEE SCRIPT FOR COMMANDS)
+
+[On digad: 14:07 azoth: 11:00]
+

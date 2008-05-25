@@ -2,6 +2,10 @@ name: linux kernel headers
 version: 2.6.23.16
 project_url: http://www.kernel.org/
 
+configuration_parameters:
+ - KERNEL_ARCH_PARAM: ARCH=mips
+ - KERNEL_HEADER_PATH: CONFIG[SYSROOT]/usr
+
 The way that programs in UNIX-style operating systems access
 system resources is by calling kernel functions called "system
 calls."  The Linux kernel has header files that define all of the
@@ -27,19 +31,14 @@ The makefile target "headers_check" presumably makes sure that
 the public header files are OK.  We haven't really looked at it,
 though.  If you know what it really does, please tell us.
 
-build-dir: . (probably that's the default)
-
-prepare-source:
-- unpack tarball
-- apply-patches(???)
-
 configure-commands:
-- make mrproper
+ - make mrproper
 
 make-commands:
-- make ENV[KERNEL_ARCH] headers_check
+ - make CONFIG[KERNEL_ARCH] headers_check
 
 test-commands:
 
 install-commands:
-- make ENV[KERNEL_ARCH] headers_install INSTALL_HDR_PATH=ENV[SYSROOT]/usr
+ - make CONFIG[KERNEL_ARCH] headers_install \
+     INSTALL_HDR_PATH=CONFIG[KERNEL_HEADER_PATH]

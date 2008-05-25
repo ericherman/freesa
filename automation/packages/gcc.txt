@@ -1,0 +1,87 @@
+
+STEP 4 gcc (bare compiler)
+
+Apply only the posix patch -- originally from CLFS.
+
+It seems as though it should be unnecessary to mess around with the GCC
+specs here.  It is a cross-compiler; if the wrong libraries are linked in,
+presumably the thing will simply not work at all, and this compiler is only
+going to be used to build glibc anyway.  (We're going to rebuild GCC after
+we have a glibc.)
+
+After doing this build, don't get rid of ANYTHING -- we will use the same
+build directory later on after we use the bare compiler from here to create
+the startup files that are needed to get libgcc compiled.  (If you do
+delete the gcc-build directory, don't panic, it will just take a few
+minutes to rebuild the bare compiler before the libgcc build happens.)
+
+GCC can't create programs unless it has access to a support library called
+libgcc.  (There are other support libraries as well, like libgcc_eh; I
+don't know what they are for.)  We can't build libgcc, because it has to be
+linked against some C runtime startup files (crti.o and a couple others)
+from glibc.  I'm not sure why; it's not a program, just a library.  But
+nevertheless, they are.  So all we can do at this point is build a "bare"
+compiler: just the gcc program per se.  We can use that bare compiler to
+produce the C startup files.
+
+After we build the crt?.o files, we can then build libgcc; and then we'll
+be able to build glibc.  After that, we'll build the full gcc.
+
+With the x86 to x86 toolchain, I did not have to specify host.  With the
+x86 to mips toolchain, I did.  It's OK to specify it for the faux-cross
+toolchain as well.
+
+The LDFLAGS_FOR_TARGET and CPPFLAGS_FOR_TARGET are from gcc bug #35532 --
+they are mentioned by Carlos O'Donell as the way to use all of the sysroot
+framework.  How exactly they function is beyond me.
+
+(SEE SCRIPT FOR COMMANDS)
+
+[On digad: 6:36 azoth: 4:28]
+
+
+STEP 6 gcc (libgcc)
+
+If you deleted the gcc and/or gcc-build directories from step 4,
+reconstruct them now by doing that step again.  After this, trash the
+gcc-build directory; but we will want the gcc source directory one more
+time.
+
+After we build and install libgcc, we can get rid of the crt* object files
+we just built in the previous step.  They're going to be rebuilt anyway
+when we do the full glibc build.
+
+(SEE SCRIPT FOR COMMANDS)
+
+[On digad: 0:49 azoth: 0:48]
+
+STEP 8 gcc (full compiler)
+
+Now we are going to build the full gcc cross-compiler.  The point of this
+compiler is to build the temporary tools (under /tools) that will allow us
+to build the final LFS system.  When we're using those tools to build the
+final system, we want to do a native build of everything, including glibc,
+so we want those tools to be independent of any filesystem locations that
+will still be present in the final system.  In particular, this includes
+/lib.
+
+When the standard GNU toolchain builds an executable, it always links it
+against the dynamic link library (which is something like
+/lib/ld-linux.so.2 or /lib/ld.so.1).  That's normally fine, but we want the
+programs we build under /tools to be entirely independent of /lib.  So we
+need to adjust our cross-toolchain so that the programs it builds look in
+/tools/lib for their libraries.  Alternatively, we could build everything
+under /tools as a static executable, so they would be self-contained and
+not need any shared libraries at all; but that option isn't well-supported
+by glibc.  (Maybe if we changed the cross-toolchain to be uClibc-based,
+instead of glibc-based, we could get that to work.)
+
+The CLFS approach has been to modify the specs up front by patching gcc.
+We're instead going to adjust things after the build, instead of applying
+additional patches now.  Use the same posix patch as earlier, but no
+others.
+
+(SEE SCRIPT FOR COMMANDS)
+
+[On digad: 11:28 azoth: 9:04]
+

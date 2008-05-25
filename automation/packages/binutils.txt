@@ -1,0 +1,13 @@
+
+STEP 2 binutils
+
+Apply the posix and branch_update-3 patches, originally from CLFS, that you
+can find in the patch directory.
+
+You can clean up the source directory for this immediately after the build,
+if you'd like.  You won't use it again in this process.
+
+(SEE SCRIPT FOR COMMANDS)
+
+[On digad: 2:30 azoth 2:00]
+
