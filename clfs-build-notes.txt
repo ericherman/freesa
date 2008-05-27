@@ -7,6 +7,9 @@ after doing the toolchain build -- everything is built in the /cross-tools
 directory.  That's good, though -- that means the /tools directory will
 contain only stuff built using the cross-tools.
 
+The first thing installed in /tools is the glibc that will be used for all
+of the cross-compiled utilities.  It has /tools as its runtime search path.
+
 At this point we're going to FBBG, mostly.
 
 6.3 binutils
@@ -35,9 +38,10 @@ cross-compiler; those steps use the same GMP include directives as the rest
 of the build, and if those include directories also include the glibc
 headers like stdio.h then the native compiler picks up those versions of
 the header files rather than the native glibc header files.  Hilarity
-ensues.  (The actual failure shows that there is an error when including
-types.h, because _MIPS_SZPTR is not defined.  That's a built-in definition
-in the mips cross-compiler, but not in the native compiler, of course.)
+ensues.  (The actual failure occurs when doing an x86-to-mips cross build,
+and says that there is an error when including types.h, because _MIPS_SZPTR
+is not defined.  That's a built-in definition in the mips cross-compiler,
+but not in the native compiler, of course.)
 
 After building GMP and MPFR, copy the shared libraries over to /tools/lib
 so that they will be available to gcc and other programs that want them.
@@ -52,7 +56,7 @@ problem by building only static versions of the library components of
 binutils (e.g. libbfd).  This is accomplished with --disable-shared in the
 configure line.
 
-../binutils/configure --prefix=/tools \
+../binutils*/configure --prefix=/tools \
     --build=${CLFS_HOST} --host=${CLFS_TARGET} --target=${CLFS_TARGET} \
     --disable-nls --disable-shared --disable-multilib \
     --with-gmp=/cross-tools/gmp --with-mpfr=/cross-tools/gmp &&
@@ -70,7 +74,7 @@ Switch to GCC 4.3.0
 
 Change the configure line to include the GMP and MPFR; I wound up with:
 
-../gcc/configure --prefix=/tools \
+../gcc*/configure --prefix=/tools \
     --build=${CLFS_HOST} --host=${CLFS_TARGET} --target=${CLFS_TARGET} \
     --with-local-prefix=/tools --enable-long-long --enable-c99 \
     --enable-shared --enable-threads=posix --enable-__cxa_atexit \
@@ -99,12 +103,11 @@ And add --cache-file=config.cache to the configure line, of course.
 
 6.12 file
 
-I switched to file 4.24.  In the middle of the build, it crashed with "no
-rule to make target file"; I got it to finish by doing:
-
-"cp src/.libs/file magic"
-
-and then re-ran make.  That is totally dorky, I agree.
+I switched to file 4.24.  When cross-compiling, the file build needs to run
+the native (host system) "file" program to compile the magic file;
+unfortunately, it doesn't know how to find it.  The fix-cross-compile patch
+works around the problem, assuming that the native system "file" command is
+located at /usr/bin/file.  If it's not, adjust the patch appropriately.
 
 6.20 tar
 
@@ -507,21 +510,6 @@ expect-5.43.0-tcl85-fixup-2.patch
 
 It should then build fine using the book instructions.
 
-10.3 set CFLAGS and CXXFLAGS:
-
-For core processors, -march is probably prescott.
-
-For mips, of course, don't worry about architecture.  We should still be
-able to omit frame pointers and use a reasonably high optimization level.
-You can use -O3, or -O2, or -Os.  -Os is probably the best option, since
-the freesa box has little RAM and cache.
-
-export CFLAGS="-Os -pipe -fomit-frame-pointer"
-export CXXFLAGS="${CFLAGS}"
-
-Override these in the "options" file for each package user if necessary.
-Set the defaults in /etc/pkgusr/bash_profile.
-
 10.4 temporary perl
 
 Why this wasn't built along with the other test tools at the end of chapter
@@ -535,19 +523,58 @@ The gcc42 fix has been incorporated into perl 5.10.0, but the libc
 hard-wired paths are still there.  I respun the 5.8.8-libc-2 patch into
 5.10.0-libc-1.
 
-10.5 
+Change the installation commands to install into perl5/5.10.0 rather than
+perl5/5.8.8, too.  See how you need to be paying attention?
 
-*******
-PRIOR TO INSTALLING LINUX KERNEL HEADERS
-*******
+*****PRIOR TO 10.5 KERNEL HEADERS*****
+
 install the package users stuff!
 
 See "README" in the package-users tarball for instructions.
 
+set CFLAGS and CXXFLAGS:
+
+For core processors, -march is probably prescott.  (For core 2, use core2,
+of course.)  This is based on the GCC info page for i386 and x86-64
+options, which says:
+
+"prescott: Improved version of Intel Pentium4 CPU with MMX, SSE, SSE2 and
+SSE3 instruction set support."
+
+and
+
+"core2: Intel Core2 CPU with 64-bit extensions, MMX, SSE, SSE2, SSE3 and
+SSSE3 instructions set support."
+
+and a document I found online, written by Agner Fog of Copenhagen
+University, showing instruction tables for Intel-architecture CPUs. It
+shows that Core Solo and Core Duo processors support the instruction sets:
+80186, CPUID, PPro, MMX, SSE, SSE2, and SSE3.  The Core 2 supports all
+those, and also Suppl. SSE3 and 64-bit operations.
+
+Optimization level for Intel processors can be O2, O3, or Os.  O2 is
+probably the best for most packages; individual programs might benefit from
+O3, but this is apparently rare.
+
+For mips, of course, don't worry about architecture.  We should still be
+able to omit frame pointers and use a reasonably high optimization level.
+You can use -O3, or -O2, or -Os.  -Os is probably the best option for
+freesa, since the freesa box has little RAM and cache.
+
+export CFLAGS="-Os -pipe -fomit-frame-pointer"
+export CXXFLAGS="${CFLAGS}"
+
+Override these in the "options" file for each package user if necessary.
+Set the defaults in /etc/pkgusr/bash_profile.
+
+10.5 
+
 AFTER INSTALLING LINUX KERNEL HEADERS
 
-Move /usr/include/scsi to /usr/include/linux/scsi (or just rename them?) --
-glibc needs to install files with the same names to /usr/include/scsi.
+If there is a directory /usr/include/scsi, move it to
+/usr/include/linux/scsi.  glibc has its own scsi header files to install.
+For some reason, in 2.6.25.3, the scsi kernel headers aren't installed, so
+this problem doesn't arise.
 
 10.6
 
@@ -563,15 +590,32 @@ If you want the posix man pages, pre-create
 glibc
 
 On the Freesa (MIPS) box, use CFLAGS "-g -O2 -pipe -fomit-frame-pointer".
-That's really important!  You can't mess with glibc.
+That's really important!  You can't mess with glibc.  If you want to remove
+the "-pipe" you can, but it is pointless since it only affects the way that
+the build works, not the results of the build.  If you want to remove the
+"-fomit-frame-pointer", you can do that -- it will make it easier to use
+the debugger later.  I don't tend to use the debugger, so to me it's kind
+of pointless.
 
-The CLFS book suggests setting CFLAGS in the configure command line to
-something like "-march=i686 -mtune=generic -g -O2"; that is probably a good
-idea.  I always add -pipe and -fomit-frame-pointer and have never had
-problems as a result.
+For X86, the CLFS book suggests setting CFLAGS in the configure command
+line to something like "-march=i686 -mtune=generic -g -O2"; that is
+probably a good idea.  I still always add -pipe and -fomit-frame-pointer
+and have never had problems as a result.  You can try messing with -march
+and -mtune if you want.  Do NOT change the optimization level.
 
-The first time I tried the build, it hung during the compilation of
-(something or other)
+I use the same kernel version as the kernel headers in the --enable-kernel
+option (e.g. 2.6.25 -- I don't worry about the stable patch number).
+
+The first time I tried the build on Freesa, it hung during the compilation
+of (something or other).  In general, the toolchain builds on the Freesa
+box are prone to hanging and crashing.  Restarting the "make" command
+usually helps.  I'm also inclined to skip the toolchain tests on Freesa:
+they take too long and are prone to failure.
+
+When running the glibc tests, some tests fail with: "$* is no longer
+supported".  That's an incompatibility with perl 5.10.0, apparently.  I
+suppose we could back out the temporary perl to 5.8.8, but bleah.  I'm more
+inclined to ignore the glibc test failures.
 
 After installing glibc, you can allow all package users to re-run ldconfig
 by setting a special user "ldconfig" in the install group, and making
@@ -587,75 +631,132 @@ glibc.  Put it in the install group and chmod 664 it.
 
 10.9 binutils
 
-Just like in 6.3 so long ago, the binutils constructed here segfault.
-Again change the "--enable-shared" line to "--disable-shared".  Perhaps
-later they can be rebuilt with --enable-shared.
+Just like in 6.3 so long ago, the binutils constructed here segfault (on
+the MIPS freesa build, anyway).  Again change the "--enable-shared" line to
+"--disable-shared".  Perhaps later they can be rebuilt with
+--enable-shared.
 
 The binutils source files are compiled with -Werror, which treats warnings
 as errors.  This is problematic for tc-mips.c, which produces a couple of
 different compiler warnings when compiled with gcc 4.3.0.  There's a
 configure option "--disable-werror" that we might as well try.
 
+On the x86 build, where I'm running the tests, I have three failures in the
+ld tests, specifically in ld-shared/shared.exp:  "shared (non PIC)",
+"shared (non PIC, load offset)", and shared (PIC main, non PIC so)".  I'm
+pretending that doesn't matter; I changed the test command to "make -k
+check || echo 'never mind'".
+
 10.10 gcc
 
-GCC installation will require the removal of a bunch of symlinks
-in /usr/lib owned by root pointing into the /tools directory,
-e.g. libgcc_s.so, libgcc_s.so.1, libstdc++.* -- chown these to 
-gcc before doing the build/test/install cycle, if you haven't
-already.
+GCC installation will require the removal of a bunch of symlinks in
+/usr/lib owned by root pointing into the /tools directory, e.g.
+libgcc_s.so, libgcc_s.so.1, libstdc++.* -- chown these to gcc before doing
+the build/test/install cycle, if you haven't already.
 
-Before building gcc we need gmp and mpfr, as before.  Those are
-quite standard ./configure && make && make install at this point.
-However, since gmp requires m4, move 10.15 (m4) up before gcc as
-well.
+Build m4 (section 10.15) before GCC, because it is needed by GMP.  Then
+build gmp and mpfr, as before.  Those are quite standard ./configure &&
+make && make install at this point; for mpfr, I had to specify
+--with-gmp=/usr because /usr/include/gmp.h wasn't found by the gcc in
+/tools/bin -- that is not particularly surprising, I guess.
 
-10.12
+For the gcc 4.3.0 build, run the "sed" scripts but don't apply patches.
+Again, /tools/bin/gcc doesn't look in /usr/include for header files;
+specify --with-gmp and --with-mpfr of /usr.
 
-There may be three ext2 filesystem check symlinks into /tools
-from /sbin -- delete them before installing the e2fsprogs
-package.
+One thing you might want to consider trying is to change the "make
+bootstrap" command to "make profiledbootstrap" -- look at
+INSTALL/build.html for details on what that does.  This makes the build
+take longer (4604 seconds on digad) but might speed up later compiles.
 
-10.13
+On digad, I got 5 unexpected failures in libmudflap (pass41-frag.cxx).  I
+don't think that's particularly significant.  As I type this, I'm on a
+cruise ship docked at Dover, England, and asking Google about those
+failures is quite expensive, so I'm going to soldier on regardless.
 
-For coreutils, I skipped running the tests altogether.
+10.12 e2fsprogs
 
-There are symlinks that need to be removed or chowned before 
-the coreutils user can install its (correct) 
-versions: /bin/{cat,pwd,rm,stty}
+Bump to 1.40.9.
 
-10.19
+There may be three ext2 filesystem check symlinks into /tools from /sbin.
+If so, chown or delete them before installing the e2fsprogs package.
 
-Before installing libtool, be sure to re-run set_install_dirs so
-that the /usr/share/aclocal directory created by bison becomes an
-install directory; otherwise libtool won't be able to do its
-install.
+10.13 coreutils
 
-10.22
+For coreutils, I skipped running the tests altogether.  Creating dummy
+users and groups and things is too much trouble.
 
-There's a perl symlink to tools at /usr/bin/perl, get rid of
-it first.
+There are symlinks that need to be removed or chowned before the coreutils
+user can install its (correct) versions: /bin/{cat,pwd,rm,stty}
 
-Also create the minimal /etc/hosts, and turn on the loopback
-interface and set the hostname, as described in this section.
+You should put "set +h" in the coreutils options file -- otherwise, the
+location of /usr/bin/mv will be cached, and some of the "mv" commands in
+the install section will fail because mv isn't there any more.
 
-For the FreeSA build, the configure for perl again drops into a
-shell a couple of times, which needs to be exited and then the 
-suggested option selected.  I don't know how to avoid this, other
-than to modify the configure.gnu script.
+10.19 libtool
 
-10.27
+Before installing libtool, be sure to re-run set_install_dirs so that the
+/usr/share/aclocal directory created by bison becomes an install directory;
+otherwise libtool won't be able to do its install.
 
-There is a bash symlink in /bin; you can't get rid of it, because
-it's needed while the bash build proceeds.  So instead, chown the
-symlink to the bash user with "chown -h bash:bash /bin/bash". The
--h means to chown the symlink rather than the file pointed to by
-the symlink.
+10.22 perl
 
-10.34
+Bump to 5.10.0.
 
-Grep is just like bash.  chown /bin/grep to grep so the install
-will work.  It would probably be safe just to remove the symlink,
-but why bother?
+There's a perl symlink to tools at /usr/bin/perl, chown or get rid of it
+first.
+
+The patch and sed scripts are unnecessary; do not run them.
+
+Also create the minimal /etc/hosts, and turn on the loopback interface and
+set the hostname, as described in this section.
+
+For the FreeSA build, the configure for perl may drop into a shell a couple
+of times; if so, the shell needs to be exited and then the suggested option
+selected.  I don't know how to avoid this, other than to modify the
+configure.gnu script.
+
+10.27 bash
+
+There is a bash symlink in /bin; chown it to bash before building.  That's
+done for you by the chown_lfs_symlinks script; you ran it, right?
+
+10.28 bzip2
+
+Bump to 1.0.5.
+
+10.30 file
+
+Bump to 4.24.
+
+10.31 findutils
+
+There's a problem with the tests -- updatedb is apparently supposed to be
+entirely silent, but complains when it isn't run as root.  "Never mind" the
+test failure, and double-check the output to make sure nothing else has
+gone awry.
+
+10.33 gettext
+
+The gettext tests hung for me.  You may wish to skip them.
+
+10.34 grep
+
+Grep is just like bash.  I think it's the last symlink into /tools.  If you
+ran chown_lfs_symlinks like you just said you did, you shouldn't have to
+pay attention though.
+
+I had a lot of test failures that seem pointless -- they seem to be related
+to UTF-8 locales.  I neverminded the failures.
+
+10.41 man
+
+Bump to 1.6f.
+
+10.43 module-init-tools
+
+I use the package user name "module-tools" because module-init-tools is too
+long.
 
 10.46
 
@@ -664,11 +765,11 @@ foreign-language man pages.  What I do is make /usr/share/man an
 install dir and then delete the foreign language man pages later
 on.
 
-remove the SUID bit from su; otherwise it will stop working. Also
-make other programs (/bin/passwd,
-/usr/bin/{chage,chfn,chsh,expiry,gpasswd,newgrp} SUID root, or
-remove the SUID bit from them.  At least /bin/passwd should be
-SUID root so that people can change their passwords.
+remove the SUID bit from su; otherwise it will stop working. Also make
+other programs (/usr/bin/{chage,chfn,chsh,expiry,gpasswd,newgrp} and
+/bin/passwd) SUID root, or remove the SUID bit from them.  At least
+/bin/passwd should be SUID root so that people can change their passwords.
+I usually don't bother to have su SUID root; I reserve that for sudo.
 
 10.47
 

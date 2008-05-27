@@ -1,0 +1,12 @@
+diff -r -N -u file-4.24-orig/magic/Makefile.in file-4.24/magic/Makefile.in
+--- file-4.24-orig/magic/Makefile.in	2008-03-22 22:41:06.000000000 +0100
++++ file-4.24/magic/Makefile.in	2008-05-27 16:56:26.000000000 +0200
+@@ -376,7 +376,7 @@
+ 
+ # FIXME: Build file natively as well so that it can be used to compile
+ # the target's magic file
+-@IS_CROSS_COMPILE_TRUE@FILE_COMPILE = file
++@IS_CROSS_COMPILE_TRUE@FILE_COMPILE = /usr/bin/file
+ all: all-am
+ 
+ .SUFFIXES:
