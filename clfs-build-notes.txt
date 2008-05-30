@@ -576,18 +576,14 @@ If there is a directory /usr/include/scsi, move it to
 For some reason, in 2.6.25.3, the scsi kernel headers aren't installed, so
 this problem doesn't arise.
 
-10.6
-
-man-pages
+10.6 man-pages
 
 Bump to version 2.79.
 
 If you want the posix man pages, pre-create
 /usr/share/man/{man0p,man1p,man3p} and make them install dirs.
 
-10.7
-
-glibc
+10.7 glibc
 
 On the Freesa (MIPS) box, use CFLAGS "-g -O2 -pipe -fomit-frame-pointer".
 That's really important!  You can't mess with glibc.  If you want to remove
@@ -758,12 +754,16 @@ Bump to 1.6f.
 I use the package user name "module-tools" because module-init-tools is too
 long.
 
-10.46
+10.45 psmisc
 
-shadow -- the install may fail if it's unable to install some
-foreign-language man pages.  What I do is make /usr/share/man an
-install dir and then delete the foreign language man pages later
-on.
+Don't symlink killall to /bin/pidof -- we will use the one from
+sysvinit, installed in just a little while.
+
+10.46 shadow
+
+the install may fail if it's unable to install some foreign-language man
+pages.  What I do is make /usr/share/man an install dir and then delete the
+foreign language man pages later on.
 
 remove the SUID bit from su; otherwise it will stop working. Also make
 other programs (/usr/bin/{chage,chfn,chsh,expiry,gpasswd,newgrp} and
@@ -771,12 +771,12 @@ other programs (/usr/bin/{chage,chfn,chsh,expiry,gpasswd,newgrp} and
 /bin/passwd should be SUID root so that people can change their passwords.
 I usually don't bother to have su SUID root; I reserve that for sudo.
 
-10.47
+10.47 sysklogd
 
-The Makefile wants to run the real install program
-(/usr/bin/install) instead of the more-control helper script.
-This patch fixes things:
+The Makefile wants to run the real install program (/usr/bin/install)
+instead of the more-control helper script.  This patch fixes things:
 
+-----------cut here----------
 diff -r -N -u sysklogd-1.5-orig/Makefile sysklogd-1.5/Makefile
 --- sysklogd-1.5-orig/Makefile  2007-05-30 10:28:48.000000000 -0500
 +++ sysklogd-1.5/Makefile       2007-12-22 22:27:22.000000000 -0600
@@ -792,4 +792,48 @@ diff -r -N -u sysklogd-1.5-orig/Makefile sysklogd-1.5/Makefile
 
 -----------cut here----------
 
+10.48 sysvinit
+
+CLFS has a sed script that makes a message more informative. The same thing
+is accomplished with the improve-messaging patch.
+
+10.49 tar
+
+Bump to 1.20.
+
+10.50 texinfo
+
+Some tests -- like dvipdf and texi2dvi -- fail, probably because there is
+no TeX installation yet.  Nevermind the test failures, and remember to
+check to make sure nothing else goes awry.
+
+10.51 udev
+
+Bump to 120.
+
+Run set_install_dirs after installing udev: that way, packages will be able
+to install their firmware blobs in /lib/firmware.
+
+10.52 util-linux-ng
+
+The result of running the sed script is now incorporated into the
+relocate-adjtime patch.
+
+11.2 boot scripts
+
+This is a good time to tar up and remove the /cross-tools and /tools
+directories.  You shouldn't have any symlinks still leading into /tools,
+and removing those directories shouldn't cause any problems, but I like to
+tar them up just in case.  Also, create additional packages like lzma at
+this point.  For reiserfsprogs, since it wants some private kernel header
+files, go ahead and build the kernel first (in other words, create
+reiserfsprogs after section 12.3).
+
+You can create a package user to own the bootscripts, or let them be owned
+by root.  It doesn't much matter, except insofar as you may not trust the
+bootscript installer to do anything it shouldn't do.
+
+As a general practice I like to ensure that no installation routine can
+clobber any file or directory on the system without my complicity, so I
+create a "bootscripts" package user.
 

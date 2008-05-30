@@ -1,0 +1,24 @@
+This is the result of running the CLFS sed script:
+
+sed -i 's@Sending processes@& started by init@g' src/init.c
+
+diff -r -N -u sysvinit-2.86-orig/src/init.c sysvinit-2.86/src/init.c
+--- sysvinit-2.86-orig/src/init.c	2004-07-30 07:16:20.000000000 -0500
++++ sysvinit-2.86/src/init.c	2008-05-30 03:34:44.000000000 -0500
+@@ -1373,14 +1373,14 @@
+ 		case 0: /* Send TERM signal */
+ 			if (talk)
+ 				initlog(L_CO,
+-					"Sending processes the TERM signal");
++					"Sending processes started by init the TERM signal");
+ 			kill(-(ch->pid), SIGTERM);
+ 			foundOne = 1;
+ 			break;
+ 		case 1: /* Send KILL signal and collect status */
+ 			if (talk)
+ 				initlog(L_CO,
+-					"Sending processes the KILL signal");
++					"Sending processes started by init the KILL signal");
+ 			kill(-(ch->pid), SIGKILL);
+ 			break;
+ 	}
