@@ -1,0 +1,76 @@
+Here's how Random uses StGIT to manage the kernel patch set for
+the OpenWRT kernel sources.
+
+First, check out the appropriate version of the linux kernel,
+create a new branch, and tell StGIT that it will manage the new
+branch:
+
+#---------------------------------
+git checkout linux-2.6.25.5
+git checkout -b owrt-11415
+stg init
+#---------------------------------
+
+Now add in the flat files from openwrt -- there's no reason that
+can't be managed as patches.  There are two sets of files, one in
+generic-2.6 and one in brcm47xx:
+
+#---------------------------------
+stg new generic-2.6-files -m "These are the files from generic-2.6"
+cp -a $OPENWRT/target/linux/generic-2.6/files-2.6.25/* .
+stg add .
+stg refresh
+stg new brcm47xx-files -m "These are the files from brcm47xx"
+cp -a $OPENWRT/target/linux/brcm47xx/files-2.6.25/* .
+stg refresh
+#---------------------------------
+
+Now we need to process all of the patches from generic-2.6 and
+brcm47xx, in that order.  The patches in openwrt have numbers
+that indicate the patch order, which we want to remove -- the
+patch sequencing is implied by the stack in StGIT.  I tried to
+use "stg import" to import the patch files easily, but it does
+not seem to work -- maybe the patch text is treated as comment
+text, or something like that.  Using lower-level stg commands
+works, although it is much slower.
+
+#---------------------------------
+for PATCH in $OPENWRT/target/linux/generic-2.6/patches-2.6.25/*
+do
+  NAME=$(basename $PATCH | cut -c 5-)
+  NAME=${NAME%.patch}
+  stg new -m "patch $NAME from OpenWRT generic-2.6 series" $NAME
+  patch -p1 < $PATCH
+  stg add .
+  stg refresh
+done
+
+for PATCH in $OPENWRT/target/linux/brcm47xx/patches-2.6.25/*
+do
+  NAME=$(basename $PATCH | cut -c 5-)
+  NAME=${NAME%.patch}
+  stg new -m "patch $NAME from OpenWRT brcm47xx series" $NAME
+  patch -p1 < $PATCH
+  stg add .
+  stg refresh
+done
+#---------------------------------
+
+We can clean up the object database to save space, and we might
+as well.  There are still lots of stg metadata files, but that's
+OK.
+
+#---------------------------------
+git gc --aggressive
+git prune
+#---------------------------------
+
+Now use stg commands (pop, float, sink, hide, unhide ...
+whatever) to adjust the patch series however seems appropriate.
+The current patch series can be exported into a directory by
+doing:
+
+#---------------------------------
+stg export -d $DESTDIR -e patch -n
+#---------------------------------
+
