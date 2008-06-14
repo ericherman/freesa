@@ -3,7 +3,7 @@ cross-toolchain using the latest released versions of all tools, by which I
 mean:
 
 binutils 2.18
-gcc 4.3.0
+gcc 4.3.1
 glibc 2.7 or uClibc 0.9.29
 gmp 4.2.2
 linux 2.6.25 (or, for mips, 2.6.23.16)
