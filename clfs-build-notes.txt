@@ -691,9 +691,18 @@ the install section will fail because mv isn't there any more.
 
 10.19 libtool
 
+Bump to 2.2.4.
+
 Before installing libtool, be sure to re-run set_install_dirs so that the
 /usr/share/aclocal directory created by bison becomes an install directory;
 otherwise libtool won't be able to do its install.
+
+10.21 iproute2
+
+Bump to 2.6.25.
+
+Convert the sed script into a patch called 
+"iproute2-2.6.25-disable-arpd-1.patch".
 
 10.22 perl
 
@@ -702,15 +711,17 @@ Bump to 5.10.0.
 There's a perl symlink to tools at /usr/bin/perl, chown or get rid of it
 first.
 
-The patch and sed scripts are unnecessary; do not run them.
+The patch is unnecessary; do not apply it.  The sed might be; the build
+works either way.  I turned the sed script into a patch "dynaloader-pic".
 
 Also create the minimal /etc/hosts, and turn on the loopback interface and
 set the hostname, as described in this section.
 
-For the FreeSA build, the configure for perl may drop into a shell a couple
-of times; if so, the shell needs to be exited and then the suggested option
-selected.  I don't know how to avoid this, other than to modify the
-configure.gnu script.
+Sometimes, when building perl, I've experienced a problem where the
+configure script drops into a shell.  When this happens, I exit from the
+shell (manually) and then select the suggested option.  It didn't happen
+with perl 5.10, though, so perhaps the underlying glitch has been
+corrected.
 
 10.27 bash
 
