@@ -625,6 +625,10 @@ indicate that a user is really /not/ supposed to log in ever.
 Many other packages will need to write to /usr/info/dir, which is onwed by
 glibc.  Put it in the install group and chmod 664 it.
 
+Also, set the timezone at this point by copying the appropriate
+file from /usr/share/zoneinfo to /etc/localtime.  Otherwise, some
+tests fail later on.
+
 10.9 binutils
 
 Just like in 6.3 so long ago, the binutils constructed here segfault (on
@@ -722,6 +726,22 @@ configure script drops into a shell.  When this happens, I exit from the
 shell (manually) and then select the suggested option.  It didn't happen
 with perl 5.10, though, so perhaps the underlying glitch has been
 corrected.
+
+10.25 autoconf
+
+I had a failure in acprograms.at:20 "AC_PROG_SED".  Don't know
+why.  Sed does seem to work.  I neverminded the failure.
+
+10.26 automake
+
+I had two failures, mdate5.test and specflg7.test.  I re-ran them
+(they are bash scripts, simply switch to the "tests" directory
+and execute them), and they do in fact fail; it turns out that
+was because I had not set localtime properly -- /etc/localtime
+was a symlink to /usr/share/zoneinfo/Factory, which is an
+invalid zone file.  WHOOPS.  SET THE TIMEZONE EARLIER.  Probably
+right after installing glibc, in fact.  Maybe that's why the
+autoconf test failed, too, who knows?
 
 10.27 bash
 
