@@ -18,3 +18,86 @@ ARCH=mips CROSS_COMPILE=${CLFS_TARGET}- KERNELDIR=${CLFS}/Build/linux make
  
 As cross-tools for "C": build VIM, lzma
 
+BUILDING THE TRX IMAGE:
+
+UTILITIES NEEDED:
+lzma -- this is lzma sdk 4.32 by Igor Pavlov, not the lzma
+  program by ville koskinen. There are two OWRT patches. Needs to
+  be built using the cross-toolchain as well as native toolchain,
+  probably.
+mksquashfs-lzma -- from OWRT squashfs-tools. needed on host.
+trx -- from OWRT firmware-utils. needed on host.
+
+Requires file components loader.gz, vmlinux.lzma, root.squashfs, fs_mark
+
+vmlinux.lzma:
+
+This is the linux kernel, but compressed with lzma rather than
+gzip.
+
+Take the kernel built as vmlinux from the kernel build, then
+use the cross-objcopy as:
+
+objcopy -O binary -R .reginfo -R .note -R .comment -R .mdebug -S \
+  orig-vmlinux fixed-vmlinux
+objcopy -R .reginfo -R .note -R .comment -R .mdebug -S \
+  orig-vmlinux fixed-vmlinux.elf
+
+(the fixed-vmlinux.elf program is apparently useless? not sure
+why we bother with it)
+
+cat fixed-vmlinux | lzma e -si -so -eos -lc1 -lp2 -pb2 > vmlinux.lzma
+
+loader.gz:
+
+This is a kernel loader program, itself compressed with gzip,
+that knows how to load and uncompress an LZMA-compressed kernel.
+It is built using the cross-toolchain, since it needs to run on
+the target.  It MAY need to be built using a uClibc toolchain.
+
+make -C lzma-loader [...] clean install
+does:
+--
+cp target/linux/brcm-2.4/image/lzma-loader/src/* workdir
+cd workdir
+make CC="mipsel-linux-uclibc-bcc" LD="mispel-linux-ucblic-ld" \
+  CROSS_COMPILE="mipsel-linux-uclibc-"
+echo -ne "\\x00" >> loader.gz
+--
+
+fs_mark:
+
+This is probably a set of bytes that are used as an indicator of
+where the filesystem part of the trx begins.
+
+touch fs_mark
+dd if=fs_mark of=tmpfile.1 bs=64k conv=sync
+echo -ne '\xde\xad\xc0\xde' >> tmpfile.1
+dd if=tmpfile.1 of=fs_mark bs=64k conv=sync
+echo -ne '\xde\xad\xc0\xde' >> fs_mark
+
+(That all seems kind of kludgy.  The first two command, for example,
+only produce a couple of empty files.  What's the point?)
+
+root.squashfs:
+
+This is the root filesystem that will be available to the kernel.
+It is vital when we are done with the entire build, but can
+hopefully be empty when we are NFS-mounting the kernel.
+
+assemble files in root-brcm47xx; then:
+find root-brcm47xx -type f -not -perm +0100 \
+   -not -name 'ssh_host*' | xargs -r chmod 0644
+find root-brcm47xx -type f -perm +0100 | xargs -r chmod 0755
+find root-brcm47xx -type d | xargs -r chmod 0755
+mkdir root-brcm47xx/tmp
+chmod 777 root-brcm47xx/tmp
+mksquashfs-lzma root-brcm47xx root-squashfs -nopad -noappend -root-owned -le
+
+invoking trx:
+
+trx -o OUTPUT_FILENAME.trx -f loader.gz -f vmlinux.lzma \
+   -a 1024 -f root.squashfs -a 0x10000 -A fs_mark
+
+(For the initial image (used with the NFS root kernel), let's try
+omitting root.squashfs and fs_mark.)
