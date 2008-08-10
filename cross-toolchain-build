@@ -133,7 +133,9 @@ uClibc is a small C library designed expressly for situations in which
 glibc is too large.  That's the case when building tools for a
 resource-constrained environment like the flash EPROM on the WL-700gE.
 
-uClibc doesn't need any patches.
+uClibc needs a patch in order to build MIPS pthreads:  without it, there
+are multiple declarations of two functions (testandset and
+__compare_and_swap).  The patch is fix-pthread-mips-build.
 
 After this step, keep the uClibc directory around -- the same configuration
 will be used in a later step.

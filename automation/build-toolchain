@@ -285,7 +285,7 @@ echo WOOT || exit 9
 function step09b_uclibc_utilities()
 {
 cd uclibc &&
-make utils &&
+make $UCLIBC_MAKE_PARAM utils &&
 make PREFIX=$SYSROOT install_utils &&
 cd ${BUILD_DIR} &&
 echo WOOT || exit 9
@@ -363,7 +363,6 @@ else
     step07b_uclibc_full > ${BUILD_DIR}/Logs/step07.txt 2>&1
     step08_gcc_full > ${BUILD_DIR}/Logs/step08.txt 2>&1
     step09b_uclibc_utilities > ${BUILD_DIR}/Logs/step09.txt 2>&1
-    step11_specs > ${BUILD_DIR}/Logs/step11.txt 2>&1
 fi
 
 echo "Ended at $(date)" >> ${BUILD_DIR}/Logs/timing.txt
