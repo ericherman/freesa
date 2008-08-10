@@ -192,7 +192,7 @@ UCLIBC_BUILD_NOEXECSTACK=y
 # uClibc development/debugging options
 #
 CROSS_COMPILER_PREFIX=""
-UCLIBC_EXTRA_CFLAGS="-isystem /cross-tools/lib/gcc/mipsel-unknown-linux-gnu/4.3.0/include-fixed"
+UCLIBC_EXTRA_CFLAGS="-isystem /cross-tools/lib/gcc/mipsel-unknown-linux-gnu/4.3.1/include-fixed"
 # DODEBUG is not set
 # DODEBUG_PT is not set
 DOSTRIP=y

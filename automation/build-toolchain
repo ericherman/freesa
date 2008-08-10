@@ -1,32 +1,66 @@
 #!/bin/bash
 #
-# TODO: this might be more fun if it were in ruby.
+# I think this would be more fun if it were combined with
+# explanatory text in a kind of "literate build system" style.
+# As a result, I intend to spend as little time and energy
+# maintaining it as possible.
 #
-# This version just installs a standard toolchain into $SYSROOT,
-# wherever that is.  Since we have a /cross-toolchain directory
-# for our cross-tools, let's put it under there.
+# This version just installs a standard toolchain into SYSROOT,
+# Since we have a /cross-toolchain directory for our cross-tools,
+# let's put it under there.
 
 # define all these things the way you want them.  it would be
 # better if we just defined the ones that are missing, but that's
 # too much work since we're going to re-implement this in ruby.
+
+# always set these...
 export CLFS=/home/clfs
-export CLFS_HOST=i686-cross-linux-gnu
-export CLFS_TARGET=mipsel-unknown-linux-gnu
-export GLIBCFLAG="-g -O2"
-export KERNEL_ARCH="ARCH=mips"
-export KERNEL_VERSION=2.6.23
 export LC_ALL=POSIX
 export PATH=/cross-tools/bin:/bin:/usr/bin
+export CLFS_HOST=i686-cross-linux-gnu
 export SYSROOT=/cross-tools/sysroot
+
 unset CFLAGS
 unset CXXFLAGS
 unset CC CXX AR AS RANLIB LD STRIP
 
+if [ $# -ne 2 ]
+then
+    echo "usage: $0 architecture(mips,x86) libc(glibc,uclibc)"
+    exit 1
+fi
+
+if [ $1 == 'x86' ]
+then
+    export CLFS_TARGET=i686-pc-linux-gnu
+    export KERNEL_VERSION=2.6.25
+    MARCH="$(cut -d- -f1 <<< $CLFS_TARGET)"
+    export GLIBCFLAG="-march=$MARCH -mtune=generic -g -O2"
+    unset KERNEL_ARCH
+    export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-x86
+    export UCLIBC_MAKE_PARAM=''
+else
+    export CLFS_TARGET=mipsel-unknown-linux-gnu
+    export KERNEL_VERSION=2.6.23
+    export GLIBCFLAG="-g -O2"
+    export KERNEL_ARCH="ARCH=mips"
+    export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-mips
+    export UCLIBC_MAKE_PARAM="CROSS=${CLFS_TARGET}-"
+fi
+
+if [ ! -f $UCLIBC_CONFIG ]
+then
+    echo "Hmm, have you not set CONFIG_DIR?"
+    exit 2
+fi
+
+export BUILD_DIR=$PWD
 
 set -e
 
 function step00_prepare_sources()
 {
+echo "STEP 00"
 lzma -d < ../Sources/binutils*tar.lzma | tar xf -
 lzma -d < ../Sources/gcc*tar.lzma | tar xf -
 lzma -d < ../Sources/glibc*tar.lzma | tar xf -
@@ -36,25 +70,34 @@ lzma -d < ../Sources/uclibc*tar.lzma | tar xf -
 
 function step01_kernel_headers()
 {
+echo "STEP 01"
+cd linux* &&
 make mrproper &&
 make $KERNEL_ARCH headers_check &&
 make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=$SYSROOT/usr &&
-echo WOOT
+cd ${BUILD_DIR} &&
+echo WOOT || exit 1
 }
 
 function step02_binutils()
 {
+echo "STEP 02"
+mkdir build-binutils && cd build-binutils
 ../binutils*/configure --prefix=/cross-tools \
    --build=${CLFS_HOST} --target=${CLFS_TARGET} \
    --disable-nls --enable-shared --disable-multilib \
    --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT &&
 make configure-host && make && make install &&
 cp -v ../binutils*/include/libiberty.h $SYSROOT/usr/include &&
-echo WOOT
+cd ${BUILD_DIR} &&
+rm -rf build-binutils &&
+echo WOOT || exit 2
 }
 
 function step03_glibc_headers()
 {
+echo "STEP 03"
+mkdir build-glibc && cd build-glibc
 CC=gcc ../glibc*/configure --prefix=/usr \
   --host=${CLFS_HOST} --build=${CLFS_TARGET} \
   --disable-sanity-checks --enable-kernel=${KERNEL_VERSION} \
@@ -66,26 +109,34 @@ touch $SYSROOT/usr/include/gnu/stubs.h &&
 cp -v ../glibc*/nptl/sysdeps/pthread/pthread.h $SYSROOT/usr/include &&
 cp -v ../glibc*/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
   $SYSROOT/usr/include/bits &&
-echo WOOT
+cd ${BUILD_DIR} &&
+rm -rf build-glibc &&
+echo WOOT || exit 3
 }
 
 function step03b_uclibc_headers()
 {
-make distclean
-rm -f extra/config/.depend
-cp ${CONFIG_DIR}/uclibc-config .config
+echo "STEP 03"
+cd uclibc &&
+make distclean &&
+rm -f extra/config/.depend &&
+cp $UCLIBC_CONFIG .config &&
 cat >> .config <<EOF
 KERNEL_HEADERS="/cross-tools/sysroot/usr/include"
 SHARED_LIB_LOADER_PREFIX="/lib"
 RUNTIME_PREFIX="/"
 DEVEL_PREFIX="/usr"
 EOF
-make oldconfig
-make PREFIX=$SYSROOT install_headers
+make oldconfig &&
+make PREFIX=$SYSROOT install_headers &&
+cd ${BUILD_DIR} &&
+echo WOOT || exit 3
 }
 
 function step04_gcc_bare()
 {
+echo "STEP 04"
+mkdir build-gcc && cd build-gcc
 ../gcc*/configure --prefix=/cross-tools \
   --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
   --disable-multilib \
@@ -96,11 +147,14 @@ function step04_gcc_bare()
 export LDFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
 export CPPFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
 make all-gcc && make install-gcc &&
-echo WOOT
+cd ${BUILD_DIR} &&
+echo WOOT || exit 4
 }
 
 function step05_glibc_startup()
 {
+echo "STEP 05"
+mkdir build-glibc && cd build-glibc
 echo "libc_cv_forced_unwind=yes" > config.cache
 echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
@@ -117,32 +171,56 @@ make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crti.o &&
 make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crtn.o &&
 mkdir -p $SYSROOT/lib &&
 cp csu/crt{1,i,n}.o $SYSROOT/lib &&
-echo WOOT
+cd ${BUILD_DIR} &&
+rm -rf build-glibc &&
+echo WOOT || exit 5
 }
 
-function step05b_uclibc()
+function step05b_uclibc_startup()
 {
-    # for mips, specify CROSS=${CLFS_TARGET}-
-    make # CROSS=${CLFS_TARGET}-
-    make PREFIX=$SYSROOT install
-    # for some reason, fenv.h doesn't get set up properly
-    cat > $SYSROOT/usr/include/fenv.h <<EOF
-#define _FENV_H
-#include <bits/fenv.h>
-EOF
+# some headers didn't get installed properly before (e.g.
+# uClibc_config.h) so do another install_headers at this point.
+echo "STEP 05"
+cd uclibc &&
+make $UCLIBC_MAKE_PARAM pregen &&
+install -d lib/ &&
+make $UCLIBC_MAKE_PARAM lib/crt1.o &&
+mipsel-unknown-linux-gnu-strip -x -R .note -R .comment lib/crt1.o &&
+make $UCLIBC_MAKE_PARAM lib/crti.o &&
+make $UCLIBC_MAKE_PARAM lib/crtn.o &&
+make PREFIX=$SYSROOT install_headers &&
+mkdir $SYSROOT/lib &&
+cp lib/crt{1,i,n}.o $SYSROOT/lib &&
+rm -rf lib &&
+cd ${BUILD_DIR} &&
+echo WOOT || exit 5
+# Egad. The libgcc build uses -isystem # /cross-tools/$CLFS_TARGET/include 
+# but there is nothing there; the header files are under $SYSROOT.  Why 
+# doesn't this happen in the glibc build?
+echo "STEP 05.5 -- set up include symlink"
+pushd /cross-tools/${CLFS_TARGET} &&
+ln -s $SYSROOT/include include &&
+popd &&
+echo "woot, I guess."
 }
 
 function step06_gcc_libgcc()
 {
+echo "STEP 06"
+cd build-gcc &&
 make all-target-libgcc && make install-target-libgcc && 
 rm -f $SYSROOT/lib/crt{1,i,n}.o &&
-echo WOOT
+cd ${BUILD_DIR} &&
+rm -rf build-gcc &&
+echo WOOT || exit 6
 }
 
 function step07_glibc_full()
 {
-echo "libc_cv_forced_unwind=yes" > config.cache
-echo "libc_cv_c_cleanup=yes" >> config.cache
+echo "STEP 07"
+mkdir build-glibc && cd build-glibc &&
+echo "libc_cv_forced_unwind=yes" > config.cache &&
+echo "libc_cv_c_cleanup=yes" >> config.cache &&
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     AR="${CLFS_TARGET}-ar" RANLIB="${CLFS_TARGET}-ranlib" \
     CFLAGS="$GLIBCFLAG" \
@@ -154,11 +232,31 @@ BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     --cache-file=config.cache &&
 make && 
 make install_root=$SYSROOT install && 
-echo WOOT
+cd ${BUILD_DIR} &&
+rm -rf build-glibc &&
+echo WOOT || exit 7
+}
+
+function step07b_uclibc_full()
+{
+# clean up the symlink under /cross-tools/$CLFS_TARGET
+rm /cross-tools/${CLFS_TARGET}/include
+# for some reason, fenv.h doesn't get set up properly, so we 
+# create a dummy one.
+echo "STEP 07"
+cd uclibc &&
+make $UCLIBC_MAKE_PARAM &&
+make PREFIX=$SYSROOT install &&
+echo "#define _FENV_H" > $SYSROOT/usr/include/fenv.h &&
+echo "#include <bits/fenv.h>" >> $SYSROOT/usr/include/fenv.h &&
+cd ${BUILD_DIR} &&
+echo WOOT || exit 7
 }
 
 function step08_gcc_full()
 {
+echo "STEP 08"
+mkdir build-gcc && cd build-gcc &&
 ../gcc*/configure --prefix=/cross-tools \
   --build=${CLFS_HOST} --host=${CLFS_HOST} --target=${CLFS_TARGET} \
   --disable-multilib \
@@ -170,26 +268,35 @@ export LDFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
 export CPPFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
 make AS_FOR_TARGET="${CLFS_TARGET}-as" LD_FOR_TARGET="${CLFS_TARGET}-ld" &&
 make install &&
-echo WOOT
-}
-
-function step09b_uclibc_utilities()
-{
-    make utils &&
-    make PREFIX=$SYSROOT install_utils &&
-    echo WOOT
+cd ${BUILD_DIR} &&
+rm -rf build-gcc &&
+echo WOOT || exit 8
 }
 
 function step09_kernel_headers_for_tools()
 {
+echo "STEP 09" &&
+cd linux* &&
 make mrproper &&
 make $KERNEL_ARCH headers_check &&
 make $KERNEL_ARCH headers_install INSTALL_HDR_PATH=/tools &&
-echo WOOT
+cd ${BUILD_DIR} &&
+echo WOOT || exit 9
+}
+
+function step09b_uclibc_utilities()
+{
+cd uclibc &&
+make utils &&
+make PREFIX=$SYSROOT install_utils &&
+cd ${BUILD_DIR} &&
+echo WOOT || exit 9
 }
 
 function step10_glibc_tools()
 {
+echo "STEP 10"
+mkdir build-glibc && cd build-glibc
 echo "libc_cv_forced_unwind=yes" > config.cache
 echo "libc_cv_c_cleanup=yes" >> config.cache
 BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
@@ -203,16 +310,17 @@ BUILD_CC="gcc" CC="${CLFS_TARGET}-gcc" \
     --cache-file=config.cache &&
 make && 
 make install_root=$CLFS install && 
+cd ${BUILD_DIR}
+rm -rf build-glibc
 echo WOOT
 }
 
 function step11_specs()
 {
+echo "STEP 11"
 ${CLFS_TARGET}-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
    $(dirname $(${CLFS_TARGET}-gcc --print-libgcc-file-name))/specs
 }
-
-BUILD_DIR=$PWD
 
 echo "clearing out old stuff, I hope that's what you wanted."
 
@@ -231,69 +339,34 @@ echo "Starting at $(date)" > ${BUILD_DIR}/Logs/timing.txt
 
 if [ ! -d binutils* ]
 then
-    echo "STEP 00"
     step00_prepare_sources > ${BUILD_DIR}/Logs/step00.txt
 fi
 
-echo "STEP 01"
-cd linux*
-step01_kernel_headers > ${BUILD_DIR}/Logs/step01.txt
-cd ${BUILD_DIR}
-
-echo "STEP 02"
-mkdir build-binutils && cd build-binutils
-step02_binutils > ${BUILD_DIR}/Logs/step02.txt
-cd ${BUILD_DIR}
-rm -rf build-binutils
-
-echo "STEP 03"
-mkdir build-glibc && cd build-glibc
-step03_glibc_headers > ${BUILD_DIR}/Logs/step03.txt
-cd ${BUILD_DIR}
-rm -rf build-glibc
-
-echo "STEP 04"
-mkdir build-gcc && cd build-gcc
-step04_gcc_bare > ${BUILD_DIR}/Logs/step04.txt
-cd ${BUILD_DIR}
-
-echo "STEP 05"
-mkdir build-glibc && cd build-glibc
-step05_glibc_startup > ${BUILD_DIR}/Logs/step05.txt
-cd ${BUILD_DIR}
-rm -rf build-glibc
-
-echo "STEP 06"
-cd build-gcc
-step06_gcc_libgcc > ${BUILD_DIR}/Logs/step06.txt
-cd ${BUILD_DIR}
-rm -rf build-gcc
-
-echo "STEP 07"
-mkdir build-glibc && cd build-glibc
-step07_glibc_full > ${BUILD_DIR}/Logs/step07.txt
-cd ${BUILD_DIR}
-rm -rf build-glibc
-
-echo "STEP 08"
-mkdir build-gcc && cd build-gcc
-step08_gcc_full > ${BUILD_DIR}/Logs/step08.txt
-cd ${BUILD_DIR}
-rm -rf build-gcc
-
-echo "STEP 09"
-cd linux*
-step09_kernel_headers_for_tools > ${BUILD_DIR}/Logs/step09.txt
-cd ${BUILD_DIR}
-
-echo "STEP 10"
-mkdir build-glibc && cd build-glibc
-step10_glibc_tools > ${BUILD_DIR}/Logs/step10.txt
-cd ${BUILD_DIR}
-rm -rf build-glibc
-
-echo "STEP 11"
-step11_specs > ${BUILD_DIR}/Logs/step11.txt
+if [ $1 == 'glibc' ]
+then
+    step01_kernel_headers > ${BUILD_DIR}/Logs/step01.txt 2>&1
+    step02_binutils > ${BUILD_DIR}/Logs/step02.txt 2>&1
+    step03_glibc_headers > ${BUILD_DIR}/Logs/step03.txt 2>&1
+    step04_gcc_bare > ${BUILD_DIR}/Logs/step04.txt 2>&1
+    step05_glibc_startup > ${BUILD_DIR}/Logs/step05.txt 2>&1
+    step06_gcc_libgcc > ${BUILD_DIR}/Logs/step06.txt 2>&1
+    step07_glibc_full > ${BUILD_DIR}/Logs/step07.txt 2>&1
+    step08_gcc_full > ${BUILD_DIR}/Logs/step08.txt 2>&1
+    step09_kernel_headers_for_tools > ${BUILD_DIR}/Logs/step09.txt 2>&1
+    step10_glibc_tools > ${BUILD_DIR}/Logs/step10.txt 2>&1
+    step11_specs > ${BUILD_DIR}/Logs/step11.txt 2>&1
+else
+    step01_kernel_headers > ${BUILD_DIR}/Logs/step01.txt 2>&1
+    step02_binutils > ${BUILD_DIR}/Logs/step02.txt 2>&1
+    step03b_uclibc_headers > ${BUILD_DIR}/Logs/step03.txt 2>&1
+    step04_gcc_bare > ${BUILD_DIR}/Logs/step04.txt 2>&1
+    step05b_uclibc_startup > ${BUILD_DIR}/Logs/step05.txt 2>&1
+    step06_gcc_libgcc > ${BUILD_DIR}/Logs/step06.txt 2>&1
+    step07b_uclibc_full > ${BUILD_DIR}/Logs/step07.txt 2>&1
+    step08_gcc_full > ${BUILD_DIR}/Logs/step08.txt 2>&1
+    step09b_uclibc_utilities > ${BUILD_DIR}/Logs/step09.txt 2>&1
+    step11_specs > ${BUILD_DIR}/Logs/step11.txt 2>&1
+fi
 
 echo "Ended at $(date)" >> ${BUILD_DIR}/Logs/timing.txt
 

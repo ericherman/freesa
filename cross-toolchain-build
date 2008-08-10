@@ -61,6 +61,19 @@ export KERNEL_VERSION=2.6.23
 export GLIBCFLAG="-g -O2"
 export KERNEL_ARCH="ARCH=mips"
 
+For uClibc builds, set some more variables (and skip GLIBCFLAG,
+as far as that goes)...
+
+x86:
+
+export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-x86
+export UCLIBC_MAKE_PARAM=''
+
+mips:
+
+export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-mips
+export UCLIBC_MAKE_PARAM="CROSS=${CLFS_TARGET}-"
+
 There's a build script in automation that does all the work for you.
 
 gcc, glibc, and binutils MUST all be built from a separate "build"
@@ -181,32 +194,14 @@ keep the source directory around.
 
 [On digad: 0:12 azoth: 0:20]
 
-STEP 5b uclibc
+NEW STEP 5b uclibc (startup files)
 
-Unlike glibc, uClibc can be built without libgcc; so instead of building
-just the startup files initially, we can build and install the entire C
-library.  That makes steps 6 and 7 unnecessary when using uClibc; and also
-means that the gcc build directory from step 4 can be deleted now.
+Brett remembers being able to build uClibc without having a
+libgcc.a around; but, as of August 2008, he can't manage it any
+more.  So we need to build the same crt?.o files as with glibc,
+so that we can build libgcc, in order to build the full uClibc.
 
-However, uClibc does require an additional step after building the full gcc
-compiler:  the utilities it provides, such things as ldd and ldconfig, need
-to be built separately.
 
-There is something wrong with the uClibc installation -- or, more likely,
-the flaw is with these instructions and I simply don't know enough to
-correct the real problem.  In either case, a header file "fenv.h" that
-should be produced is not; the only fenv.h provided is in the "bits"
-subdirectory and has a guard clause that prevents it from being included 
-directly.  The bits/fenv.h file comes from glibc, and the original glibc
-version gets most of its content from math/fenv.h before including
-bits/fenv.h.  uClibc doesn't have the top-level fenv.h or math/fenv.h.  To
-get around the downstream build failure (when building the full gcc), we
-simply synthesize a very basic fenv.h that just gets bits/fenv.h included.
-
-fenv.h is a header file related to ISO C99 floating-point arithmetic (it
-means "floating-point environment"). If problems occur when using the
-uClibc-based toolchain to compile or run programs that use floating-point
-math, this is probably the reason.
 
 STEP 6 gcc (libgcc)
 
@@ -232,6 +227,24 @@ patches that were used previously; but use a fresh glibc-build directory.
 (SEE SCRIPT FOR COMMANDS)
 
 [On digad: 14:07 azoth: 11:00]
+
+STEP 7b uclibc
+
+There is something wrong with the uClibc installation -- or, more likely,
+the flaw is with these instructions and I simply don't know enough to
+correct the real problem.  In either case, a header file "fenv.h" that
+should be produced is not; the only fenv.h provided is in the "bits"
+subdirectory and has a guard clause that prevents it from being included 
+directly.  The bits/fenv.h file comes from glibc, and the original glibc
+version gets most of its content from math/fenv.h before including
+bits/fenv.h.  uClibc doesn't have the top-level fenv.h or math/fenv.h.  To
+get around the downstream build failure (when building the full gcc), we
+simply synthesize a very basic fenv.h that just gets bits/fenv.h included.
+
+fenv.h is a header file related to ISO C99 floating-point arithmetic (it
+means "floating-point environment"). If problems occur when using the
+uClibc-based toolchain to compile or run programs that use floating-point
+math, this is probably the reason.
 
 STEP 8 gcc (full compiler)
 
