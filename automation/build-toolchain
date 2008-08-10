@@ -239,8 +239,6 @@ echo WOOT || exit 7
 
 function step07b_uclibc_full()
 {
-# clean up the symlink under /cross-tools/$CLFS_TARGET
-rm /cross-tools/${CLFS_TARGET}/include
 # for some reason, fenv.h doesn't get set up properly, so we 
 # create a dummy one.
 echo "STEP 07"
