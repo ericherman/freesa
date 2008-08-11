@@ -1,87 +1,161 @@
+name: GNU Compiler Collection
+version: 4.3.1
+project_url: http://gcc.gnu.org/
 
-STEP 4 gcc (bare compiler)
+configuration_defaults:
+ - HOST
+ - TARGET
+ - SYSROOT
 
-Apply only the posix patch -- originally from CLFS.
+environment:
+ - LDFLAGS_FOR_TARGET = CONFIG[SYSROOT]
+ - CPPFLAGS_FOR_TARGET = CONFIG[SYSROOT]
 
-It seems as though it should be unnecessary to mess around with the GCC
-specs here.  It is a cross-compiler; if the wrong libraries are linked in,
-presumably the thing will simply not work at all, and this compiler is only
-going to be used to build glibc anyway.  (We're going to rebuild GCC after
-we have a glibc.)
+GCC is the GNU Compiler Collection.  The most important compiler
+in the collection, for purposes of bootstrapping a system, is the
+C compiler; but GCC also includes compilers for C++, Fortran,
+Java, Ada, and probably other languages as well.
 
-After doing this build, don't get rid of ANYTHING -- we will use the same
-build directory later on after we use the bare compiler from here to create
-the startup files that are needed to get libgcc compiled.  (If you do
-delete the gcc-build directory, don't panic, it will just take a few
-minutes to rebuild the bare compiler before the libgcc build happens.)
+GCC is really more than just that, though.  The job of a compiler
+is to translate source code in a high-level language into
+assembler code.  GCC does that, but it also acts as a driver
+program that invokes other programs like +as+ and +ld+ (from the
+binutils package) as necessary to produce libraries and
+executables.  GCC as a driver program is configured by a "specs
+file" that tell it what other programs to invoke, and how to
+invoke them.
 
-GCC can't create programs unless it has access to a support library called
-libgcc.  (There are other support libraries as well, like libgcc_eh; I
-don't know what they are for.)  We can't build libgcc, because it has to be
-linked against some C runtime startup files (crti.o and a couple others)
-from glibc.  I'm not sure why; it's not a program, just a library.  But
-nevertheless, they are.  So all we can do at this point is build a "bare"
-compiler: just the gcc program per se.  We can use that bare compiler to
-produce the C startup files.
+Oh.  I almost forgot.  In addition to all that, gcc includes the
+C pre-processor (+cpp+).
 
-After we build the crt?.o files, we can then build libgcc; and then we'll
-be able to build glibc.  After that, we'll build the full gcc.
+Bootstrapping GCC in a cross-compiler is tricky.  The only thing
+that can be built without a working standard library (libc) is a
+base compiler, but that base compiler won't be able to produce
+executable programs.  GCC can only create programs if it has
+access to a support library called libgcc -- when GCC is
+compiling C code, it frequently generates references to functions
+defined in libgcc, rather than assembler code; and GCC can't
+produce libgcc unless it has access to some C runtime startup
+files -- object files -- the source for which is distributed as
+part of the C library rather than GCC itself.
 
-With the x86 to x86 toolchain, I did not have to specify host.  With the
-x86 to mips toolchain, I did.  It's OK to specify it for the faux-cross
-toolchain as well.
+The C libraries that are useful for our purposes -- glibc and
+uClibc -- require libgcc to be available.  That's where the
+trickiness comes from:  we have to produce the bare compiler,
+then use it (and +as+) to compile the C runtime files from the C
+library, then use those files to produce libgcc, and then use the
+compiler plus libgcc to build the C library itself.  At that
+point we can finally build the full GCC.
 
-The LDFLAGS_FOR_TARGET and CPPFLAGS_FOR_TARGET are from gcc bug #35532 --
-they are mentioned by Carlos O'Donell as the way to use all of the sysroot
-framework.  How exactly they function is beyond me.
+GCC, like the GNU binutils, can be built as part of a
+cross-toolchain by using the "sysroot" framework.  To perform a
+sysroot build, the configure options --with-sysroot and
+--with-build-sysroot should be specified; and when building GCC,
+the environment variables LDFLAGS_FOR_TARGET and
+CPPFLAGS_FOR_TARGET should be set to "--sysroot=${SYSROOT}".  At
+least, that's what Carlos O'Donell said in a comment on GCC bug
+#35532.  The documentation on sysroot builds is not particularly
+easy to find, as of this writing.
 
-(SEE SCRIPT FOR COMMANDS)
+patches:
+ - posix-1
 
-[On digad: 6:36 azoth: 4:28]
+phase: bare compiler
+
+After doing this part of the build, keep the build directory
+around; the same directory should be used when building libgcc.
+
+build-dir: ../build-gcc KEEP
+
+configure-commands:
+ - ../gcc*/configure --prefix=/cross-tools \
+     --build=CONFIG[HOST] --host=CONFIG[HOST] --target=CONFIG[TARGET] \
+     --disable-multilib --disable-nls --disable-shared \
+     --disable-libmudflap --disable-libssp \
+     --disable-threads --enable-languages=c \
+     --with-sysroot=CONFIG[SYSROOT] --with-build-sysroot=CONFIG[SYSROOT]
+
+make-commands:
+ - make all-gcc
+
+test-commands:
+
+install-commands:
+ - make install-gcc
 
 
-STEP 6 gcc (libgcc)
+phase: libgcc
 
-If you deleted the gcc and/or gcc-build directories from step 4,
-reconstruct them now by doing that step again.  After this, trash the
-gcc-build directory; but we will want the gcc source directory one more
-time.
+After we build and install libgcc, we can get rid of the crt*
+object files we just built in the previous step.  They're going
+to be rebuilt anyway when we do the full glibc build.
 
-After we build and install libgcc, we can get rid of the crt* object files
-we just built in the previous step.  They're going to be rebuilt anyway
-when we do the full glibc build.
+build-dir: ../build-gcc
 
-(SEE SCRIPT FOR COMMANDS)
+configure-commands:
 
-[On digad: 0:49 azoth: 0:48]
+make-commands:
+ - make all-target-libgcc
 
-STEP 8 gcc (full compiler)
+test-commands:
 
-Now we are going to build the full gcc cross-compiler.  The point of this
-compiler is to build the temporary tools (under /tools) that will allow us
-to build the final LFS system.  When we're using those tools to build the
-final system, we want to do a native build of everything, including glibc,
-so we want those tools to be independent of any filesystem locations that
-will still be present in the final system.  In particular, this includes
-/lib.
+install-commands:
+ - make install-target-libgcc
+ - rm -f CONFIG[SYSROOT]/lib/crt{1,i,n}.o
 
-When the standard GNU toolchain builds an executable, it always links it
-against the dynamic link library (which is something like
-/lib/ld-linux.so.2 or /lib/ld.so.1).  That's normally fine, but we want the
-programs we build under /tools to be entirely independent of /lib.  So we
-need to adjust our cross-toolchain so that the programs it builds look in
-/tools/lib for their libraries.  Alternatively, we could build everything
-under /tools as a static executable, so they would be self-contained and
-not need any shared libraries at all; but that option isn't well-supported
-by glibc.  (Maybe if we changed the cross-toolchain to be uClibc-based,
-instead of glibc-based, we could get that to work.)
 
-The CLFS approach has been to modify the specs up front by patching gcc.
-We're instead going to adjust things after the build, instead of applying
-additional patches now.  Use the same posix patch as earlier, but no
-others.
+phase: full compiler
 
-(SEE SCRIPT FOR COMMANDS)
+Now that we can finally do a full GCC build, we will build both
+the C and C++ compilers.  We also need to enable multi-threaded
+code.  Other than that, the configuration is fairly similar to
+the partial builds we've done so far.
 
-[On digad: 11:28 azoth: 9:04]
+build-dir: ../build-gcc
+
+configure-commands:
+../gcc*/configure --prefix=/cross-tools \
+  --build=CONFIG[HOST] --host=CONFIG[HOST] --target=CONFIG[TARGET] \
+  --disable-multilib --disable-nls --enable-shared \
+  --enable-languages=c,c++ --enable-__cxa_atexit \
+  --enable-c99 --enable-long-long --enable-threads=posix \
+  --with-sysroot=CONFIG[SYSROOT] --with-build-sysroot=CONFIG[SYSROOT]
+
+make-commands:
+ - make
+
+test-commands:
+
+install-commands:
+ - make install
+
+
+phase: adjust specs
+
+The point of this compiler is to build the temporary tools (under
+/tools) that will allow us to build the final system entirely
+from source code.  When we're using those tools to build the
+final system, we want to do a native build of everything,
+including glibc, so we want those tools to be independent of any
+filesystem locations that will still be present in the final
+system.  In particular, this includes /lib.
+
+When the standard GNU toolchain builds an executable, it always
+links it against the dynamic link library (which is something
+like /lib/ld-linux.so.2 or /lib/ld.so.1).  That's normally fine,
+but we want the programs we build under /tools to be entirely
+independent of /lib.  So we need to adjust our cross-toolchain so
+that the programs it builds look in /tools/lib for their
+libraries.  Alternatively, we could build everything under /tools
+as a static executable, so they would be self-contained and not
+need any shared libraries at all; but that option isn't
+well-supported by glibc.  (Maybe if we changed the
+cross-toolchain to be uClibc-based, instead of glibc-based, we
+could get that to work.)
+
+misc-commands:
+ - LIBGCC_FILE = CONFIG[TARGET]-gcc --print-libgcc-file-name
+ - SPECSDIR = dirname CONFIG[LIBGCC_FILE]
+ - CONFIG[TARGET]-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
+     CONFIG[SPECSDIR]/specs
 

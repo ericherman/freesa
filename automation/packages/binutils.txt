@@ -32,9 +32,9 @@ build-dir: ../build-binutils
 
 configure-commands:
  - ../binutils*/configure --prefix=/cross-tools \
-     --build=${CLFS_HOST} --target=${CLFS_TARGET} \
+     --build=CONFIG[HOST] --target=CONFIG[TARGET] \
      --disable-nls --enable-shared --disable-multilib \
-     --with-sysroot=$SYSROOT --with-build-sysroot=$SYSROOT 
+     --with-sysroot=CONFIG[SYSROOT] --with-build-sysroot=CONFIG[SYSROOT]
  - make configure-host
 
 make-commands:
@@ -44,5 +44,4 @@ test-commands:
 
 install-commands:
  - make install
- - cp -v ../binutils*/include/libiberty.h $SYSROOT/usr/include
-
+ - cp -v ../binutils*/include/libiberty.h CONFIG[SYSROOT]/usr/include
