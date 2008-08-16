@@ -1,10 +1,20 @@
-name: linux kernel headers
+name: linux kernel
 version: 2.6.23.16
 project_url: http://www.kernel.org/
 
-configuration_defaults:
- - KERNEL_ARCH_PARAM: ARCH=mips
- - KERNEL_HEADER_PATH: CONFIG[SYSROOT]/usr
+The kernel is linux _per se_ -- the core of the operating system.
+Usually, when people say "linux," they mean the entire operating
+system that lets them use a computer; properly, though, linux is
+just the kernel.
+
+The job of the kernel is to initialize and manage all of the
+hardware on the computer (including CPU, memory, and all I/O
+devices) and control processes.  [What else?  Is there anything
+else it does?]
+
+To do that, EDITPOINT
+
+phase: headers
 
 The way that programs in UNIX-style operating systems access
 system resources is by invoking kernel functions that are called
@@ -12,8 +22,8 @@ system resources is by invoking kernel functions that are called
 all of the system calls exposed to userspace programs.
 
 Userspace programs don't usually invoke system calls themselves.
-Instead, they invoke system library functions (such as the ones
-defined in the standard C library, which on GNU/Linux systems is
+Instead, they invoke library functions (such as the ones defined
+in the standard C library, which on GNU/Linux systems is
 typically glibc or uClibc) that invoke system calls as needed to
 accomplish their work.
 
@@ -30,6 +40,10 @@ these private internal headers.
 The makefile target "headers_check" presumably makes sure that
 the public header files are OK.  We haven't really looked at it,
 though.  If you know what it really does, please tell us.
+
+configuration-defaults:
+ - KERNEL_ARCH_PARAM: ARCH=mips
+ - KERNEL_HEADER_PATH: CONFIG[SYSROOT]/usr
 
 configure-commands:
  - make mrproper

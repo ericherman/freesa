@@ -2,10 +2,6 @@ name: GNU MP Library
 version: 4.2.2
 project_url: http://gmplib.org/
 
-configuration_defaults:
- - INSTALL_GMP: true
- - GMP_PREFIX: /usr/local
-
 GMP, the GNU Multi-Precision arithmetic library, is a new
 component in -- or perhaps it is more properly called a
 dependency of -- the GNU toolchain.  It allows arithmetic
@@ -20,3 +16,8 @@ C++) as well.
 
 If your system already has GMP installed, this step can be
 skipped.
+
+configuration-defaults:
+ - INSTALL_GMP: true
+ - GMP_PREFIX: /usr/local
+

@@ -1,51 +1,108 @@
+name: GNU libc
+version: 2.7
+
 Note that we are building our cross-glibc with a "minimum kernel
 version" set to the version of the actual runtime kernel that we
 will use to construct the real LFS system using the programs in
-/tools.  It's kind of unnecessary to worry about optimizing the
++/tools+.  It's kind of unnecessary to worry about optimizing the
 glibc here that way, since it won't wind up on the final system,
 but it won't hurt anything and is good practice in general.
 According to the glibc documentation, the higher the kernel
 version number, the less unnecessary compatibility code is built
 into the C library.
 
+configuration-defaults:
+ - HOST
+ - TARGET
+ - KERNEL_VERSION
+ - SYSROOT
+ - GLIBCFLAG
 
-STEP 3 glibc headers
+patches:
+ - libgcc_eh-1
+ - localedef_segfault-1
+ - i586-chk-1
+ - fixup_for_gcc43-1
 
-Apply the patches: libgcc_eh, localedef_segfault, i586_chk, and
-fixup_for_gcc43.  The first three are from CLFS; the last one corrects the
-glibc build so it works with GCC 4.3 (and is already in glibc CVS).
+phase: headers
 
-After doing this build, get rid of the glibc-build directory but keep the
-source directory around for now:  we will need it again a little later.
+build-dir: ../build-glibc
 
-(SEE SCRIPT FOR COMMANDS)
+configure-commands:
+ - CC=gcc ../glibc*/configure --prefix=/usr \
+    --host=CONFIG[HOST] --build=CONFIG[TARGET] \
+    --disable-sanity-checks --enable-kernel=CONFIG[KERNEL_VERSION] \
+    --with-headers=CONFIG[SYSROOT]/usr/include \
+    --with-binutils=/cross-tools/CONFIG[TARGET]/bin
 
-[On digad: 0:49 azoth: 0:30]
+make_commands:
+ - make cross-compiling=yes install_root=CONFIG[SYSROOT] install-headers
+
+test-commands:
+
+install-commands:
+ - cp -v bits/stdio_lim.h CONFIG[SYSROOT]/usr/include/bits
+ - touch CONFIG[SYSROOT]/usr/include/gnu/stubs.h
+ - cp -v ../glibc*/nptl/sysdeps/pthread/pthread.h CONFIG[SYSROOT]/usr/include
+ - cp -v ../glibc*/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
+    CONFIG[SYSROOT]/usr/include/bits
 
 
-STEP 5 glibc (startup files)
+phase: startup files
 
-If you kept around the source directory from step 3, just use it again
-here.  If not, remember to apply the patches: libgcc_eh,
-localedef_segfault, i586_chk, and fixup_for_gcc43.  
+The build commands here just build the startup files we need.
+We'll build the rest of glibc after we build libgcc.
 
-The build commands here just build the startup files we need.  We'll build
-the rest of glibc after we build libgcc.
+configure-commands:
+ - echo "libc_cv_forced_unwind=yes" > config.cache
+ - echo "libc_cv_c_cleanup=yes" >> config.cache
+ - BUILD_CC="gcc" CC="CONFIG[CLFS_TARGET]-gcc" \
+      AR="CONFIG[TARGET]-ar" RANLIB="CONFIG[TARGET]-ranlib" \
+      CFLAGS="CONFIG[GLIBCFLAG]" \
+      ../glibc*/configure --prefix=/usr \
+      --host=CONFIG[TARGET] --build=CONFIG[HOST] \
+      --disable-profile --enable-add-ons --with-tls \
+      --enable-kernel=CONFIG[KERNEL_VERSION] --with-__thread \
+      --with-binutils=/cross-tools/bin \
+      --with-headers=CONFIG[SYSROOT]/usr/include \
+      --cache-file=config.cache
 
-Again, when this step is complete, delete the glibc-build directory but
-keep the source directory around.
+make_commands:
+ - make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crt1.o
+ - make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crti.o
+ - make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crtn.o
 
-(SEE SCRIPT FOR COMMANDS)
+test-commands:
 
-[On digad: 0:12 azoth: 0:20]
+install-commands:
+ - mkdir -p CONFIG[SYSROOT]/lib
+ - cp csu/crt{1,i,n}.o CONFIG[SYSROOT]/lib
 
-STEP 7 glibc
 
-Now we have a usable GCC, complete with libgcc, and we can build glibc at
-last!  Use the same glibc source directory as before, or re-apply all the
-patches that were used previously; but use a fresh glibc-build directory.
+phase: full glibc
 
-(SEE SCRIPT FOR COMMANDS)
+Now we have a usable GCC, complete with libgcc, and we can build
+glibc at last!
 
-[On digad: 14:07 azoth: 11:00]
+configure-commands:
+ - mkdir build-glibc && cd build-glibc
+ - echo "libc_cv_forced_unwind=yes" > config.cache
+ - echo "libc_cv_c_cleanup=yes" >> config.cache
+ - BUILD_CC="gcc" CC="CONFIG[TARGET]-gcc" \
+      AR="CONFIG[TARGET]-ar" RANLIB="CONFIG[TARGET]-ranlib" \
+      CFLAGS="CONFIG[GLIBCFLAG]" \
+      ../glibc*/configure --prefix=/usr \
+      --host=CONFIG[TARGET] --build=CONFIG[HOST] \
+      --disable-profile --enable-add-ons --with-tls \
+      --enable-kernel=CONFIG[KERNEL_VERSION] --with-__thread \
+      --with-binutils=/cross-tools/bin \
+      --with-headers=CONFIG[SYSROOT]/usr/include \
+      --cache-file=config.cache
 
+make_commands:
+ - make
+
+test-commands:
+
+install-commands:
+ - make install_root=CONFIG[SYSROOT] install

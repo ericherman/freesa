@@ -21,10 +21,10 @@ implementation of the standard C and C++ libraries, which specify
 a large number of functions that may be used by any C or C++
 program.
 
-In the GNU toolchain, the compilers are gcc (for C source code)
-and g++ (for C++ source code), both of which are contained in the
-gcc (GNU Compiler Collection) distribution; the assembler and
-linker are as and ld, and are contained (along with other
+In the GNU toolchain, the compilers are +gcc+ (for C source code)
+and +g+++ (for C++ source code), both of which are contained in
+the GNU Compiler Collection (gcc) distribution; the assembler and
+linker are +as+ and +ld+, and are contained (along with other
 programs that operate on object code files) in the binutils
 (binary utilities) distribution; and the standard C library is
 distributed separately as glibc.  (The standard C++ library is
@@ -76,18 +76,20 @@ built, most programs built using it will be configured with
 "build" set to the host computer and "host" set to the target
 computer.
 
-The cross-toolchain built here uses a standard sysroot approach,
-as recommended by the GCC developers.  That means means that a
+The cross-toolchain built here uses a the sysroot framework, as
+recommended by the GCC developers.  (It used to be possible to do
+non-sysroot builds, but that may not even be possible with the
+current release of all the components.)  That means means that a
 directory on the host system (the "sysroot" directory) is set up
 to contain a subset of the root filesystem of the target system:
-/bin, /lib, /usr/lib, /etc, that sort of thing.  Header files and
-libraries will be used only from the sysroot location, not from
-the normal host system locations.
++/bin+, +/lib+, +/usr/lib+, +/etc+, that sort of thing.  Header
+files and libraries will be used only from the sysroot location,
+not from the normal host system locations.
 
 EDITPOINT
 
-Flags for building an x86-to-x86 "faux" cross-toolchain -- put these in the
-building user's .bashrc:
+Flags for building an x86-to-x86 "faux" cross-toolchain -- put
+these in the building user's .bashrc:
 
 export CLFS=/home/clfs
 export LC_ALL=POSIX

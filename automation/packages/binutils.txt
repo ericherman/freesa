@@ -1,11 +1,6 @@
 name: GNU binutils
 version: 2.18
 
-configuration_defaults:
- - HOST
- - TARGET
- - SYSROOT
-
 The GNU binary utilities are a collection of programs and
 libraries that produce and operate on object files.  The primary
 ones are +as+ (the assembler, which transforms assembly source
@@ -23,6 +18,17 @@ You won't need to invoke any of these programs manually.  The
 work, and several of the other utility programs are used
 internally during the build process of the rest of the toolchain
 (and beyond).
+
+The GNU binutils can be built as part of a cross-toolchain by
+using the "sysroot" framework.  That framework isn't particularly
+well-documented, but the important thing from our perspective is
+that we need to specify the configure options +--with-sysroot+
+and +--with-build-sysroot+ should be specified.
+
+configuration_defaults:
+ - HOST
+ - TARGET
+ - SYSROOT
 
 patches:
  - posix-1

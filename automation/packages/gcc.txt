@@ -2,15 +2,6 @@ name: GNU Compiler Collection
 version: 4.3.1
 project_url: http://gcc.gnu.org/
 
-configuration_defaults:
- - HOST
- - TARGET
- - SYSROOT
-
-environment:
- - LDFLAGS_FOR_TARGET = CONFIG[SYSROOT]
- - CPPFLAGS_FOR_TARGET = CONFIG[SYSROOT]
-
 GCC is the GNU Compiler Collection.  The most important compiler
 in the collection, for purposes of bootstrapping a system, is the
 C compiler; but GCC also includes compilers for C++, Fortran,
@@ -40,12 +31,13 @@ files -- object files -- the source for which is distributed as
 part of the C library rather than GCC itself.
 
 The C libraries that are useful for our purposes -- glibc and
-uClibc -- require libgcc to be available.  That's where the
-trickiness comes from:  we have to produce the bare compiler,
-then use it (and +as+) to compile the C runtime files from the C
-library, then use those files to produce libgcc, and then use the
-compiler plus libgcc to build the C library itself.  At that
-point we can finally build the full GCC.
+uClibc -- can't be built unless libgcc is available.  That's
+where the trickiness comes from:  we have to produce the bare
+compiler, then use it (and +as+) to compile the C runtime files
+from the C library, then use those files and the bare compiler to
+produce libgcc, and then use the compiler plus libgcc to build
+the C library itself.  At that point we can finally build the
+full GCC.
 
 GCC, like the GNU binutils, can be built as part of a
 cross-toolchain by using the "sysroot" framework.  To perform a
@@ -56,6 +48,15 @@ CPPFLAGS_FOR_TARGET should be set to "--sysroot=${SYSROOT}".  At
 least, that's what Carlos O'Donell said in a comment on GCC bug
 #35532.  The documentation on sysroot builds is not particularly
 easy to find, as of this writing.
+
+configuration-defaults:
+ - HOST
+ - TARGET
+ - SYSROOT
+
+environment:
+ - LDFLAGS_FOR_TARGET = CONFIG[SYSROOT]
+ - CPPFLAGS_FOR_TARGET = CONFIG[SYSROOT]
 
 patches:
  - posix-1
@@ -158,4 +159,3 @@ misc-commands:
  - SPECSDIR = dirname CONFIG[LIBGCC_FILE]
  - CONFIG[TARGET]-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
      CONFIG[SPECSDIR]/specs
-
