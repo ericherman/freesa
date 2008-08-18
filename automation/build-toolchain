@@ -185,7 +185,7 @@ cd uclibc &&
 make $UCLIBC_MAKE_PARAM pregen &&
 install -d lib/ &&
 make $UCLIBC_MAKE_PARAM lib/crt1.o &&
-mipsel-unknown-linux-gnu-strip -x -R .note -R .comment lib/crt1.o &&
+${CLFS_TARGET}-strip -x -R .note -R .comment lib/crt1.o &&
 make $UCLIBC_MAKE_PARAM lib/crti.o &&
 make $UCLIBC_MAKE_PARAM lib/crtn.o &&
 make PREFIX=$SYSROOT install_headers &&
