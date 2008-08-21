@@ -120,13 +120,16 @@ echo "STEP 03"
 cd uclibc &&
 make distclean &&
 rm -f extra/config/.depend &&
+export UC_FIXED="/cross-tools/lib/gcc/${CLFS_TARGET}/4.3.1/include-fixed"
 cp $UCLIBC_CONFIG .config &&
 cat >> .config <<EOF
 KERNEL_HEADERS="/cross-tools/sysroot/usr/include"
 SHARED_LIB_LOADER_PREFIX="/lib"
 RUNTIME_PREFIX="/"
 DEVEL_PREFIX="/usr"
+UCLIBC_EXTRA_CFLAGS="-isystem ${UC_FIXED}"
 EOF
+unset UC_FIXED
 make oldconfig &&
 make PREFIX=$SYSROOT install_headers &&
 cd ${BUILD_DIR} &&
