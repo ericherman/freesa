@@ -7,9 +7,11 @@ configuration_defaults:
  - MPFR_PREFIX: /usr/local
 
 MPFR is a library for arbitrary-precision floating-point
-arithmetic.  It uses GMP internally, but provides any level of
-precision (including very small precision) and provides the four
-rounding modes from the IEEE 754-1985 standard.
+arithmetic.  It stands for "Multiple-Precision Floating-point
+Rounding," I think; but that's not really clear.  It uses GMP
+internally, but provides any level of precision (including very
+small precision) and provides the four rounding modes from the
+IEEE 754-1985 standard.
 
 Like GMP, MPFR is a new component in, or dependency of, the GNU
 toolchain.  It has been needed by the Fortran GCC front-end for

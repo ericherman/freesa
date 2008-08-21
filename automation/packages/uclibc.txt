@@ -1,0 +1,54 @@
+name: uClibc
+version: 0.9.29
+
+uClibc is a small C library designed expressly for situations in
+which glibc is too large.  That's the case when building tools
+for a resource-constrained environment like the flash EPROM on
+the WL-700gE.
+
+In most cases, uClibc can be used instead of glibc without any
+application code changes.
+
+EDITPOINT
+
+configuration-defaults:
+
+patches:
+
+phase: headers
+
+configure-commands:
+
+make_commands:
+
+test-commands:
+
+install-commands:
+
+
+phase: startup files
+
+The build commands here just build the startup files we need.
+We'll build the rest of glibc after we build libgcc.
+
+configure-commands:
+
+make_commands:
+
+test-commands:
+
+install-commands:
+
+
+phase: full uclibc
+
+Now we have a usable GCC, complete with libgcc, and we can build
+uClibc at last!
+
+configure-commands:
+
+make_commands:
+
+test-commands:
+
+install-commands:
