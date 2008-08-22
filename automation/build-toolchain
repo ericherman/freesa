@@ -26,7 +26,7 @@ unset CC CXX AR AS RANLIB LD STRIP
 
 if [ $# -ne 2 ]
 then
-    echo "usage: $0 architecture(mips,x86) libc(glibc,uclibc)"
+    echo "usage: $0 architecture(mipsel,mips,x86) libc(glibc,uclibc)"
     exit 1
 fi
 
@@ -40,7 +40,14 @@ then
     export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-x86
     export UCLIBC_MAKE_PARAM=''
 else
-    export CLFS_TARGET=mipsel-unknown-linux-gnu
+    if [ $1 == 'mipsel' ]
+    then
+        export ENDIANNESS=little
+        export CLFS_TARGET=mipsel-unknown-linux-gnu
+    else
+        export ENDIANNESS=big
+        export CLFS_TARGET=mips-unknown-linux-gnu
+    fi
     export KERNEL_VERSION=2.6.23
     export GLIBCFLAG="-g -O2"
     export KERNEL_ARCH="ARCH=mips"
@@ -129,6 +136,17 @@ RUNTIME_PREFIX="/"
 DEVEL_PREFIX="/usr"
 UCLIBC_EXTRA_CFLAGS="-isystem ${UC_FIXED}"
 EOF
+if [ $ENDIANNESS == 'big' ]
+then
+    echo "ARCH_BIG_ENDIAN=y" >> .config
+    echo "ARCH_WANTS_BIG_ENDIAN=y" >> .config
+    echo "# ARCH_WANTS_LITTLE_ENDIAN is not set" >> .config
+elif [ $ENDIANNESS == 'little' ]
+then
+    echo "ARCH_LITTLE_ENDIAN=y" >> .config
+    echo "# ARCH_WANTS_BIG_ENDIAN is not set" >> .config
+    echo "ARCH_WANTS_LITTLE_ENDIAN=y" >> .config
+fi
 unset UC_FIXED
 make oldconfig &&
 make PREFIX=$SYSROOT install_headers &&
@@ -181,7 +199,11 @@ echo WOOT || exit 5
 
 function step05b_uclibc_startup()
 {
-# some headers didn't get installed properly before (e.g.
+# for some reason, fenv.h doesn't get set up properly by uclibc,
+# so we create a dummy one.
+echo "#define _FENV_H" > $SYSROOT/usr/include/fenv.h &&
+echo "#include <bits/fenv.h>" >> $SYSROOT/usr/include/fenv.h &&
+# also, some headers didn't get installed properly before (e.g.
 # uClibc_config.h) so do another install_headers at this point.
 echo "STEP 05"
 cd uclibc &&
@@ -242,14 +264,10 @@ echo WOOT || exit 7
 
 function step07b_uclibc_full()
 {
-# for some reason, fenv.h doesn't get set up properly, so we 
-# create a dummy one.
 echo "STEP 07"
 cd uclibc &&
 make $UCLIBC_MAKE_PARAM &&
 make PREFIX=$SYSROOT install &&
-echo "#define _FENV_H" > $SYSROOT/usr/include/fenv.h &&
-echo "#include <bits/fenv.h>" >> $SYSROOT/usr/include/fenv.h &&
 cd ${BUILD_DIR} &&
 echo WOOT || exit 7
 }
