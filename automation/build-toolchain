@@ -286,6 +286,7 @@ mkdir build-gcc && cd build-gcc &&
 export LDFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
 export CPPFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
 make AS_FOR_TARGET="${CLFS_TARGET}-as" LD_FOR_TARGET="${CLFS_TARGET}-ld" &&
+rm -f /cross-tools/i686-pc-linux-gnu/include &&
 make install &&
 cd ${BUILD_DIR} &&
 rm -rf build-gcc &&
@@ -361,7 +362,7 @@ then
     step00_prepare_sources > ${BUILD_DIR}/Logs/step00.txt
 fi
 
-if [ $1 == 'glibc' ]
+if [ $2 == 'glibc' ]
 then
     step01_kernel_headers > ${BUILD_DIR}/Logs/step01.txt 2>&1
     step02_binutils > ${BUILD_DIR}/Logs/step02.txt 2>&1
