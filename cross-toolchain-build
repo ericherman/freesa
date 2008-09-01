@@ -12,10 +12,10 @@ cross-toolchain using the latest released versions of all tools, by which I
 mean:
 
 binutils 2.18
-gcc 4.3.1
+gcc 4.3.2
 glibc 2.7 or uClibc 0.9.29
 gmp 4.2.2
-linux 2.6.25 (or, for mips, 2.6.23.16)
+linux 2.6.26.2 (or, for mips, 2.6.23.16)
 mpfr 2.3.1
 
 GMP and MPFR are new pieces of the GNU toolchain; since they are required
@@ -145,6 +145,12 @@ resource-constrained environment like the flash EPROM on the WL-700gE.
 uClibc needs a patch in order to build MIPS pthreads:  without it, there
 are multiple declarations of two functions (testandset and
 __compare_and_swap).  The patch is fix-pthread-mips-build.
+
+The UCLIBC_EXTRA_CFLAGS in the .config file need to specify
+an -isystem directive using the correct include-fixed directory
+for the GCC cross-compiler, which will be
+/cross-tools/lib/gcc/$TARGET/$GCC_VERSION/include-fixed.  Make
+sure it has the right contents.
 
 After this step, keep the uClibc directory around -- the same configuration
 will be used in a later step.

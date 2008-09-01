@@ -48,6 +48,7 @@ else
         export ENDIANNESS=big
         export CLFS_TARGET=mips-unknown-linux-gnu
     fi
+    export GCC_VERSION=4.3.2
     export KERNEL_VERSION=2.6.23
     export GLIBCFLAG="-g -O2"
     export KERNEL_ARCH="ARCH=mips"
@@ -127,7 +128,8 @@ echo "STEP 03"
 cd uclibc &&
 make distclean &&
 rm -f extra/config/.depend &&
-export UC_FIXED="/cross-tools/lib/gcc/${CLFS_TARGET}/4.3.1/include-fixed"
+export UC_VAR="${CLFS_TARGET}/${GCC_VERSION}"
+export UC_FIXED="/cross-tools/lib/gcc/${UC_VAR}/include-fixed"
 cp $UCLIBC_CONFIG .config &&
 cat >> .config <<EOF
 KERNEL_HEADERS="/cross-tools/sysroot/usr/include"
@@ -147,7 +149,7 @@ then
     echo "# ARCH_WANTS_BIG_ENDIAN is not set" >> .config
     echo "ARCH_WANTS_LITTLE_ENDIAN=y" >> .config
 fi
-unset UC_FIXED
+unset UC_FIXED UC_VAR
 make oldconfig &&
 make PREFIX=$SYSROOT install_headers &&
 cd ${BUILD_DIR} &&
