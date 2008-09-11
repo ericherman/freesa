@@ -13,7 +13,7 @@ mean:
 
 binutils 2.18
 gcc 4.3.2
-glibc 2.7 or uClibc 0.9.29
+glibc 2.8 or uClibc 0.9.29
 gmp 4.2.2
 linux 2.6.26.2 (or, for mips, 2.6.23.16)
 mpfr 2.3.1
@@ -125,9 +125,11 @@ if you'd like.  You won't use it again in this process.
 
 STEP 3 glibc headers
 
-Apply the patches: libgcc_eh, localedef_segfault, i586_chk, and
-fixup_for_gcc43.  The first three are from CLFS; the last one corrects the
-glibc build so it works with GCC 4.3 (and is already in glibc CVS).
+Apply the patches: libgcc_eh and localedef_segfault.  These are from CLFS;
+libgcc_eh links in a library provided by gcc only if it exists, and the
+second corrects a segmentation fault on architectures that we're probably
+not using.  (Maybe try without the patch to determine whether the fault
+exists on MIPS?)
 
 After doing this build, get rid of the glibc-build directory but keep the
 source directory around for now:  we will need it again a little later.
