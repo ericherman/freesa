@@ -4,20 +4,6 @@ We should patch the kernel to get rid of:
 
 b44: eth1: BUG!  Timeout waiting for bit 80000000 of register 428 to clear.
 
-"tools" isn't really the root of the system, but we told the toolchain that
-it was the sysroot.  What would probably be better is to build with
-SYSROOT=$CLFS instead of SYSROOT=$CLFS/tools.
-
-pushd $CLFS/tools/lib
-ln *.* ../../lib
-
-
-Build the "diag" module from openwrt.  Put that in the Freesa git, as well.
-
-ARCH=mips CROSS_COMPILE=${CLFS_TARGET}- KERNELDIR=${CLFS}/Build/linux make
- 
-As cross-tools for "C": build VIM, lzma
-
 BUILDING THE TRX IMAGE:
 
 UTILITIES NEEDED:
@@ -76,8 +62,9 @@ echo -ne '\xde\xad\xc0\xde' >> tmpfile.1
 dd if=tmpfile.1 of=fs_mark bs=64k conv=sync
 echo -ne '\xde\xad\xc0\xde' >> fs_mark
 
-(That all seems kind of kludgy.  The first two command, for example,
-only produce a couple of empty files.  What's the point?)
+(That all seems kind of kludgy.  The first two commands, for
+example, only produce a couple of empty files.  What's the
+point?)
 
 root.squashfs:
 

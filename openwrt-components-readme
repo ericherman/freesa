@@ -1,0 +1,21 @@
+The following components are taken from the OpenWRT project, who
+actually did all the work of making our target hardware
+supported.  Those guys are AWESOME.
+
+diag:
+
+Provides the "diag" kernel module, which provides a GPIO driver.
+Among other things, this turns on the hard disk and LEDs when
+installed in the kernel on a WL-700gE.  Taken from broadcom-diag
+in SVN revision ????.
+
+trx:
+
+The "trx" image construction program, taken from OpenWRT's
+firmware-utils package as of SVN revision 7491.
+
+lzma-loader:
+
+The "lzma-loader" program, used to load and decompress an
+LZMA-compressed kernel image.  Taken from OpenWRT as of SVN
+revision 11340.
