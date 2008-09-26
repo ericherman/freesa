@@ -7,7 +7,7 @@ b44: eth1: BUG!  Timeout waiting for bit 80000000 of register 428 to clear.
 BUILDING THE TRX IMAGE:
 
 UTILITIES NEEDED:
-lzma -- this is lzma sdk 4.32 by Igor Pavlov, not the lzma
+lzma -- this is LZMA SDK 4.32 by Igor Pavlov, not the lzma utils
   program by ville koskinen. There are two OWRT patches. Needs to
   be built using the cross-toolchain as well as native toolchain,
   probably.
@@ -15,6 +15,17 @@ mksquashfs-lzma -- from OWRT squashfs-tools. needed on host.
 trx -- from OWRT firmware-utils. needed on host.
 
 Requires file components loader.gz, vmlinux.lzma, root.squashfs, fs_mark
+
+lzma sdk:
+
+Apply the two openwrt patches (zlib, then ranlib).
+Build with:
+
+make -C C/7zip/Compress/LZMA_Lib
+make -f makefile.gcc -C C/7zip/Compress/LZMA_Alone
+
+put C/7zip/Compress/LZMA_Alone/lzma somewhere convenient for
+later use.
 
 vmlinux.lzma:
 
@@ -41,14 +52,12 @@ that knows how to load and uncompress an LZMA-compressed kernel.
 It is built using the cross-toolchain, since it needs to run on
 the target.  It MAY need to be built using a uClibc toolchain.
 
-make -C lzma-loader [...] clean install
-does:
---
-cp target/linux/brcm-2.4/image/lzma-loader/src/* workdir
-cd workdir
-make CC="mipsel-linux-uclibc-bcc" LD="mispel-linux-ucblic-ld" \
-  CROSS_COMPILE="mipsel-linux-uclibc-"
+make clean
+make CC="mipsel-unknown-linux-gnu-gcc" \
+  LD="mipsel-unknown-linux-gnu-ld" \
+  CROSS_COMPILE="mipsel-unknown-linux-gnu-"
 echo -ne "\\x00" >> loader.gz
+
 --
 
 fs_mark:
@@ -81,6 +90,10 @@ mkdir root-brcm47xx/tmp
 chmod 777 root-brcm47xx/tmp
 mksquashfs-lzma root-brcm47xx root-squashfs -nopad -noappend -root-owned -le
 
+trx:
+
+this is as simple as "gcc -o trx trx.c", wahoo!
+
 invoking trx:
 
 trx -o OUTPUT_FILENAME.trx -f loader.gz -f vmlinux.lzma \
@@ -88,3 +101,8 @@ trx -o OUTPUT_FILENAME.trx -f loader.gz -f vmlinux.lzma \
 
 (For the initial image (used with the NFS root kernel), let's try
 omitting root.squashfs and fs_mark.)
+
+INITIAL TRIAL:
+
+trx -o NFSBOOT.trx -f loader.gz -f vmlinux.lzma
+

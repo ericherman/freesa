@@ -1,4 +1,4 @@
-Taken from OpenWRT, SVN revision 9649.
+From OpenWRT, SVN revision 9649
 
 Index: lzma/C/7zip/Compress/LZMA_Lib/makefile
 ===================================================================
