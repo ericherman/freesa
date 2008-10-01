@@ -1,0 +1,150 @@
+The WL-700gE hardware has a 2-megabyte flash ROM that can hold a
+firmware image.  When you power on the device, it automatically
+runs a program called CFE -- Broadcom's "Common Firmware
+Environment" -- that occupies the first 256kb of the flash
+memory.  CFE is kind of like the PC BIOS: it knows how to do a
+little bit of hardware initialization, and it can load an
+operating system kernel and execute it.  Unlike the PC BIOS,
+though, the CFE on the WL-700gE can't access a hard disk and load
+the operating system kernel from it; it needs to obtain the
+kernel either from the flash ROM or over the network.
+
+Happily, the CFE provides a "rescue mode" designed to allow
+firmware upgrades.  In rescue mode, CFE configures its internal
+ethernet interface with an IP address (192.168.1.1 by default),
+starts a TFTP server on that address, and waits for you to send
+it a firmware image formatted as a TRX file.  It then installs
+that TRX file into the flash ROM right after the CFE.  The TRX
+file can be up to 1728kb in size (the flash ROM has 2048 kb of
+space, but the first 256kb hold the CFE and the last 64kb are
+reserved for non-volatile environment variable storage).
+
+The firmware image for the freesa box is going to be a very small
+GNU/Linux system.  During our build process, we will construct
+two separate firmware images:
+
+ * The first image will be created after completing the minimal
+   system build, and will contain just the Linux kernel produced
+   during that build.  This kernel will mount its root filesystem
+   over NFS from the build machine, so it doesn't need to access
+   the hard disk at all.
+
+ * Then, after completing the operating system installation on
+   the internal hard drive, we'll build a minimal GNU/Linux
+   system that will be just good enough to do the rest of the
+   hardware initialization (including activating the hard drive),
+   mount the /real/ root filesystem, and use pivot-root and
+   chroot so that it no longer has any references to the
+   flash-resident filesystem -- a trick that is also used by many
+   standard linux distributions and rescue CDs, although they use
+   an initial ramfs rather than a flash-resident initial root
+   filesystem.
+
+Essentially, the firmware becomes a second-stage boot loader.
+(The first-stage boot loader is CFE.)  That's not exactly
+what it is, since the runtime kernel is actually resident in
+the flash image.  Maybe someday we will get kexec working on the
+freesa hardware, in which case we can have the firmware be an
+actual second-stage boot loader, whose job is to initialize the
+hard drive and then load the runtime kernel from it and launch
+into it.
+
+Because the flash area we have to work with is so small, we need
+to ensure that the firmware image contains only what is
+absolutely necessary to get the job done; and we need to compress
+everything in flash as much as possible.  The standard
+zlib compression used by the kernel is not good enough, so
+instead we will use LZMA compression of the kernel (and, for the
+final firmware image, the root filesystem).  That means we'll
+need a kernel loader program that has LZMA-decompression code.
+We also need the lzma compressor program from the 7zip LZMA SDK,
+and a program that writes the trx-formatted firmware image.
+Happily, all the hard work of assembling and building these
+things has been done by the wonderful people on the OpenWRT
+project, so all we need to do is follow in their footsteps.
+
+BUILD OVERVIEW -- initial (nfs-booting) firmware
+
+1. build the tools we need to construct the firmware image
+
+a. lzma
+
+This is from the 7zip LZMA SDK, version 4.32, available from
+[URL], by Igor Pavlov.  That is /not/ the same as the lzma-utils
+project by Ville Koskinen.
+
+Apply two patches from OpenWRT (first zlib, then ranlib), and
+build using a native toolchain wherever you are doing this work:
+
+make -C C/7zip/Compress/LZMA_Lib
+make -f makefile.gcc -C C/7zip/Compress/LZMA_Alone
+
+The result is in C/7zip/Compress/LZMA_Alone/lzma.  Put it
+somewhere convenient.  Keep in mind that you shouldn't install it
+anywhere on your $PATH -- if you do, it might conflict with the
+lzma program from lzma-utils, leading to confusion and
+unhappiness.
+
+b. trx
+
+This is the simplest program we will build at any point during
+the freesa construction process, with the exception of any "hello
+world" program you build to validate a toolchain.  Build it with:
+
+gcc -o trx trx.c
+
+Put the resulting program trx somewhere convenient.  I put it in
+the same place as the lzma program from 1.a.
+
+c. loader.gz
+
+This is a program by Oleg I. Vdovikin; like trx, we pulled it
+from OpenWRT.  It loads an LZMA-compressed Linux kernel from a
+flash device, decompresses it, and then transfers control to it.
+
+Build with:
+
+make clean
+make CC="mipsel-unknown-linux-gnu-gcc" \
+  LD="mipsel-unknown-linux-gnu-ld" \
+  CROSS_COMPILE="mipsel-unknown-linux-gnu-"
+echo -ne "\\x00" >> loader.gz
+
+[NOTE -- It appears that I built this with the same MIPS
+cross-toolchain we've used for the rest of the initial system
+build, rather than with a uClibc-based toolchain, but at the
+moment I don't remember for sure. -bn]
+
+
+2. build the firmware
+
+a. compressed linux kernel
+
+Start with the kernel image "vmlinux" that was produced during
+the initial-stage build.
+
+First, take the initial output and convert it into a "raw binary"
+that will actually work:
+
+mipsel-unknown-linux-gnu-objcopy -O binary -R .reginfo \
+  -R .note -R .comment -R .mdebug -S vmlinux fixed-vmlinux
+
+Now compress it with lzma:
+
+cat fixed-vmlinux | lzma e si -so -eos -lc1 -lp2 -pb2 > vmlinux.lzma
+
+b. invoke trx
+
+trx -o freesa-nfsboot.trx -f loader.gz -f vmlinux.lzma
+
+3. flash the firmware onto a wl-700ge box
+
+Hold down the orange "EZS" button on the back of the WL-700gE and
+plug in the device.  Wait for the blue light on the power button
+to stop flashing (about ten or fifteen seconds).  At this point,
+the WL-700gE will be running a TFTP server on the IP address
+stored in its NVRAM area.  By default this is 192.168.1.1.
+Ensure you can ping that IP address [CHECK: does CFE support
+ICMP? does ping work?], then use a tftp client to send
+freesa-nfsboot.trx to it.  Remember to use binary mode!
+
