@@ -106,3 +106,7 @@ INITIAL TRIAL:
 
 trx -o NFSBOOT.trx -f loader.gz -f vmlinux.lzma
 
+WORKS FINE.
+
+We can therefore defer the construction of root.squashfs until we
+are ready to make the final system bootable.

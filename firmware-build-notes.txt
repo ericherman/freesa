@@ -1,9 +1,9 @@
-The WL-700gE hardware has a 2-megabyte flash ROM that can hold a
-firmware image.  When you power on the device, it automatically
-runs a program called CFE -- Broadcom's "Common Firmware
-Environment" -- that occupies the first 256kb of the flash
-memory.  CFE is kind of like the PC BIOS: it knows how to do a
-little bit of hardware initialization, and it can load an
+The WL-700gE hardware has a 2-megabyte flash ROM, part of which
+can hold a firmware image.  When you power on the device, it
+automatically runs a program called CFE -- Broadcom's "Common
+Firmware Environment" -- that occupies the first 256kb of the
+flash memory.  CFE is kind of like the PC BIOS: it knows how to
+do a little bit of hardware initialization, and it can load an
 operating system kernel and execute it.  Unlike the PC BIOS,
 though, the CFE on the WL-700gE can't access a hard disk and load
 the operating system kernel from it; it needs to obtain the
@@ -20,8 +20,8 @@ space, but the first 256kb hold the CFE and the last 64kb are
 reserved for non-volatile environment variable storage).
 
 The firmware image for the freesa box is going to be a very small
-GNU/Linux system.  During our build process, we will construct
-two separate firmware images:
+GNU/Linux system, but we won't build that right away.  During our
+build process, we will construct two separate firmware images:
 
  * The first image will be created after completing the minimal
    system build, and will contain just the Linux kernel produced
@@ -46,22 +46,22 @@ what it is, since the runtime kernel is actually resident in
 the flash image.  Maybe someday we will get kexec working on the
 freesa hardware, in which case we can have the firmware be an
 actual second-stage boot loader, whose job is to initialize the
-hard drive and then load the runtime kernel from it and launch
-into it.
+hard drive and then load the runtime kernel from it and transfer
+control into it.
 
 Because the flash area we have to work with is so small, we need
 to ensure that the firmware image contains only what is
 absolutely necessary to get the job done; and we need to compress
-everything in flash as much as possible.  The standard
-zlib compression used by the kernel is not good enough, so
-instead we will use LZMA compression of the kernel (and, for the
-final firmware image, the root filesystem).  That means we'll
-need a kernel loader program that has LZMA-decompression code.
-We also need the lzma compressor program from the 7zip LZMA SDK,
-and a program that writes the trx-formatted firmware image.
-Happily, all the hard work of assembling and building these
-things has been done by the wonderful people on the OpenWRT
-project, so all we need to do is follow in their footsteps.
+everything in flash as much as possible.  The standard zlib
+compression used by the kernel is not good enough, so instead we
+will use LZMA compression of the kernel (and, for the final
+firmware image, the root filesystem).  That means we'll need a
+kernel loader program that has LZMA-decompression code.  We also
+need the lzma compressor program from the 7zip LZMA SDK, and a
+program that writes the trx-formatted firmware image.  Happily,
+all the hard work of assembling and building these things has
+been done by the wonderful people on the OpenWRT project, so all
+we need to do is follow in their footsteps.
 
 BUILD OVERVIEW -- initial (nfs-booting) firmware
 
@@ -147,4 +147,3 @@ stored in its NVRAM area.  By default this is 192.168.1.1.
 Ensure you can ping that IP address [CHECK: does CFE support
 ICMP? does ping work?], then use a tftp client to send
 freesa-nfsboot.trx to it.  Remember to use binary mode!
-
