@@ -11,26 +11,28 @@ Here are notes and scripts and things related to my efforts to build a
 cross-toolchain using the latest released versions of all tools, by which I
 mean:
 
-binutils 2.18
+binutils 2.19
 gcc 4.3.2
 glibc 2.8 or uClibc 0.9.29
-gmp 4.2.2
+gmp 4.2.4
 linux 2.6.26.2 (or, for mips, 2.6.23.16)
-mpfr 2.3.1
+mpfr 2.3.2
 
-GMP and MPFR are new pieces of the GNU toolchain; since they are required
-in order to build GCC, I think they qualify as components of the toolchain
-the same way that glibc does.
+It's arguable whether GMP and MPFR are actual toolchain components or not.
+I think they qualify, since they are needed in order to build the GCC C
+compiler.
 
 This is all built using a sysroot approach, as recommended by the GCC
-developers, and WITHOUT using most of the CLFS toolchain build
-instructions.  "sysroot" means that a directory on the host system, in our
-case $CLFS, will be set up to contain a subset of the root filesystem of
-the target system; include files and libraries will be used only from the
-sysroot location, not from the normal host system locations.  That's
-perfect for us, since we want to ensure that components of the host system
-are ignored by our cross-tools, whether we're doing a real cross-toolchain
-or a faux cross-toolchain (like an x86-to-x86 cross).
+developers.  I started with the instructions from CLFS, but wound up
+heavily modifying those instructions because they didn't work very well for
+me when using the latest stable versions of the components.  "sysroot"
+means that a directory on the host system, in our case $CLFS, will be set
+up to contain a subset of the root filesystem of the target system; include
+files and libraries will be used only from the sysroot location, not from
+the normal host system locations.  That's perfect for us, since we want to
+ensure that components of the host system are ignored by our cross-tools,
+whether we're doing a real cross-toolchain or a faux cross-toolchain (like
+an x86-to-x86 cross).
 
 These instructions are very conservative, and include building the C
 library in the sysroot as well as everything else.  For CLFS, we eventually
@@ -41,12 +43,12 @@ separately after the cross-toolchain build is complete.
 The patches referred to here are included in the "patches" directory.
 
 Note that we are building our cross-glibc with a "minimum kernel version"
-of 2.6.25; that means the actual runtime kernel being used to construct the
-real LFS system using the stuff under /tools will have to be a 2.6.25
-kernel.  You can adjust the kernel version downward if you are currently
-using an older kernel and don't want to upgrade it.  It isn't really a big
-deal to build an optimized glibc here; none of the code we are currently
-building will wind up on the final system.
+configuration directgive; that means the actual runtime kernel being used
+to construct the final system using the stuff under /tools will have to be
+at least the specified version.  You can adjust the kernel version downward
+if you are currently using an older kernel and don't want to upgrade it.
+It isn't really a big deal to build an optimized glibc here; none of the
+code we are currently building will wind up on the final system.
 
 Flags for building an x86-to-x86 "faux" cross-toolchain -- put these in the
 building user's .bashrc:
@@ -77,16 +79,19 @@ x86:
 
 export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-x86
 export UCLIBC_MAKE_PARAM=''
+unset GLIBCFLAG
 
 mips:
 
 export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-mips
 export UCLIBC_MAKE_PARAM="CROSS=${CLFS_TARGET}-"
+unset GLIBCFLAG
 
 There's a build script in automation that does all the work for you.
 
 gcc, glibc, and binutils MUST all be built from a separate "build"
-directory, not the source directory.
+directory, not the source directory.  Linux and uClibc don't have that
+constraint.
 
 The notes here are meant to be read along with the automated script.  Gosh,
 it sure would be cool if the whole thing had been written using literate
@@ -95,9 +100,9 @@ run it like a program, depending on your personal needs.  Maybe someday.
 
 STEP 0 host system dependencies
 
-Build and install gmp and mpfr.  I used gmp 4.2.2 and mpfr 2.3.1.  You can
-install them anywhere you want, but I went with /usr.  They don't take up
-much space, and they might come in handy for something later.
+Build and install gmp and mpfr.  You can install them anywhere you want,
+but I went with /usr.  They don't take up much space, and they might come
+in handy for something later.
 
 The CLFS book says it's also important to have file at least version 2.41,
 so go ahead and upgrade that if necessary.
@@ -113,8 +118,8 @@ This one doesn't need a separate build directory.
 
 STEP 2 binutils
 
-Apply the posix and branch_update-3 patches, originally from CLFS, that you
-can find in the patch directory.
+Apply the posix patch, originally from CLFS, that you can find in the patch
+directory.
 
 You can clean up the source directory for this immediately after the build,
 if you'd like.  You won't use it again in this process.
