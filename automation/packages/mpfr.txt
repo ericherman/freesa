@@ -2,7 +2,7 @@ name: MPFR library
 version: 2.3.1
 project_url: http://www.mpfr.org/
 
-configuration_defaults:
+configuration-defaults:
  - INSTALL_MPFR: true
  - MPFR_PREFIX: /usr/local
 

@@ -1,0 +1,6 @@
+"lib" and "specs" contain the Literate Build System, currently
+under development.
+
+"packages" and "sections" contain sample inputs that the Literate
+Build System should eventually be able to handle, producing
+either a book or a sequence of commands.

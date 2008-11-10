@@ -25,7 +25,7 @@ well-documented, but the important thing from our perspective is
 that we need to specify the configure options +--with-sysroot+
 and +--with-build-sysroot+ should be specified.
 
-configuration_defaults:
+configuration-defaults:
  - HOST
  - TARGET
  - SYSROOT
