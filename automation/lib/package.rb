@@ -1,12 +1,9 @@
+require 'yaml'
+
 class Package
 
   def initialize(file_text)
     @text = file_text
-  end
-
-  def extract_value(keyword)
-    line = @text.select { |line| line =~ /^#{keyword}:/ }
-    line.first.gsub(/^[a-z]*:/, '').strip
   end
 
   def name
@@ -31,6 +28,21 @@ class Package
 
   def install
     [ 'make install' ]
+  end
+
+  private
+
+  def parse(text)
+    directives = {}
+    chunks.each { |chunk|
+      parsed = YAML.load(chunk)
+      directives.merge!(parsed) if parsed.instance_of? Hash
+    }
+  end
+
+  def extract_value(keyword)
+    line = @text.select { |line| line =~ /^#{keyword}:/ }
+    line.first.gsub(/^[a-z]*:/, '').strip
   end
 
 end
