@@ -3,15 +3,20 @@ require 'yaml'
 class Package
 
   def initialize(file_text)
-    @text = file_text
+    @directives = {}
+    chunks = file_text.split("\n\n")
+    chunks.each { |chunk|
+      parsed = YAML.load(chunk)
+      @directives.merge!(parsed) if parsed.instance_of? Hash
+    }
   end
 
   def name
-    extract_value('name')
+    @directives['name']
   end
 
   def version
-    extract_value('version')
+    @directives['version'].to_s
   end
 
   def configure
@@ -28,21 +33,6 @@ class Package
 
   def install
     [ 'make install' ]
-  end
-
-  private
-
-  def parse(text)
-    directives = {}
-    chunks.each { |chunk|
-      parsed = YAML.load(chunk)
-      directives.merge!(parsed) if parsed.instance_of? Hash
-    }
-  end
-
-  def extract_value(keyword)
-    line = @text.select { |line| line =~ /^#{keyword}:/ }
-    line.first.gsub(/^[a-z]*:/, '').strip
   end
 
 end
