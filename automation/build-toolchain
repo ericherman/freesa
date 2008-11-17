@@ -263,7 +263,7 @@ function step07b_uclibc_full()
 echo "STEP 07"
 cd uclibc &&
 make $UCLIBC_MAKE_PARAM &&
-make PREFIX=$SYSROOT install &&
+make $UCLIBC_MAKE_PARAM PREFIX=$SYSROOT install &&
 cd ${BUILD_DIR} &&
 echo WOOT || exit 7
 }
@@ -303,7 +303,7 @@ function step09b_uclibc_utilities()
 {
 cd uclibc &&
 make $UCLIBC_MAKE_PARAM utils &&
-make PREFIX=$SYSROOT install_utils &&
+make $UCLIBC_MAKE_PARAM PREFIX=$SYSROOT install_utils &&
 cd ${BUILD_DIR} &&
 echo WOOT || exit 9
 }
