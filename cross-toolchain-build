@@ -253,9 +253,15 @@ patches that were used previously; but use a fresh glibc-build directory.
 
 STEP 7b uclibc
 
-This build now runs without problems.  The former problems with
-the fenv.h header are resolved by enabling the C99 floating-point
-environment.
+The former problems with the fenv.h header are resolved by
+enabling the C99 floating-point environment.
+
+There is a problem when compiling a MIPS library, because a
+function in the linuxthreads.old implementation (_test_and_set)
+is declared static and then used in a non-static context. The
+mips-linuxthreads-1 patch corrects the problem by removing the
+static function definition and explicitly using the definition
+provided in a separate header (sys/tas.h) instead.
 
 STEP 8 gcc (full compiler)
 
