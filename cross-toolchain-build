@@ -13,9 +13,9 @@ mean:
 
 binutils 2.19
 gcc 4.3.2
-glibc 2.8 or uClibc 0.9.29
+glibc 2.8 or uClibc 0.9.30
 gmp 4.2.4
-linux 2.6.26.2 (or, for mips, 2.6.23.16)
+linux 2.6.27.6 (or, for mips, 2.6.23.16)
 mpfr 2.3.2
 
 It's arguable whether GMP and MPFR are actual toolchain components or not.
@@ -68,6 +68,7 @@ export GLIBCFLAG="-march=$(cut -d- -f1 <<< $CLFS_TARGET) -mtune=generic -g -O2"
 Flags for building an x86-to-mipsel cross-toolchain:
 
 export CLFS_TARGET=mipsel-unknown-linux-gnu
+
 export KERNEL_VERSION=2.6.23
 export GLIBCFLAG="-g -O2"
 export KERNEL_ARCH="ARCH=mips"
@@ -77,12 +78,14 @@ as far as that goes)...
 
 x86:
 
+export CLFS_TARGET=mipsel-unknown-linux-uclibc
 export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-x86
 export UCLIBC_MAKE_PARAM=''
 unset GLIBCFLAG
 
 mips:
 
+export CLFS_TARGET=mipsel-unknown-linux-uclibc
 export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-mips
 export UCLIBC_MAKE_PARAM="CROSS=${CLFS_TARGET}-"
 unset GLIBCFLAG
@@ -148,10 +151,6 @@ STEP 3b uclibc headers
 uClibc is a small C library designed expressly for situations in which
 glibc is too large.  That's the case when building tools for a
 resource-constrained environment like the flash EPROM on the WL-700gE.
-
-uClibc needs a patch in order to build MIPS pthreads:  without it, there
-are multiple declarations of two functions (testandset and
-__compare_and_swap).  The patch is fix-pthread-mips-build.
 
 The UCLIBC_EXTRA_CFLAGS in the .config file need to specify
 an -isystem directive using the correct include-fixed directory
@@ -225,7 +224,7 @@ libgcc.a around; but, as of August 2008, he can't manage it any
 more.  So we need to build the same crt?.o files as with glibc,
 so that we can build libgcc, in order to build the full uClibc.
 
-
+(SEE SCRIPT FOR COMMANDS)
 
 STEP 6 gcc (libgcc)
 
@@ -254,21 +253,9 @@ patches that were used previously; but use a fresh glibc-build directory.
 
 STEP 7b uclibc
 
-There is something wrong with the uClibc installation -- or, more likely,
-the flaw is with these instructions and I simply don't know enough to
-correct the real problem.  In either case, a header file "fenv.h" that
-should be produced is not; the only fenv.h provided is in the "bits"
-subdirectory and has a guard clause that prevents it from being included 
-directly.  The bits/fenv.h file comes from glibc, and the original glibc
-version gets most of its content from math/fenv.h before including
-bits/fenv.h.  uClibc doesn't have the top-level fenv.h or math/fenv.h.  To
-get around the downstream build failure (when building the full gcc), we
-simply synthesize a very basic fenv.h that just gets bits/fenv.h included.
-
-fenv.h is a header file related to ISO C99 floating-point arithmetic (it
-means "floating-point environment"). If problems occur when using the
-uClibc-based toolchain to compile or run programs that use floating-point
-math, this is probably the reason.
+This build now runs without problems.  The former problems with
+the fenv.h header are resolved by enabling the C99 floating-point
+environment.
 
 STEP 8 gcc (full compiler)
 

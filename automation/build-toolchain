@@ -33,20 +33,27 @@ fi
 if [ $1 == 'x86' ]
 then
     export CLFS_TARGET=i686-pc-linux-gnu
-    export KERNEL_VERSION=2.6.25
+    export KERNEL_VERSION=2.6.27
     MARCH="$(cut -d- -f1 <<< $CLFS_TARGET)"
     export GLIBCFLAG="-march=$MARCH -mtune=generic -g -O2"
     unset KERNEL_ARCH
     export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-x86
     export UCLIBC_MAKE_PARAM=''
+    export GCC_VERSION=4.3.2
 else
+    if [ $2 == 'glibc' ]
+    then
+        LASTPART=gnu
+    else
+        LASTPART=uclibc
+    fi
     if [ $1 == 'mipsel' ]
     then
         export ENDIANNESS=little
-        export CLFS_TARGET=mipsel-unknown-linux-gnu
+        export CLFS_TARGET=mipsel-unknown-linux-$LASTPART
     else
         export ENDIANNESS=big
-        export CLFS_TARGET=mips-unknown-linux-gnu
+        export CLFS_TARGET=mips-unknown-linux-$LASTPART
     fi
     export GCC_VERSION=4.3.2
     export KERNEL_VERSION=2.6.23
@@ -127,7 +134,6 @@ function step03b_uclibc_headers()
 echo "STEP 03"
 cd uclibc &&
 make distclean &&
-rm -f extra/config/.depend &&
 export UC_VAR="${CLFS_TARGET}/${GCC_VERSION}"
 export UC_FIXED="/cross-tools/lib/gcc/${UC_VAR}/include-fixed"
 cp $UCLIBC_CONFIG .config &&
@@ -201,11 +207,7 @@ echo WOOT || exit 5
 
 function step05b_uclibc_startup()
 {
-# for some reason, fenv.h doesn't get set up properly by uclibc,
-# so we create a dummy one.
-echo "#define _FENV_H" > $SYSROOT/usr/include/fenv.h &&
-echo "#include <bits/fenv.h>" >> $SYSROOT/usr/include/fenv.h &&
-# also, some headers didn't get installed properly before (e.g.
+# some headers didn't get installed properly before (e.g.
 # uClibc_config.h) so do another install_headers at this point.
 echo "STEP 05"
 cd uclibc &&
@@ -221,14 +223,6 @@ cp lib/crt{1,i,n}.o $SYSROOT/lib &&
 rm -rf lib &&
 cd ${BUILD_DIR} &&
 echo WOOT || exit 5
-# Egad. The libgcc build uses -isystem # /cross-tools/$CLFS_TARGET/include 
-# but there is nothing there; the header files are under $SYSROOT.  Why 
-# doesn't this happen in the glibc build?
-echo "STEP 05.5 -- set up include symlink"
-pushd /cross-tools/${CLFS_TARGET} &&
-ln -s $SYSROOT/include include &&
-popd &&
-echo "woot, I guess."
 }
 
 function step06_gcc_libgcc()
@@ -288,7 +282,6 @@ mkdir build-gcc && cd build-gcc &&
 export LDFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
 export CPPFLAGS_FOR_TARGET="--sysroot=$SYSROOT" &&
 make AS_FOR_TARGET="${CLFS_TARGET}-as" LD_FOR_TARGET="${CLFS_TARGET}-ld" &&
-rm -f /cross-tools/i686-pc-linux-gnu/include &&
 make install &&
 cd ${BUILD_DIR} &&
 rm -rf build-gcc &&
