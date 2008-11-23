@@ -1,5 +1,5 @@
 name: GNU binutils
-version: 2.18
+version: 2.19
 
 The GNU binary utilities are a collection of programs and
 libraries that produce and operate on object files.  The primary
@@ -25,22 +25,16 @@ well-documented, but the important thing from our perspective is
 that we need to specify the configure options +--with-sysroot+
 and +--with-build-sysroot+ should be specified.
 
-configuration-defaults:
- - HOST
- - TARGET
- - SYSROOT
-
 patches:
  - posix-1
- - branch_update-3
 
 build-dir: ../build-binutils
 
 configure-commands:
- - ../binutils*/configure --prefix=/cross-tools \
-     --build=CONFIG[HOST] --target=CONFIG[TARGET] \
+ - PARAM[SOURCEDIR]/configure --prefix=/cross-tools \
+     --build=PARAM[HOST] --target=PARAM[TARGET] \
      --disable-nls --enable-shared --disable-multilib \
-     --with-sysroot=CONFIG[SYSROOT] --with-build-sysroot=CONFIG[SYSROOT]
+     --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
  - make configure-host
 
 make-commands:
@@ -50,4 +44,4 @@ test-commands:
 
 install-commands:
  - make install
- - cp -v ../binutils*/include/libiberty.h CONFIG[SYSROOT]/usr/include
+ - cp -v PARAM[SOURCEDIR]/include/libiberty.h PARAM[SYSROOT]/usr/include

@@ -11,13 +11,6 @@ According to the glibc documentation, the higher the kernel
 version number, the less unnecessary compatibility code is built
 into the C library.
 
-configuration-defaults:
- - HOST
- - TARGET
- - KERNEL_VERSION
- - SYSROOT
- - GLIBCFLAG
-
 patches:
  - libgcc_eh-1
  - localedef_segfault-1
@@ -29,23 +22,23 @@ phase: headers
 build-dir: ../build-glibc
 
 configure-commands:
- - CC=gcc ../glibc*/configure --prefix=/usr \
-    --host=CONFIG[HOST] --build=CONFIG[TARGET] \
-    --disable-sanity-checks --enable-kernel=CONFIG[KERNEL_VERSION] \
-    --with-headers=CONFIG[SYSROOT]/usr/include \
-    --with-binutils=/cross-tools/CONFIG[TARGET]/bin
+ - CC=gcc PARAM[SOURCEDIR]/configure --prefix=/usr \
+    --host=PARAM[HOST] --build=PARAM[TARGET] \
+    --disable-sanity-checks --enable-kernel=PARAM[KERNEL_VERSION] \
+    --with-headers=PARAM[SYSROOT]/usr/include \
+    --with-binutils=/cross-tools/PARAM[TARGET]/bin
 
 make_commands:
- - make cross-compiling=yes install_root=CONFIG[SYSROOT] install-headers
+ - make cross-compiling=yes install_root=PARAM[SYSROOT] install-headers
 
 test-commands:
 
 install-commands:
- - cp -v bits/stdio_lim.h CONFIG[SYSROOT]/usr/include/bits
- - touch CONFIG[SYSROOT]/usr/include/gnu/stubs.h
- - cp -v ../glibc*/nptl/sysdeps/pthread/pthread.h CONFIG[SYSROOT]/usr/include
- - cp -v ../glibc*/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
-    CONFIG[SYSROOT]/usr/include/bits
+ - cp -v bits/stdio_lim.h PARAM[SYSROOT]/usr/include/bits
+ - touch PARAM[SYSROOT]/usr/include/gnu/stubs.h
+ - cp -v PARAM[SOURCEDIR]/nptl/sysdeps/pthread/pthread.h PARAM[SYSROOT]/usr/include
+ - cp -v PARAM[SOURCEDIR]/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
+    PARAM[SYSROOT]/usr/include/bits
 
 
 phase: startup files
@@ -56,27 +49,27 @@ We'll build the rest of glibc after we build libgcc.
 configure-commands:
  - echo "libc_cv_forced_unwind=yes" > config.cache
  - echo "libc_cv_c_cleanup=yes" >> config.cache
- - BUILD_CC="gcc" CC="CONFIG[CLFS_TARGET]-gcc" \
-      AR="CONFIG[TARGET]-ar" RANLIB="CONFIG[TARGET]-ranlib" \
-      CFLAGS="CONFIG[GLIBCFLAG]" \
-      ../glibc*/configure --prefix=/usr \
-      --host=CONFIG[TARGET] --build=CONFIG[HOST] \
+ - BUILD_CC="gcc" CC="PARAM[CLFS_TARGET]-gcc" \
+      AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib" \
+      CFLAGS="PARAM[GLIBCFLAG]" \
+      PARAM[SOURCEDIR]/configure --prefix=/usr \
+      --host=PARAM[TARGET] --build=PARAM[HOST] \
       --disable-profile --enable-add-ons --with-tls \
-      --enable-kernel=CONFIG[KERNEL_VERSION] --with-__thread \
+      --enable-kernel=PARAM[KERNEL_VERSION] --with-__thread \
       --with-binutils=/cross-tools/bin \
-      --with-headers=CONFIG[SYSROOT]/usr/include \
+      --with-headers=PARAM[SYSROOT]/usr/include \
       --cache-file=config.cache
 
 make_commands:
- - make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crt1.o
- - make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crti.o
- - make -r -C ../glibc*/csu objdir=$(pwd) $(pwd)/csu/crtn.o
+ - make -r -C PARAM[SOURCEDIR]/csu objdir=$(pwd) $(pwd)/csu/crt1.o
+ - make -r -C PARAM[SOURCEDIR]/csu objdir=$(pwd) $(pwd)/csu/crti.o
+ - make -r -C PARAM[SOURCEDIR]/csu objdir=$(pwd) $(pwd)/csu/crtn.o
 
 test-commands:
 
 install-commands:
- - mkdir -p CONFIG[SYSROOT]/lib
- - cp csu/crt{1,i,n}.o CONFIG[SYSROOT]/lib
+ - mkdir -p PARAM[SYSROOT]/lib
+ - cp csu/crt{1,i,n}.o PARAM[SYSROOT]/lib
 
 
 phase: full glibc
@@ -88,15 +81,15 @@ configure-commands:
  - mkdir build-glibc && cd build-glibc
  - echo "libc_cv_forced_unwind=yes" > config.cache
  - echo "libc_cv_c_cleanup=yes" >> config.cache
- - BUILD_CC="gcc" CC="CONFIG[TARGET]-gcc" \
-      AR="CONFIG[TARGET]-ar" RANLIB="CONFIG[TARGET]-ranlib" \
-      CFLAGS="CONFIG[GLIBCFLAG]" \
-      ../glibc*/configure --prefix=/usr \
-      --host=CONFIG[TARGET] --build=CONFIG[HOST] \
+ - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc" \
+      AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib" \
+      CFLAGS="PARAM[GLIBCFLAG]" \
+      PARAM[SOURCEDIR]/configure --prefix=/usr \
+      --host=PARAM[TARGET] --build=PARAM[HOST] \
       --disable-profile --enable-add-ons --with-tls \
-      --enable-kernel=CONFIG[KERNEL_VERSION] --with-__thread \
+      --enable-kernel=PARAM[KERNEL_VERSION] --with-__thread \
       --with-binutils=/cross-tools/bin \
-      --with-headers=CONFIG[SYSROOT]/usr/include \
+      --with-headers=PARAM[SYSROOT]/usr/include \
       --cache-file=config.cache
 
 make_commands:
@@ -105,4 +98,4 @@ make_commands:
 test-commands:
 
 install-commands:
- - make install_root=CONFIG[SYSROOT] install
+ - make install_root=PARAM[SYSROOT] install

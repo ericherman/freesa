@@ -1,0 +1,2 @@
+make the cross-toolchain installation path configurable
+instead of always using /cross-tools.

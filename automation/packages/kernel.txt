@@ -49,17 +49,17 @@ though.  If you know what it really does, please tell us.
 
 configuration-defaults:
  - KERNEL_ARCH_PARAM: ARCH=mips
- - KERNEL_HEADER_PATH: CONFIG[SYSROOT]/usr
+ - KERNEL_HEADER_PATH: PARAM[SYSROOT]/usr
 
 configure-commands:
  - make mrproper
 
 make-commands:
- - make CONFIG[KERNEL_ARCH] headers_check
+ - make PARAM[KERNEL_ARCH] headers_check
 
 test-commands:
 
 install-commands:
- - make CONFIG[KERNEL_ARCH] headers_install \
-     INSTALL_HDR_PATH=CONFIG[KERNEL_HEADER_PATH]
+ - make PARAM[KERNEL_ARCH] headers_install \
+     INSTALL_HDR_PATH=PARAM[KERNEL_HEADER_PATH]
 

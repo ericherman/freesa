@@ -49,14 +49,9 @@ least, that's what Carlos O'Donell said in a comment on GCC bug
 #35532.  The documentation on sysroot builds is not particularly
 easy to find, as of this writing.
 
-configuration-defaults:
- - HOST
- - TARGET
- - SYSROOT
-
 environment:
- - LDFLAGS_FOR_TARGET = CONFIG[SYSROOT]
- - CPPFLAGS_FOR_TARGET = CONFIG[SYSROOT]
+ - LDFLAGS_FOR_TARGET = PARAM[SYSROOT]
+ - CPPFLAGS_FOR_TARGET = PARAM[SYSROOT]
 
 patches:
  - posix-1
@@ -69,12 +64,12 @@ around; the same directory should be used when building libgcc.
 build-dir: ../build-gcc KEEP
 
 configure-commands:
- - ../gcc*/configure --prefix=/cross-tools \
-     --build=CONFIG[HOST] --host=CONFIG[HOST] --target=CONFIG[TARGET] \
+ - PARAM[SOURCEDIR]/configure --prefix=/cross-tools \
+     --build=PARAM[HOST] --host=PARAM[HOST] --target=PARAM[TARGET] \
      --disable-multilib --disable-nls --disable-shared \
      --disable-libmudflap --disable-libssp \
      --disable-threads --enable-languages=c \
-     --with-sysroot=CONFIG[SYSROOT] --with-build-sysroot=CONFIG[SYSROOT]
+     --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
 
 make-commands:
  - make all-gcc
@@ -102,7 +97,7 @@ test-commands:
 
 install-commands:
  - make install-target-libgcc
- - rm -f CONFIG[SYSROOT]/lib/crt{1,i,n}.o
+ - rm -f PARAM[SYSROOT]/lib/crt{1,i,n}.o
 
 
 phase: full compiler
@@ -115,12 +110,12 @@ the partial builds we've done so far.
 build-dir: ../build-gcc
 
 configure-commands:
-../gcc*/configure --prefix=/cross-tools \
-  --build=CONFIG[HOST] --host=CONFIG[HOST] --target=CONFIG[TARGET] \
+PARAM[SOURCEDIR]/configure --prefix=/cross-tools \
+  --build=PARAM[HOST] --host=PARAM[HOST] --target=PARAM[TARGET] \
   --disable-multilib --disable-nls --enable-shared \
   --enable-languages=c,c++ --enable-__cxa_atexit \
   --enable-c99 --enable-long-long --enable-threads=posix \
-  --with-sysroot=CONFIG[SYSROOT] --with-build-sysroot=CONFIG[SYSROOT]
+  --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
 
 make-commands:
  - make
@@ -155,7 +150,7 @@ cross-toolchain to be uClibc-based, instead of glibc-based, we
 could get that to work.)
 
 misc-commands:
- - LIBGCC_FILE = CONFIG[TARGET]-gcc --print-libgcc-file-name
- - SPECSDIR = dirname CONFIG[LIBGCC_FILE]
- - CONFIG[TARGET]-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
-     CONFIG[SPECSDIR]/specs
+ - LIBGCC_FILE = PARAM[TARGET]-gcc --print-libgcc-file-name
+ - SPECSDIR = dirname PARAM[LIBGCC_FILE]
+ - PARAM[TARGET]-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' > \
+     PARAM[SPECSDIR]/specs
