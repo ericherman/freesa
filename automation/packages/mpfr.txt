@@ -1,6 +1,6 @@
 name: MPFR library
 version: 2.3.1
-project_url: http://www.mpfr.org/
+project-url: http://www.mpfr.org/
 
 configuration-defaults:
  - INSTALL_MPFR: true

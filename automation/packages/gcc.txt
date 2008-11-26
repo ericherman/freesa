@@ -1,6 +1,6 @@
 name: GNU Compiler Collection
 version: 4.3.1
-project_url: http://gcc.gnu.org/
+project-url: http://gcc.gnu.org/
 
 GCC is the GNU Compiler Collection.  The most important compiler
 in the collection, for purposes of bootstrapping a system, is the

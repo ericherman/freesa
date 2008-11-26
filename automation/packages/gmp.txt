@@ -1,6 +1,6 @@
 name: GNU MP Library
 version: 4.2.2
-project_url: http://gmplib.org/
+project-url: http://gmplib.org/
 
 configuration-defaults:
  - INSTALL_GMP: true

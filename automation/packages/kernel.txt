@@ -1,6 +1,6 @@
 name: linux kernel
 version: 2.6.23.16
-project_url: http://www.kernel.org/
+project-url: http://www.kernel.org/
 
 The kernel is linux _per se_ -- the core of the operating system.
 Usually, when people say "linux," they mean the entire operating

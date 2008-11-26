@@ -31,9 +31,9 @@ patches:
 build-dir: ../build-binutils
 
 configure-commands:
- - PARAM[SOURCEDIR]/configure --prefix=/cross-tools \
-     --build=PARAM[HOST] --target=PARAM[TARGET] \
-     --disable-nls --enable-shared --disable-multilib \
+ - PARAM[SOURCEDIR]/configure --prefix=/cross-tools
+     --build=PARAM[HOST] --target=PARAM[TARGET]
+     --disable-nls --enable-shared --disable-multilib
      --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
  - make configure-host
 
