@@ -13,7 +13,7 @@ mean:
 
 binutils 2.19
 gcc 4.3.2
-glibc 2.8 or uClibc 0.9.30
+glibc 2.9 or uClibc 0.9.30
 gmp 4.2.4
 linux 2.6.27.6 (or, for mips, 2.6.23.16)
 mpfr 2.3.2
@@ -61,7 +61,7 @@ unset CXXFLAGS
 export CLFS_HOST=i686-cross-linux-gnu
 export CLFS_TARGET=i686-pc-linux-gnu
 export SYSROOT=/cross-tools/sysroot
-export KERNEL_VERSION=2.6.25
+export KERNEL_VERSION=2.6.27
 unset KERNEL_ARCH
 export GLIBCFLAG="-march=$(cut -d- -f1 <<< $CLFS_TARGET) -mtune=generic -g -O2"
 
@@ -134,10 +134,11 @@ if you'd like.  You won't use it again in this process.
 STEP 3 glibc headers
 
 Apply the patches: libgcc_eh and localedef_segfault.  These are from CLFS;
-libgcc_eh links in a library provided by gcc only if it exists, and the
-second corrects a segmentation fault on architectures that we're probably
-not using.  (Maybe try without the patch to determine whether the fault
-exists on MIPS?)
+libgcc_eh causes the GCC exception-handling library to be linked into glibc
+only if it exists (which it won't, until after the final gcc build in step
+8), and the second corrects a segmentation fault on architectures that
+we're probably not using.  (Maybe sometime we'll try without the patch to
+determine whether the fault exists on MIPS?)
 
 After doing this build, get rid of the glibc-build directory but keep the
 source directory around for now:  we will need it again a little later.
@@ -205,7 +206,7 @@ STEP 5 glibc (startup files)
 
 If you kept around the source directory from step 3, just use it again
 here.  If not, remember to apply the patches: libgcc_eh,
-localedef_segfault, i586_chk, and fixup_for_gcc43.  
+and localedef_segfault.
 
 The build commands here just build the startup files we need.  We'll build
 the rest of glibc after we build libgcc.
@@ -319,7 +320,8 @@ STEP 10 glibc (in /tools)
 
 This is just like the earlier glibc build except that we don't need to mess
 around with building part of gcc and then part of glibc and so on -- we
-already have a perfectly good cross-toolchain built and ready to use.  It
+already have a perfectly good cross-toolchain built and ready to use.  We
+also have a libgcc_eh to link against now, for whatever that's worth.  It
 still takes a while, unfortunately.
 
 (SEE SCRIPT FOR COMMANDS)

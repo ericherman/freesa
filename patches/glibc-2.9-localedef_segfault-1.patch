@@ -8,7 +8,7 @@ Description: Fixes Segfault when using localdef.
              and some architectures besides x86.
              See debian bug # 231438
 
-             Respun for 2.8 by Brett Neumeier
+             Respun for 2.9 by Brett Neumeier
 
 diff --git a/locale/programs/3level.h b/locale/programs/3level.h
 index cce925e..6bf8b84 100644
@@ -57,3 +57,6 @@ index cce925e..6bf8b84 100644
  #endif
  
  #ifndef NO_FINALIZE
+-- 
+1.6.0.3
+

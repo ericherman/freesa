@@ -6,10 +6,10 @@ Upstream Status: Unknown
 Description: Checks to see if libgcc_eh has been provided by gcc. If it has
              the glibc will attempt to link to it.
 
-             Rediffed for 2.8 by Brett Neumeier
+             Rediffed for 2.9 by Brett Neumeier
 
 diff --git a/Makeconfig b/Makeconfig
-index d269936..528d5e7 100644
+index 83e1409..0210ec8 100644
 --- a/Makeconfig
 +++ b/Makeconfig
 @@ -525,12 +525,20 @@ else
@@ -35,7 +35,7 @@ index d269936..528d5e7 100644
  endif
  ifeq ($(elf),yes)
 diff --git a/config.make.in b/config.make.in
-index 3fd0abc..531e282 100644
+index aa73466..f6681d7 100644
 --- a/config.make.in
 +++ b/config.make.in
 @@ -60,6 +60,7 @@ have-selinux = @have_selinux@
@@ -47,7 +47,7 @@ index 3fd0abc..531e282 100644
  bind-now = @bindnow@
  have-hash-style = @libc_cv_hashstyle@
 diff --git a/configure b/configure
-index 3330d53..a6dc813 100755
+index a2a792c..ea4e032 100755
 --- a/configure
 +++ b/configure
 @@ -716,6 +716,7 @@ INSTALL_INFO
@@ -58,7 +58,7 @@ index 3330d53..a6dc813 100755
  libc_cv_Bgroup
  libc_cv_libgcc_s_suffix
  libc_cv_as_needed
-@@ -6052,6 +6053,33 @@ _ACEOF
+@@ -6053,6 +6054,33 @@ _ACEOF
  
    fi
  
@@ -92,7 +92,7 @@ index 3330d53..a6dc813 100755
    { echo "$as_me:$LINENO: checking for -z nodelete option" >&5
  echo $ECHO_N "checking for -z nodelete option... $ECHO_C" >&6; }
  if test "${libc_cv_z_nodelete+set}" = set; then
-@@ -9250,6 +9278,7 @@ for ac_last_try in false false false false false :; do
+@@ -9282,6 +9310,7 @@ for ac_last_try in false false false false false :; do
  BISON!$BISON$ac_delim
  VERSIONING!$VERSIONING$ac_delim
  libc_cv_cc_with_libunwind!$libc_cv_cc_with_libunwind$ac_delim
@@ -100,20 +100,20 @@ index 3330d53..a6dc813 100755
  libc_cv_Bgroup!$libc_cv_Bgroup$ac_delim
  libc_cv_libgcc_s_suffix!$libc_cv_libgcc_s_suffix$ac_delim
  libc_cv_as_needed!$libc_cv_as_needed$ac_delim
-@@ -9301,7 +9330,7 @@ LIBOBJS!$LIBOBJS$ac_delim
+@@ -9335,7 +9364,7 @@ LIBOBJS!$LIBOBJS$ac_delim
  LTLIBOBJS!$LTLIBOBJS$ac_delim
  _ACEOF
  
--  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 52; then
-+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 53; then
+-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 54; then
++  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 55; then
      break
    elif $ac_last_try; then
      { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
 diff --git a/configure.in b/configure.in
-index e6a5abb..1aa1b75 100644
+index 4a2b546..29ad067 100644
 --- a/configure.in
 +++ b/configure.in
-@@ -1395,6 +1395,23 @@ EOF
+@@ -1394,6 +1394,23 @@ EOF
      AC_DEFINE(HAVE_CC_WITH_LIBUNWIND)
    fi
  
@@ -137,3 +137,6 @@ index e6a5abb..1aa1b75 100644
    AC_CACHE_CHECK(for -z nodelete option,
  		 libc_cv_z_nodelete, [dnl
    cat > conftest.c <<EOF
+-- 
+1.6.0.3
+
