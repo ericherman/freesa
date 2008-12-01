@@ -122,7 +122,7 @@ This one doesn't need a separate build directory.
 STEP 2 binutils
 
 Apply the posix patch, originally from CLFS, that you can find in the patch
-directory.
+directory, and the latest branch-update patch from the binutils project.
 
 You can clean up the source directory for this immediately after the build,
 if you'd like.  You won't use it again in this process.
