@@ -191,12 +191,55 @@ Index: bfd/version.h
 ===================================================================
 RCS file: /cvs/src/src/bfd/version.h,v
 retrieving revision 1.2442.2.37
-retrieving revision 1.2442.2.82
-diff -r1.2442.2.37 -r1.2442.2.82
+retrieving revision 1.2442.2.90
+diff -r1.2442.2.37 -r1.2442.2.90
 1c1
 < #define BFD_VERSION_DATE 20081016
 ---
-> #define BFD_VERSION_DATE 20081130
+> #define BFD_VERSION_DATE 20081208
+Index: binutils/ChangeLog
+===================================================================
+RCS file: /cvs/src/src/binutils/ChangeLog,v
+retrieving revision 1.1365.2.5
+retrieving revision 1.1365.2.6
+diff -r1.1365.2.5 -r1.1365.2.6
+0a1,8
+> 2008-12-01  Nick Clifton  <nickc@redhat.com>
+> 
+> 	PR 7044
+> 	* dlltool.c (run): Use formatting string to avoid compile time
+> 	warning.
+> 	(gen_exp_file): Check return value from fread.
+> 	* windmc.c (main): Check return value from fread.
+> 
+Index: binutils/dlltool.c
+===================================================================
+RCS file: /cvs/src/src/binutils/dlltool.c,v
+retrieving revision 1.82
+retrieving revision 1.82.2.1
+diff -r1.82 -r1.82.2.1
+1209c1209
+<       inform (strerror (errno));
+---
+>       inform ("%s", strerror (errno));
+1995c1995,1996
+<       fread (copy, 1, numbytes, base_file);
+---
+>       if (fread (copy, 1, numbytes, base_file) < numbytes)
+> 	fatal (_("failed to read the number of entries from base file"));
+1998d1998
+< 
+Index: binutils/windmc.c
+===================================================================
+RCS file: /cvs/src/src/binutils/windmc.c,v
+retrieving revision 1.5
+retrieving revision 1.5.2.1
+diff -r1.5 -r1.5.2.1
+1158c1158,1159
+<     fread (buff, 1, flen, fp);
+---
+>     if (fread (buff, 1, flen, fp) < flen)
+>       fatal (_("unable to read contents of %s"), input_filename);
 Index: ld/ChangeLog
 ===================================================================
 RCS file: /cvs/src/src/ld/ChangeLog,v

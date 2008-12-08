@@ -1,0 +1,26 @@
+After building a uclibc-based native toolchain on the freesa box,
+we have to use that toolchain to build all of the stuff that will
+wind up in flash (except for the kernel image and kernel modules,
+which are built using the normal toolchain).
+
+Create a user who will do all of the flash image construction. I
+called it ssbl for "Second Stage Boot Loader."  This can be a
+package user if you'd like, or a normal user.  In this file I'm
+assuming the user is called "ssbl".
+
+Start by copying /opt/uclibc/sysroot to the ssbl home directory.
+
+Now configure busybox -- we need to build everything we need in
+the ssbl image, but absolutely nothing else, because (I can't
+reiterate this enough) we only have 1728mb for the kernel image
+plus root filesystem.
+
+Use busybox 1.12.2.
+
+Set PATH to include /opt/uclibc/bin as its first element.
+
+busybox can be configured with "make menuconfig" -- it is just
+like the linux kernel and uclibc.
+
+I turned off everything I could turn off, including even such
+things as terse applet usage messages

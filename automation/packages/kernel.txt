@@ -2,17 +2,20 @@ name: linux kernel
 version: 2.6.23.16
 project-url: http://www.kernel.org/
 
-The kernel is linux _per se_ -- the core of the operating system.
-Usually, when people say "linux," they mean the entire operating
-system that lets them use a computer; properly, though, linux is
-just the kernel.
+The kernel is Linux _per se_ -- the core of the operating system.
+Usually, when people say "Linux," they mean the entire operating
+system that lets them use a computer; properly, though, Linux is
+just the kernel.  (This is the basis of the Free Software
+Foundation's suggestion that the operating system as a whole
+should be called GNU/Linux: it's the software developed as parts
+of the GNU project, combined with the Linux kernel.)
 
 The job of the kernel is to initialize and manage all of the
 hardware on the computer (including CPU, memory, and all I/O
 devices) and control userspace processes.  [What else?  Is there
 anything else it does?]
 
-When a computer boots linux, the kernel does some hardware
+When a computer boots Linux, it does some hardware
 initialization, mounts the root filesystem, and then starts a
 userspace process called +init+.  The +init+ process then has the
 job of starting all other userspace programs and getting the
@@ -23,9 +26,9 @@ its services.
 phase: headers
 
 The way that programs make these requests is by invoking kernel
-functions that are called "system calls."  The Linux kernel
-sources includes header files that define all of the system calls
-it makes available to userspace programs.
+functions called "system calls."  The Linux kernel sources
+include header files that define all of the system calls it makes
+available to userspace programs.
 
 Userspace programs don't usually invoke system calls themselves.
 Instead, they invoke library functions (such as the ones defined
@@ -60,6 +63,6 @@ make-commands:
 test-commands:
 
 install-commands:
- - make PARAM[KERNEL_ARCH] headers_install \
+ - make PARAM[KERNEL_ARCH] headers_install
      INSTALL_HDR_PATH=PARAM[KERNEL_HEADER_PATH]
 
