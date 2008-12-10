@@ -22,10 +22,10 @@ phase: headers
 build-dir: ../build-glibc
 
 configure-commands:
- - CC=gcc PARAM[SOURCEDIR]/configure --prefix=/usr \
-    --host=PARAM[HOST] --build=PARAM[TARGET] \
-    --disable-sanity-checks --enable-kernel=PARAM[KERNEL_VERSION] \
-    --with-headers=PARAM[SYSROOT]/usr/include \
+ - CC=gcc PARAM[SOURCE_DIR]/configure --prefix=/usr
+    --host=PARAM[HOST] --build=PARAM[TARGET]
+    --disable-sanity-checks --enable-kernel=PARAM[KERNEL_VERSION]
+    --with-headers=PARAM[SYSROOT]/usr/include
     --with-binutils=/cross-tools/PARAM[TARGET]/bin
 
 make_commands:
@@ -36,9 +36,10 @@ test-commands:
 install-commands:
  - cp -v bits/stdio_lim.h PARAM[SYSROOT]/usr/include/bits
  - touch PARAM[SYSROOT]/usr/include/gnu/stubs.h
- - cp -v PARAM[SOURCEDIR]/nptl/sysdeps/pthread/pthread.h PARAM[SYSROOT]/usr/include
- - cp -v PARAM[SOURCEDIR]/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h \
-    PARAM[SYSROOT]/usr/include/bits
+ - cp -v PARAM[SOURCE_DIR]/nptl/sysdeps/pthread/pthread.h 
+     PARAM[SYSROOT]/usr/include
+ - cp -v PARAM[SOURCE_DIR]/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h
+     PARAM[SYSROOT]/usr/include/bits
 
 
 phase: startup files
@@ -49,21 +50,21 @@ We'll build the rest of glibc after we build libgcc.
 configure-commands:
  - echo "libc_cv_forced_unwind=yes" > config.cache
  - echo "libc_cv_c_cleanup=yes" >> config.cache
- - BUILD_CC="gcc" CC="PARAM[CLFS_TARGET]-gcc" \
-      AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib" \
-      CFLAGS="PARAM[GLIBCFLAG]" \
-      PARAM[SOURCEDIR]/configure --prefix=/usr \
-      --host=PARAM[TARGET] --build=PARAM[HOST] \
-      --disable-profile --enable-add-ons --with-tls \
-      --enable-kernel=PARAM[KERNEL_VERSION] --with-__thread \
-      --with-binutils=/cross-tools/bin \
-      --with-headers=PARAM[SYSROOT]/usr/include \
+ - BUILD_CC="gcc" CC="PARAM[CLFS_TARGET]-gcc"
+      AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib"
+      CFLAGS="PARAM[GLIBCFLAG]"
+      PARAM[SOURCE_DIR]/configure --prefix=/usr
+      --host=PARAM[TARGET] --build=PARAM[HOST]
+      --disable-profile --enable-add-ons --with-tls
+      --enable-kernel=PARAM[KERNEL_VERSION] --with-__thread
+      --with-binutils=/cross-tools/bin
+      --with-headers=PARAM[SYSROOT]/usr/include
       --cache-file=config.cache
 
 make_commands:
- - make -r -C PARAM[SOURCEDIR]/csu objdir=$(pwd) $(pwd)/csu/crt1.o
- - make -r -C PARAM[SOURCEDIR]/csu objdir=$(pwd) $(pwd)/csu/crti.o
- - make -r -C PARAM[SOURCEDIR]/csu objdir=$(pwd) $(pwd)/csu/crtn.o
+ - make -r -C PARAM[SOURCE_DIR]/csu objdir=$(pwd) $(pwd)/csu/crt1.o
+ - make -r -C PARAM[SOURCE_DIR]/csu objdir=$(pwd) $(pwd)/csu/crti.o
+ - make -r -C PARAM[SOURCE_DIR]/csu objdir=$(pwd) $(pwd)/csu/crtn.o
 
 test-commands:
 
@@ -81,15 +82,15 @@ configure-commands:
  - mkdir build-glibc && cd build-glibc
  - echo "libc_cv_forced_unwind=yes" > config.cache
  - echo "libc_cv_c_cleanup=yes" >> config.cache
- - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc" \
-      AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib" \
-      CFLAGS="PARAM[GLIBCFLAG]" \
-      PARAM[SOURCEDIR]/configure --prefix=/usr \
-      --host=PARAM[TARGET] --build=PARAM[HOST] \
-      --disable-profile --enable-add-ons --with-tls \
-      --enable-kernel=PARAM[KERNEL_VERSION] --with-__thread \
-      --with-binutils=/cross-tools/bin \
-      --with-headers=PARAM[SYSROOT]/usr/include \
+ - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc"
+      AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib"
+      CFLAGS="PARAM[GLIBCFLAG]"
+      PARAM[SOURCE_DIR]/configure --prefix=/usr
+      --host=PARAM[TARGET] --build=PARAM[HOST]
+      --disable-profile --enable-add-ons --with-tls
+      --enable-kernel=PARAM[KERNEL_VERSION] --with-__thread
+      --with-binutils=/cross-tools/bin
+      --with-headers=PARAM[SYSROOT]/usr/include
       --cache-file=config.cache
 
 make_commands:

@@ -1,4 +1,5 @@
-name: linux kernel
+name: linux
+full-name: Linux kernel
 version: 2.6.23.16
 project-url: http://www.kernel.org/
 
@@ -52,7 +53,6 @@ though.  If you know what it really does, please tell us.
 
 configuration-defaults:
  - KERNEL_ARCH_PARAM: ARCH=mips
- - KERNEL_HEADER_PATH: PARAM[SYSROOT]/usr
 
 configure-commands:
  - make mrproper
@@ -64,5 +64,5 @@ test-commands:
 
 install-commands:
  - make PARAM[KERNEL_ARCH] headers_install
-     INSTALL_HDR_PATH=PARAM[KERNEL_HEADER_PATH]
+     INSTALL_HDR_PATH=PARAM[SYSROOT]/usr
 

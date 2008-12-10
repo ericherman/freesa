@@ -64,7 +64,7 @@ around; the same directory should be used when building libgcc.
 build-dir: ../build-gcc KEEP
 
 configure-commands:
- - PARAM[SOURCEDIR]/configure --prefix=/cross-tools \
+ - PARAM[SOURCE_DIR]/configure --prefix=/cross-tools \
      --build=PARAM[HOST] --host=PARAM[HOST] --target=PARAM[TARGET] \
      --disable-multilib --disable-nls --disable-shared \
      --disable-libmudflap --disable-libssp \
@@ -110,7 +110,7 @@ the partial builds we've done so far.
 build-dir: ../build-gcc
 
 configure-commands:
-PARAM[SOURCEDIR]/configure --prefix=/cross-tools \
+PARAM[SOURCE_DIR]/configure --prefix=/cross-tools \
   --build=PARAM[HOST] --host=PARAM[HOST] --target=PARAM[TARGET] \
   --disable-multilib --disable-nls --enable-shared \
   --enable-languages=c,c++ --enable-__cxa_atexit \

@@ -31,7 +31,7 @@ patches:
 build-dir: ../build-binutils
 
 configure-commands:
- - PARAM[SOURCEDIR]/configure --prefix=/cross-tools
+ - PARAM[SOURCE_DIR]/configure --prefix=/cross-tools
      --build=PARAM[HOST] --target=PARAM[TARGET]
      --disable-nls --enable-shared --disable-multilib
      --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
@@ -44,4 +44,4 @@ test-commands:
 
 install-commands:
  - make install
- - cp -v PARAM[SOURCEDIR]/include/libiberty.h PARAM[SYSROOT]/usr/include
+ - cp -v PARAM[SOURCE_DIR]/include/libiberty.h PARAM[SYSROOT]/usr/include
