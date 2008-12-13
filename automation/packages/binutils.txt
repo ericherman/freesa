@@ -1,4 +1,5 @@
-name: GNU binutils
+full-name: GNU binutils
+name: binutils
 version: 2.19
 
 The GNU binary utilities are a collection of programs and
@@ -13,32 +14,39 @@ libraries as well (+libbfd+ and +libopcodes+).  All of the
 utility programs are documented in man pages and the binutils
 info file.
 
-You won't need to invoke any of these programs manually.  The
-+gcc+ driver program calls +as+ and +ld+ as necessary to do its
-work, and several of the other utility programs are used
-internally during the build process of the rest of the toolchain
-(and beyond).
+You probably won't need to invoke any of these programs manually.
+The +gcc+ driver program calls +as+ and +ld+ as necessary to do
+its work, and several of the other utility programs are used
+internally during the build process of other system components.
 
-The GNU binutils can be built as part of a cross-toolchain by
-using the "sysroot" framework.  That framework isn't particularly
-well-documented, but the important thing from our perspective is
-that we need to specify the configure options +--with-sysroot+
-and +--with-build-sysroot+ should be specified.
+No patches are strictly required for binutils.  The one patch we
+apply converts an archaic invocation syntax for programs like
++head+ and +tail+ to the POSIX-standard syntax.
 
 patches:
  - posix-1
 
+GNU binutils, like many toolchain components,  must be
+constructed from a directory outside the source directory.
+
 build-dir: ../build-binutils
 
+The GNU binutils can be built as part of a cross-toolchain using
+the "sysroot" framework.  That framework isn't particularly
+well-documented, but the important thing from our perspective is
+that we need to specify the configure options +--with-sysroot+
+and +--with-build-sysroot+ should be specified.
+
+All of the toolchain components should be installed in the same
+filesystem location.  The TOOL_PREFIX parameter lets you specify
+that location.
+
 configure-commands:
- - PARAM[SOURCE_DIR]/configure --prefix=/cross-tools
+ - PARAM[SOURCE_DIR]/configure --prefix=PARAM[TOOL_PREFIX]
      --build=PARAM[HOST] --target=PARAM[TARGET]
      --disable-nls --enable-shared --disable-multilib
      --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
  - make configure-host
-
-make-commands:
- - make
 
 test-commands:
 

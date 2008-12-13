@@ -1,0 +1,24 @@
+name: adjust-specs-for-tools
+
+The point of this compiler is to build the temporary tools (under
++/tools+) that will allow us to build the final system entirely
+from source code.  When we're using those tools to build the
+final system, we want to do a native build of everything,
+including glibc, so we want those tools to be independent of any
+filesystem locations that will still be present in the final
+system.  In particular, this includes +/lib+ and +/usr/lib+.
+
+When the standard GNU toolchain builds an executable, it always
+links it against the dynamic link library (which is something
+like +/lib/ld-linux.so.2+ or +/lib/ld.so.1+).  That's normally fine,
+but we want the programs we build under +/tools+ to be entirely
+independent of +/lib+.  So we need to adjust our cross-toolchain so
+that the programs it builds look in +/tools/lib+ for their
+libraries.  Alternatively, we could build everything under
++/tools+ as a static executable, so they would be self-contained
+and not need any shared libraries at all; but that option isn't
+well-supported by glibc.
+
+commands:
+ - PARAM[TARGET]-gcc -dumpspecs | sed -e 's@/lib/ld@/tools/lib/ld@g' >
+     $(dirname $(PARAM[TARGET]-gcc --print-libgcc-file-name))/specs

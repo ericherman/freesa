@@ -19,7 +19,7 @@ phase: headers
 
 configure-commands:
 
-make_commands:
+make-commands:
 
 test-commands:
 
@@ -33,7 +33,7 @@ We'll build the rest of glibc after we build libgcc.
 
 configure-commands:
 
-make_commands:
+make-commands:
 
 test-commands:
 
@@ -47,7 +47,7 @@ uClibc at last!
 
 configure-commands:
 
-make_commands:
+make-commands:
 
 test-commands:
 

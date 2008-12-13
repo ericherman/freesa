@@ -1,9 +1,22 @@
-name: GNU libc
-version: 2.7
+full-name: GNU libc
+name: glibc
+version: 2.9
+
+glibc is the standard C library produced as part of the GNU
+project.  It contains the implementation for all of the functions
+that are assumed to be available in C programs: +printf+ and so
+on.  It also contains the dynamic loader, which almost all
+programs use to find shared libraries at runtime.
+
+Since all C and C++ programs link against the C library, glibc is
+the single most fundamental component of a GNU/Linux
+installation.  Upgrading the Linux kernel is a relatively trivial
+operation compared to upgrading the C library installed on a
+computer.
 
 Note that we are building our cross-glibc with a "minimum kernel
 version" set to the version of the actual runtime kernel that we
-will use to construct the real LFS system using the programs in
+will use to construct the final system using the programs in
 +/tools+.  It's kind of unnecessary to worry about optimizing the
 glibc here that way, since it won't wind up on the final system,
 but it won't hurt anything and is good practice in general.
@@ -11,11 +24,22 @@ According to the glibc documentation, the higher the kernel
 version number, the less unnecessary compatibility code is built
 into the C library.
 
+One of the patches we apply is very important:  it allows glibc
+to be built without the libgcc_eh library provided as part of
+GCC.  That library is not built except during a full GCC build,
+but isn't actually required even though the standard glibc build
+process crashes if it is not available.  The patch allows the
+glibc build to complete successfully (possibly with reduced
+functionality) even if libgcc_eh is not available.
+
+The other patch we apply prevents the localedef function from
+failing with segmentation faults on some machine architectures.
+It's probably not particularly important for our purposes, but it
+doesn't hurt anything to apply it.
+
 patches:
  - libgcc_eh-1
  - localedef_segfault-1
- - i586-chk-1
- - fixup_for_gcc43-1
 
 phase: headers
 
@@ -26,14 +50,14 @@ configure-commands:
     --host=PARAM[HOST] --build=PARAM[TARGET]
     --disable-sanity-checks --enable-kernel=PARAM[KERNEL_VERSION]
     --with-headers=PARAM[SYSROOT]/usr/include
-    --with-binutils=/cross-tools/PARAM[TARGET]/bin
+    --with-binutils=PARAM[TOOLS_PREFIX]/PARAM[TARGET]/bin
 
-make_commands:
- - make cross-compiling=yes install_root=PARAM[SYSROOT] install-headers
+make-commands:
 
 test-commands:
 
 install-commands:
+ - make cross-compiling=yes install_root=PARAM[SYSROOT] install-headers
  - cp -v bits/stdio_lim.h PARAM[SYSROOT]/usr/include/bits
  - touch PARAM[SYSROOT]/usr/include/gnu/stubs.h
  - cp -v PARAM[SOURCE_DIR]/nptl/sysdeps/pthread/pthread.h 
@@ -44,8 +68,11 @@ install-commands:
 
 phase: startup files
 
-The build commands here just build the startup files we need.
-We'll build the rest of glibc after we build libgcc.
+In this phase we just build the startup files that we need in
+order to build libgcc.  We'll build the rest of glibc later, once
+we have libgcc.
+
+build-dir: ../build-glibc-2
 
 configure-commands:
  - echo "libc_cv_forced_unwind=yes" > config.cache
@@ -61,7 +88,7 @@ configure-commands:
       --with-headers=PARAM[SYSROOT]/usr/include
       --cache-file=config.cache
 
-make_commands:
+make-commands:
  - make -r -C PARAM[SOURCE_DIR]/csu objdir=$(pwd) $(pwd)/csu/crt1.o
  - make -r -C PARAM[SOURCE_DIR]/csu objdir=$(pwd) $(pwd)/csu/crti.o
  - make -r -C PARAM[SOURCE_DIR]/csu objdir=$(pwd) $(pwd)/csu/crtn.o
@@ -78,8 +105,9 @@ phase: full glibc
 Now we have a usable GCC, complete with libgcc, and we can build
 glibc at last!
 
+build-dir: ../build-glibc-3
+
 configure-commands:
- - mkdir build-glibc && cd build-glibc
  - echo "libc_cv_forced_unwind=yes" > config.cache
  - echo "libc_cv_c_cleanup=yes" >> config.cache
  - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc"
@@ -89,12 +117,9 @@ configure-commands:
       --host=PARAM[TARGET] --build=PARAM[HOST]
       --disable-profile --enable-add-ons --with-tls
       --enable-kernel=PARAM[KERNEL_VERSION] --with-__thread
-      --with-binutils=/cross-tools/bin
+      --with-binutils=PARAM[TOOLS_PREFIX]/bin
       --with-headers=PARAM[SYSROOT]/usr/include
       --cache-file=config.cache
-
-make_commands:
- - make
 
 test-commands:
 
