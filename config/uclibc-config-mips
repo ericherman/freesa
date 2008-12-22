@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Version: 0.9.30
-# Sun Nov 16 19:42:32 2008
+# Mon Dec 22 07:49:10 2008
 #
 # TARGET_alpha is not set
 # TARGET_arm is not set
@@ -127,8 +127,8 @@ UCLIBC_HAS_REALTIME=y
 # UCLIBC_HAS_EPOLL is not set
 # UCLIBC_HAS_XATTR is not set
 # UCLIBC_HAS_PROFILING is not set
-# UCLIBC_HAS_CRYPT_IMPL is not set
-# UCLIBC_HAS_CRYPT_STUB is not set
+UCLIBC_HAS_CRYPT_IMPL=y
+UCLIBC_HAS_CRYPT=y
 UCLIBC_HAS_NETWORK_SUPPORT=y
 UCLIBC_HAS_SOCKET=y
 UCLIBC_HAS_IPV4=y
@@ -211,7 +211,6 @@ UCLIBC_BUILD_NOEXECSTACK=y
 #
 CROSS_COMPILER_PREFIX=""
 # DODEBUG is not set
-# DODEBUG_PT is not set
 DOSTRIP=y
 # DOASSERTS is not set
 # SUPPORT_LD_DEBUG is not set
