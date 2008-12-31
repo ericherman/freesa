@@ -21,3 +21,4 @@ under /tools instead of $SYSROOT this time]
 
 - [[kernel-headers]]
 - [[glibc]]
+- [[specs]]

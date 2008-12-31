@@ -35,7 +35,8 @@ The GNU binutils can be built as part of a cross-toolchain using
 the "sysroot" framework.  That framework isn't particularly
 well-documented, but the important thing from our perspective is
 that we need to specify the configure options +--with-sysroot+
-and +--with-build-sysroot+ should be specified.
+and +--with-build-sysroot+ to inform the build machinery of the
+desired sysroot directory.
 
 All of the toolchain components should be installed in the same
 filesystem location.  The TOOL_PREFIX parameter lets you specify

@@ -13,21 +13,20 @@ of the GNU project, combined with the Linux kernel.)
 
 The job of the kernel is to initialize and manage all of the
 hardware on the computer (including CPU, memory, and all I/O
-devices) and control userspace processes.  [What else?  Is there
-anything else it does?]
+devices) and control userspace processes.
 
 When a computer boots Linux, it does some hardware
 initialization, mounts the root filesystem, and then starts a
-userspace process called +init+.  The +init+ process then has the
-job of starting all other userspace programs and getting the
-machine into a usable state; after the kernel starts +init+, it
-gets out of the way and waits for userspace programs to request
-its services.
+userspace process called +init+.  The +init+ process is
+responsible for starting all other userspace programs and getting
+the machine into a usable state; after the kernel starts +init+,
+it gets out of the way and waits for userspace programs to
+request its services.
 
-phase: headers
+phase: sysroot headers
 
-The way that programs make these requests is by invoking kernel
-functions called "system calls."  The Linux kernel sources
+The way that programs make requests of the kernel is by invoking
+kernel functions called "system calls."  The Linux kernel sources
 include header files that define all of the system calls it makes
 available to userspace programs.
 
@@ -35,7 +34,9 @@ Userspace programs don't usually invoke system calls themselves.
 Instead, they invoke library functions (such as the ones defined
 in the standard C library, which on GNU/Linux systems is
 typically glibc or uClibc) that invoke system calls as needed to
-accomplish their work.
+accomplish their work.  (There are some cases, like the reiserfs
+utilities, where userspace programs and libraries besides the C
+library do include the kernel headers directly.)
 
 This step installs all of the Linux kernel header files that the
 C library needs.
@@ -51,8 +52,23 @@ The makefile target "headers_check" presumably makes sure that
 the public header files are OK.  We haven't really looked at it,
 though.  If you know what it really does, please tell us.
 
-configuration-defaults:
- - KERNEL_ARCH_PARAM: ARCH=mips
+configure-commands:
+ - make mrproper
+
+make-commands:
+ - make PARAM[KERNEL_ARCH] headers_check
+
+test-commands:
+
+install-commands:
+ - make PARAM[KERNEL_ARCH] headers_install INSTALL_HDR_PATH=PARAM[SYSROOT]/usr
+
+
+phase: temporary tool headers
+
+The kernel headers are needed in the temporary tools area just as
+they are needed for the cross-toolchain build:  they will be used
+by the glibc as it is built in the tools directory.
 
 configure-commands:
  - make mrproper
@@ -63,6 +79,4 @@ make-commands:
 test-commands:
 
 install-commands:
- - make PARAM[KERNEL_ARCH] headers_install
-     INSTALL_HDR_PATH=PARAM[SYSROOT]/usr
-
+ - make PARAM[KERNEL_ARCH] headers_install INSTALL_HDR_PATH=/tools

@@ -1,4 +1,5 @@
-name: adjust-specs-for-tools
+name: specs
+full-name: Adjust specs for /tools
 
 The point of this compiler is to build the temporary tools (under
 +/tools+) that will allow us to build the final system entirely
