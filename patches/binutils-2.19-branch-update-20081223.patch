@@ -2,9 +2,18 @@ Index: bfd/ChangeLog
 ===================================================================
 RCS file: /cvs/src/src/bfd/ChangeLog,v
 retrieving revision 1.4318.2.16
-retrieving revision 1.4318.2.19
-diff -r1.4318.2.16 -r1.4318.2.19
-0a1,19
+retrieving revision 1.4318.2.20
+diff -r1.4318.2.16 -r1.4318.2.20
+0a1,28
+> 2008-12-23  Nick Clifton  <nickc@redhat.com>
+> 
+> 	* Import this patch from the mainline:
+> 	2008-11-10  Andreas Schwab  <schwab@suse.de>
+> 
+> 	PR 7011
+> 	* elf.c (assign_file_positions_for_non_load_sections): Handle
+> 	PT_GNU_RELRO specially.
+> 
 > 2008-11-20  Alan Modra  <amodra@bigpond.net.au>
 > 
 > 	* elf32-ppc.c (allocate_dynrelocs): Always use tlsld_got for
@@ -64,6 +73,165 @@ diff -r1.243.2.5 -r1.243.2.6
 < AM_INIT_AUTOMAKE(bfd, 2.19)
 ---
 > AM_INIT_AUTOMAKE(bfd, 2.19.0)
+Index: bfd/elf.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elf.c,v
+retrieving revision 1.462.2.2
+retrieving revision 1.462.2.3
+diff -r1.462.2.2 -r1.462.2.3
+4609c4609,4663
+<       if (m->count != 0)
+---
+>       if (p->p_type == PT_GNU_RELRO)
+> 	{
+> 	  const Elf_Internal_Phdr *lp;
+> 
+> 	  BFD_ASSERT (!m->includes_filehdr && !m->includes_phdrs);
+> 
+> 	  if (link_info != NULL)
+> 	    {
+> 	      /* During linking the range of the RELRO segment is passed
+> 		 in link_info.  */
+> 	      for (lp = phdrs; lp < phdrs + count; ++lp)
+> 		{
+> 		  if (lp->p_type == PT_LOAD
+> 		      && lp->p_vaddr >= link_info->relro_start
+> 		      && lp->p_vaddr < link_info->relro_end
+> 		      && lp->p_vaddr + lp->p_filesz >= link_info->relro_end)
+> 		    break;
+> 		}
+> 	    }
+> 	  else
+> 	    {
+> 	      /* Otherwise we are copying an executable or shared
+> 		 library, but we need to use the same linker logic.  */
+> 	      for (lp = phdrs; lp < phdrs + count; ++lp)
+> 		{
+> 		  if (lp->p_type == PT_LOAD
+> 		      && lp->p_paddr == p->p_paddr)
+> 		    break;
+> 		}
+> 	    }
+> 
+> 	  if (lp < phdrs + count)
+> 	    {
+> 	      p->p_vaddr = lp->p_vaddr;
+> 	      p->p_paddr = lp->p_paddr;
+> 	      p->p_offset = lp->p_offset;
+> 	      if (link_info != NULL)
+> 		p->p_filesz = link_info->relro_end - lp->p_vaddr;
+> 	      else if (m->p_size_valid)
+> 		p->p_filesz = m->p_size;
+> 	      else
+> 		abort ();
+> 	      p->p_memsz = p->p_filesz;
+> 	      p->p_align = 1;
+> 	      p->p_flags = (lp->p_flags & ~PF_W);
+> 	    }
+> 	  else if (link_info != NULL)
+> 	    {
+> 	      memset (p, 0, sizeof *p);
+> 	      p->p_type = PT_NULL;
+> 	    }
+> 	  else
+> 	    abort ();
+> 	}
+>       else if (m->count != 0)
+4625,4658c4679
+< 
+< 	      if (p->p_type == PT_GNU_RELRO)
+< 		{
+< 		  /* When we get here, we are copying executable
+< 		     or shared library. But we need to use the same
+< 		     linker logic.  */
+< 		  Elf_Internal_Phdr *lp;
+< 
+< 		  for (lp = phdrs; lp < phdrs + count; ++lp)
+< 		    {
+< 		      if (lp->p_type == PT_LOAD
+< 			  && lp->p_paddr == p->p_paddr)
+< 			break;
+< 		    }
+< 	  
+< 		  if (lp < phdrs + count)
+< 		    {
+< 		      /* We should use p_size if it is valid since it
+< 			 may contain the first few bytes of the next
+< 			 SEC_ALLOC section.  */
+< 		      if (m->p_size_valid)
+< 			p->p_filesz = m->p_size;
+< 		      else
+< 			abort ();
+< 		      p->p_vaddr = lp->p_vaddr;
+< 		      p->p_offset = lp->p_offset;
+< 		      p->p_memsz = p->p_filesz;
+< 		      p->p_align = 1;
+< 		    }
+< 		  else
+< 		    abort ();
+< 		}
+< 	      else
+< 		p->p_offset = m->sections[0]->filepos;
+---
+> 	      p->p_offset = m->sections[0]->filepos;
+4661c4682
+<       else
+---
+>       else if (m->includes_filehdr)
+4663,4705c4684,4692
+< 	  if (m->includes_filehdr)
+< 	    {
+< 	      p->p_vaddr = filehdr_vaddr;
+< 	      if (! m->p_paddr_valid)
+< 		p->p_paddr = filehdr_paddr;
+< 	    }
+< 	  else if (m->includes_phdrs)
+< 	    {
+< 	      p->p_vaddr = phdrs_vaddr;
+< 	      if (! m->p_paddr_valid)
+< 		p->p_paddr = phdrs_paddr;
+< 	    }
+< 	  else if (p->p_type == PT_GNU_RELRO)
+< 	    {
+< 	      Elf_Internal_Phdr *lp;
+< 
+< 	      for (lp = phdrs; lp < phdrs + count; ++lp)
+< 		{
+< 		  if (lp->p_type == PT_LOAD
+< 		      && lp->p_vaddr <= link_info->relro_end
+< 		      && lp->p_vaddr >= link_info->relro_start
+< 		      && (lp->p_vaddr + lp->p_filesz
+< 			  >= link_info->relro_end))
+< 		    break;
+< 		}
+< 
+< 	      if (lp < phdrs + count
+< 		  && link_info->relro_end > lp->p_vaddr)
+< 		{
+< 		  p->p_vaddr = lp->p_vaddr;
+< 		  p->p_paddr = lp->p_paddr;
+< 		  p->p_offset = lp->p_offset;
+< 		  p->p_filesz = link_info->relro_end - lp->p_vaddr;
+< 		  p->p_memsz = p->p_filesz;
+< 		  p->p_align = 1;
+< 		  p->p_flags = (lp->p_flags & ~PF_W);
+< 		}
+< 	      else
+< 		{
+< 		  memset (p, 0, sizeof *p);
+< 		  p->p_type = PT_NULL;
+< 		}
+< 	    }
+---
+> 	  p->p_vaddr = filehdr_vaddr;
+> 	  if (! m->p_paddr_valid)
+> 	    p->p_paddr = filehdr_paddr;
+> 	}
+>       else if (m->includes_phdrs)
+> 	{
+> 	  p->p_vaddr = phdrs_vaddr;
+> 	  if (! m->p_paddr_valid)
+> 	    p->p_paddr = phdrs_paddr;
 Index: bfd/elf32-avr.c
 ===================================================================
 RCS file: /cvs/src/src/bfd/elf32-avr.c,v
@@ -191,19 +359,24 @@ Index: bfd/version.h
 ===================================================================
 RCS file: /cvs/src/src/bfd/version.h,v
 retrieving revision 1.2442.2.37
-retrieving revision 1.2442.2.90
-diff -r1.2442.2.37 -r1.2442.2.90
+retrieving revision 1.2442.2.112
+diff -r1.2442.2.37 -r1.2442.2.112
 1c1
 < #define BFD_VERSION_DATE 20081016
 ---
-> #define BFD_VERSION_DATE 20081208
+> #define BFD_VERSION_DATE 20081230
 Index: binutils/ChangeLog
 ===================================================================
 RCS file: /cvs/src/src/binutils/ChangeLog,v
 retrieving revision 1.1365.2.5
-retrieving revision 1.1365.2.6
-diff -r1.1365.2.5 -r1.1365.2.6
-0a1,8
+retrieving revision 1.1365.2.7
+diff -r1.1365.2.5 -r1.1365.2.7
+0a1,13
+> 2008-12-23  Nick Clifton  <nickc@redhat.com>
+> 
+> 	* windmc.c (main): Use correct type for file length.
+> 	* dlltool.c (gen_exp_file): Likewise.
+> 
 > 2008-12-01  Nick Clifton  <nickc@redhat.com>
 > 
 > 	PR 7044
@@ -216,12 +389,16 @@ Index: binutils/dlltool.c
 ===================================================================
 RCS file: /cvs/src/src/binutils/dlltool.c,v
 retrieving revision 1.82
-retrieving revision 1.82.2.1
-diff -r1.82 -r1.82.2.1
+retrieving revision 1.82.2.2
+diff -r1.82 -r1.82.2.2
 1209c1209
 <       inform (strerror (errno));
 ---
 >       inform ("%s", strerror (errno));
+1983c1983
+<       int numbytes;
+---
+>       bfd_size_type numbytes;
 1995c1995,1996
 <       fread (copy, 1, numbytes, base_file);
 ---
@@ -233,8 +410,12 @@ Index: binutils/windmc.c
 ===================================================================
 RCS file: /cvs/src/src/binutils/windmc.c,v
 retrieving revision 1.5
-retrieving revision 1.5.2.1
-diff -r1.5 -r1.5.2.1
+retrieving revision 1.5.2.2
+diff -r1.5 -r1.5.2.2
+1147c1147
+<     long flen;
+---
+>     bfd_size_type flen;
 1158c1158,1159
 <     fread (buff, 1, flen, fp);
 ---
@@ -244,9 +425,14 @@ Index: ld/ChangeLog
 ===================================================================
 RCS file: /cvs/src/src/ld/ChangeLog,v
 retrieving revision 1.1868.2.6
-retrieving revision 1.1868.2.7
-diff -r1.1868.2.6 -r1.1868.2.7
-0a1,5
+retrieving revision 1.1868.2.8
+diff -r1.1868.2.6 -r1.1868.2.8
+0a1,10
+> 2008-12-23  Tristan Gingold  <gingold@adacore.com>
+> 
+> 	* Makefile.am (EXTRA_DIST): Add deffilep.c and deffilep.h
+> 	* Makefile.in: Regenerate.
+> 
 > 2008-11-14  Alan Modra  <amodra@bigpond.net.au>
 > 
 > 	* Makefile.am (spu_ovl.o_c): Add missing line continuations.
@@ -256,8 +442,8 @@ Index: ld/Makefile.am
 ===================================================================
 RCS file: /cvs/src/src/ld/Makefile.am,v
 retrieving revision 1.253.2.1
-retrieving revision 1.253.2.2
-diff -r1.253.2.1 -r1.253.2.2
+retrieving revision 1.253.2.3
+diff -r1.253.2.1 -r1.253.2.3
 761c761
 < 	  cpp -DOVLY_IRQ_SAVE $(srcdir)/emultempl/spu_ovl.S spu_ovl.s
 ---
@@ -266,17 +452,28 @@ diff -r1.253.2.1 -r1.253.2.2
 < 	  ../binutils/bin2c <spu_ovl.o >$@
 ---
 > 	  ../binutils/bin2c <spu_ovl.o >$@; \
+1917c1917,1918
+< EXTRA_DIST = ldgram.c ldgram.h ldlex.c emultempl/spu_ovl.o_c $(man_MANS)
+---
+> EXTRA_DIST = ldgram.c ldgram.h ldlex.c emultempl/spu_ovl.o_c \
+>            deffilep.c deffilep.h $(man_MANS)
 Index: ld/Makefile.in
 ===================================================================
 RCS file: /cvs/src/src/ld/Makefile.in,v
 retrieving revision 1.274.2.1
-retrieving revision 1.274.2.2
-diff -r1.274.2.1 -r1.274.2.2
-1591c1591
+retrieving revision 1.274.2.3
+diff -r1.274.2.1 -r1.274.2.3
+733c733,735
+< EXTRA_DIST = ldgram.c ldgram.h ldlex.c emultempl/spu_ovl.o_c $(man_MANS)
+---
+> EXTRA_DIST = ldgram.c ldgram.h ldlex.c emultempl/spu_ovl.o_c \
+>            deffilep.c deffilep.h $(man_MANS)
+> 
+1591c1593
 < 	  cpp -DOVLY_IRQ_SAVE $(srcdir)/emultempl/spu_ovl.S spu_ovl.s
 ---
 > 	  cpp -DOVLY_IRQ_SAVE $(srcdir)/emultempl/spu_ovl.S spu_ovl.s; \
-1593c1593
+1593c1595
 < 	  ../binutils/bin2c <spu_ovl.o >$@
 ---
 > 	  ../binutils/bin2c <spu_ovl.o >$@; \
