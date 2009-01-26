@@ -113,8 +113,8 @@ builds we've done so far.
 build-dir: ../build-gcc-2
 
 environment:
- - CPPFLAGS_FOR_TARGET="--with-sysroot=PARAM[SYSROOT]"
- - LDFLAGS_FOR_TARGET="--with-sysroot=PARAM[SYSROOT]"
+ CPPFLAGS_FOR_TARGET: --with-sysroot=PARAM[SYSROOT]
+ LDFLAGS_FOR_TARGET: --with-sysroot=PARAM[SYSROOT]
 
 configure-commands:
  - PARAM[SOURCE_DIR]/configure --prefix=PARAM[TOOL_PREFIX]

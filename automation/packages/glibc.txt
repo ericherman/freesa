@@ -88,14 +88,14 @@ build-dir: ../build-glibc-2
 configure-commands:
  - echo "libc_cv_forced_unwind=yes" > config.cache
  - echo "libc_cv_c_cleanup=yes" >> config.cache
- - BUILD_CC="gcc" CC="PARAM[CLFS_TARGET]-gcc"
+ - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc"
       AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib"
       CFLAGS="PARAM[GLIBCFLAG]"
       PARAM[SOURCE_DIR]/configure --prefix=/usr
       --host=PARAM[TARGET] --build=PARAM[HOST]
       --disable-profile --enable-add-ons --with-tls
       --enable-kernel=PARAM[KERNEL_VERSION] --with-__thread
-      --with-binutils=/cross-tools/bin
+      --with-binutils=PARAM[TOOL_PREFIX]/bin
       --with-headers=PARAM[SYSROOT]/usr/include
       --cache-file=config.cache
 
@@ -137,7 +137,7 @@ test-commands:
 install-commands:
  - make install_root=PARAM[SYSROOT] install
 
-phase: temporary tools glibc
+phase: temporary tool glibc
 
 The glibc built as part of the cross-toolchain builds executables
 with the standard runtime linking paths -- that is, it links
