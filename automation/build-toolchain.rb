@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
-
-# Run this from this directory with: 
+# run with:
 # ruby -I /path/to/litbuild/lib build-toolchain.rb
 
 require 'litbuild'
+
+@log = GlobalLogPolicy.new('/mnt/Build/logs')
 
 class ShuntExecutioner < Executioner
   def execute_in_dir(shell_command, output_file, cwd)
@@ -14,32 +15,32 @@ end
 def load_misc(name)
   File.read(File.join("miscellany", "#{name}.txt"))
 end
-def package(name, version)
+def package(name)
   text = File.read(File.join('packages', "#{name}.txt"))
-  sourcedir = File.join("$HOME", "build", "#{name}-#{version}")
-  Package.new(text, @exec, sourcedir, @logdir)
+  parent_dir = File.join("/mnt", "Build")
+  Package.new(text, @exec, @log, parent_dir)
 end
 
-@logdir = File.join("$HOME", "build", "log")
-@exec = ShuntExecutioner.new
+#@exec = ShuntExecutioner.new
+@exec = Executioner.new
 
 cfg = {
   'KERNEL_ARCH' => '',
   'SYSROOT' => '/cross-tools/sysroot',
-  'TARFILE_DIR' => '$HOME/work',
+  'TARFILE_DIR' => '/mnt/Sources',
   'HOST' => 'i686-cross-linux-gnu',
-  'PATCH_DIR' => '../patches',
+  'PATCH_DIR' => '/mnt/Freesa/patches',
   'TARGET' => 'i686-pc-linux-gnu',
   'TOOL_PREFIX' => '/cross-tools',
   'GLIBCFLAG' => '-march=i686 -mtune=generic -g -O2',
   'KERNEL_VERSION' => '2.6.28'
 }
 
-binutils = package('binutils', '2.19')
-gcc = package('gcc', '4.3.2')
-glibc = package('glibc', '2.9')
-linux = package('linux', '2.6.28')
-specs = Commands.new(load_misc('specs'), @exec, @logdir)
+binutils = package('binutils')
+gcc = package('gcc')
+glibc = package('glibc')
+linux = package('linux')
+specs = Commands.new(load_misc('specs'), @exec, @log)
 
 [ binutils, gcc, glibc, linux, specs ].each { |r| r.set(cfg) }
 
