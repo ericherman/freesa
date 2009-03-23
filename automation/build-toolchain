@@ -33,13 +33,13 @@ fi
 if [ $1 == 'x86' ]
 then
     export CLFS_TARGET=i686-pc-linux-gnu
-    export KERNEL_VERSION=2.6.27
+    export KERNEL_VERSION=2.6.28
     MARCH="$(cut -d- -f1 <<< $CLFS_TARGET)"
     export GLIBCFLAG="-march=$MARCH -mtune=generic -g -O2"
     unset KERNEL_ARCH
     export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-x86
     export UCLIBC_MAKE_PARAM=''
-    export GCC_VERSION=4.3.2
+    export GCC_VERSION=4.3.3
 else
     if [ $2 == 'glibc' ]
     then
@@ -55,8 +55,8 @@ else
         export ENDIANNESS=big
         export CLFS_TARGET=mips-unknown-linux-$LASTPART
     fi
-    export GCC_VERSION=4.3.2
-    export KERNEL_VERSION=2.6.23
+    export GCC_VERSION=4.3.3
+    export KERNEL_VERSION=2.6.28
     export GLIBCFLAG="-g -O2"
     export KERNEL_ARCH="ARCH=mips"
     export UCLIBC_CONFIG=$CONFIG_DIR/uclibc-config-mips

@@ -64,6 +64,10 @@ phase: bare compiler
 After doing this part of the build, keep the build directory
 around; it should be used again when building libgcc.
 
+environment:
+ CPPFLAGS_FOR_TARGET: --sysroot=PARAM[SYSROOT]
+ LDFLAGS_FOR_TARGET: --sysroot=PARAM[SYSROOT]
+
 build-dir: ../build-gcc
 
 configure-commands:
@@ -89,6 +93,10 @@ Now we can build and install libgcc, after which we can get rid
 of the crt* object files from the C library.  (They're going to be
 rebuilt as part of the full C library build.)
 
+environment:
+ CPPFLAGS_FOR_TARGET: --sysroot=PARAM[SYSROOT]
+ LDFLAGS_FOR_TARGET: --sysroot=PARAM[SYSROOT]
+
 build-dir: ../build-gcc
 
 configure-commands:
@@ -113,8 +121,8 @@ builds we've done so far.
 build-dir: ../build-gcc-2
 
 environment:
- CPPFLAGS_FOR_TARGET: --with-sysroot=PARAM[SYSROOT]
- LDFLAGS_FOR_TARGET: --with-sysroot=PARAM[SYSROOT]
+ CPPFLAGS_FOR_TARGET: --sysroot=PARAM[SYSROOT]
+ LDFLAGS_FOR_TARGET: --sysroot=PARAM[SYSROOT]
 
 configure-commands:
  - PARAM[SOURCE_DIR]/configure --prefix=PARAM[TOOL_PREFIX]
