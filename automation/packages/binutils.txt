@@ -1,6 +1,6 @@
 full-name: GNU binutils
 name: binutils
-version: 2.19
+version: 2.19.1
 
 The GNU binary utilities are a collection of programs and
 libraries that produce and operate on object files.  The primary
@@ -24,6 +24,7 @@ apply converts an archaic invocation syntax for programs like
 +head+ and +tail+ to the POSIX-standard syntax.
 
 patches:
+ - branch_update-1
  - posix-1
 
 GNU binutils, like many toolchain components,  must be

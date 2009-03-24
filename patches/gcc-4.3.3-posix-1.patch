@@ -1,29 +1,49 @@
-From: Brett Neumeier <brett@neumeier.us>
-Date: Fri, 20 Feb 2009 07:50:03 -0600
-Subject: [PATCH] posix patch from clfs, respun for 4.3.3
+Submitted By: Jim Gifford (jim at cross-lfs dot org)
+Date: 01-25-2009
+Initial Package Version: 4.3.3
+Origin: Jim Gifford
+        Rediffed against 4.1.0 by Chris Staub
+        Rediffed against 4.1.2 by Jim Gifford
+	Rediffed and additions against 4.2.0 by Joe Ciccone
+	Rediffed against 4.3.0 by Joe Ciccone
+	Rediffed against 4.3.3 by Jim Gifford
+Upstream Status: On Hold
+Description: Makes GCC Posix Compliant
 
----
- contrib/test_summary                       |    2 +-
- gcc/configure                              |    2 +-
- gcc/configure.ac                           |    2 +-
- gcc/testsuite/ada/acats/run_all.sh         |    2 +-
- libgomp/acinclude.m4                       |    2 +-
- libgomp/configure                          |    2 +-
- libjava/classpath/configure                |    2 +-
- libjava/classpath/ltcf-c.sh                |    2 +-
- libjava/classpath/ltcf-gcj.sh              |    2 +-
- libjava/classpath/m4/ax_create_stdint_h.m4 |    2 +-
- libjava/configure                          |    4 ++--
- libjava/mingwld.m4                         |    4 ++--
- libstdc++-v3/acinclude.m4                  |    2 +-
- libstdc++-v3/configure                     |   22 +++++++++++-----------
- 14 files changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/contrib/test_summary b/contrib/test_summary
-index 9866435..fcd7958 100755
---- a/contrib/test_summary
-+++ b/contrib/test_summary
-@@ -107,7 +107,7 @@ configflags == "" {
+diff -Naur gcc-4.3.3.orig/contrib/patch_tester.sh gcc-4.3.3/contrib/patch_tester.sh
+--- gcc-4.3.3.orig/contrib/patch_tester.sh	2007-12-26 13:01:38.000000000 -0800
++++ gcc-4.3.3/contrib/patch_tester.sh	2009-01-25 00:53:32.447636261 -0800
+@@ -287,7 +287,7 @@
+ 
+     if ! make $dashj `grep "^make:" $PATCH | sed -e "s/^make://g"` bootstrap &> $1/bootstrap ; then
+ 	report "bootstrap failed with last lines:"
+-	tail -30 $1/bootstrap > $1/last_bootstrap
++	tail -n 30 $1/bootstrap > $1/last_bootstrap
+ 	freport $1/last_bootstrap
+ 	report "grep --context=20 Error bootstrap:"
+ 	grep --context=20 Error $1/bootstrap > $1/bootstrap_error
+@@ -420,7 +420,7 @@
+ # After selfexec, $TESTING is already set up.  
+ if [ -d $TESTING ]; then
+     # The only file in $TESTING is the patch.
+-    PATCH=`ls -rt -1 $TESTING | head -1`
++    PATCH=`ls -rt -1 $TESTING | head -n 1`
+     PATCH=$TESTING/$PATCH
+     if [ -f $PATCH ]; then
+ 	bootntest_patched && bootntest_pristine && compare_passes
+@@ -429,7 +429,7 @@
+ fi
+ 
+ while true; do
+-    PATCH=`ls -rt -1 $PATCHES | head -1`
++    PATCH=`ls -rt -1 $PATCHES | head -n 1`
+     if [ x$PATCH = x ]; then
+ 	sleep ${standby}m
+     else
+diff -Naur gcc-4.3.3.orig/contrib/test_summary gcc-4.3.3/contrib/test_summary
+--- gcc-4.3.3.orig/contrib/test_summary	2007-02-09 16:30:46.000000000 -0800
++++ gcc-4.3.3/contrib/test_summary	2009-01-25 00:53:32.447636261 -0800
+@@ -107,7 +107,7 @@
      srcdir = configflags;
      sub(/\/configure .*/, "", srcdir);
      printf "LAST_UPDATED: ";
@@ -32,11 +52,10 @@ index 9866435..fcd7958 100755
      print "";
  
      sub(/^[^ ]*\/configure */, " ", configflags);
-diff --git a/gcc/configure b/gcc/configure
-index f7d4161..03c5783 100755
---- a/gcc/configure
-+++ b/gcc/configure
-@@ -20245,7 +20245,7 @@ EOF
+diff -Naur gcc-4.3.3.orig/gcc/configure gcc-4.3.3/gcc/configure
+--- gcc-4.3.3.orig/gcc/configure	2008-08-01 02:51:03.000000000 -0700
++++ gcc-4.3.3/gcc/configure	2009-01-25 00:53:32.455839362 -0800
+@@ -20245,7 +20245,7 @@
    # Therefore, use diff -b for the comparisons.
    if test x$gcc_cv_objdump != x \
    && $gcc_cv_objdump -s -j .eh_frame conftest.o 2>/dev/null \
@@ -45,11 +64,10 @@ index f7d4161..03c5783 100755
    && { diff -b conftest.lit conftest.got > /dev/null 2>&1 \
      || diff -b conftest.big conftest.got > /dev/null 2>&1; }
    then
-diff --git a/gcc/configure.ac b/gcc/configure.ac
-index 057c480..702d59e 100644
---- a/gcc/configure.ac
-+++ b/gcc/configure.ac
-@@ -2241,7 +2241,7 @@ EOF
+diff -Naur gcc-4.3.3.orig/gcc/configure.ac gcc-4.3.3/gcc/configure.ac
+--- gcc-4.3.3.orig/gcc/configure.ac	2008-08-01 02:51:03.000000000 -0700
++++ gcc-4.3.3/gcc/configure.ac	2009-01-25 00:53:32.455839362 -0800
+@@ -2241,7 +2241,7 @@
    # Therefore, use diff -b for the comparisons.
    if test x$gcc_cv_objdump != x \
    && $gcc_cv_objdump -s -j .eh_frame conftest.o 2>/dev/null \
@@ -58,11 +76,10 @@ index 057c480..702d59e 100644
    && { diff -b conftest.lit conftest.got > /dev/null 2>&1 \
      || diff -b conftest.big conftest.got > /dev/null 2>&1; }
    then
-diff --git a/gcc/testsuite/ada/acats/run_all.sh b/gcc/testsuite/ada/acats/run_all.sh
-index ddd4da0..91accff 100755
---- a/gcc/testsuite/ada/acats/run_all.sh
-+++ b/gcc/testsuite/ada/acats/run_all.sh
-@@ -68,7 +68,7 @@ find_main () {
+diff -Naur gcc-4.3.3.orig/gcc/testsuite/ada/acats/run_all.sh gcc-4.3.3/gcc/testsuite/ada/acats/run_all.sh
+--- gcc-4.3.3.orig/gcc/testsuite/ada/acats/run_all.sh	2006-09-14 03:12:03.000000000 -0700
++++ gcc-4.3.3/gcc/testsuite/ada/acats/run_all.sh	2009-01-25 00:53:32.459940773 -0800
+@@ -68,7 +68,7 @@
    ls ${i}?.adb > ${i}.lst 2> /dev/null
    ls ${i}*m.adb >> ${i}.lst 2> /dev/null
    ls ${i}.adb >> ${i}.lst 2> /dev/null
@@ -71,11 +88,10 @@ index ddd4da0..91accff 100755
  }
  
  EXTERNAL_OBJECTS=""
-diff --git a/libgomp/acinclude.m4 b/libgomp/acinclude.m4
-index acf47df..4ee8ba6 100644
---- a/libgomp/acinclude.m4
-+++ b/libgomp/acinclude.m4
-@@ -147,7 +147,7 @@ AC_DEFUN([LIBGOMP_CHECK_LINKER_FEATURES], [
+diff -Naur gcc-4.3.3.orig/libgomp/acinclude.m4 gcc-4.3.3/libgomp/acinclude.m4
+--- gcc-4.3.3.orig/libgomp/acinclude.m4	2007-03-18 04:17:44.000000000 -0700
++++ gcc-4.3.3/libgomp/acinclude.m4	2009-01-25 00:53:32.459940773 -0800
+@@ -147,7 +147,7 @@
    # Start by getting the version number.  I think the libtool test already
    # does some of this, but throws away the result.
    changequote(,)
@@ -84,11 +100,10 @@ index acf47df..4ee8ba6 100644
           sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
    changequote([,])
    libgomp_gnu_ld_version=`echo $ldver | \
-diff --git a/libgomp/configure b/libgomp/configure
-index 7f4be76..755880f 100755
---- a/libgomp/configure
-+++ b/libgomp/configure
-@@ -17600,7 +17600,7 @@ with_gnu_ld=$lt_cv_prog_gnu_ld
+diff -Naur gcc-4.3.3.orig/libgomp/configure gcc-4.3.3/libgomp/configure
+--- gcc-4.3.3.orig/libgomp/configure	2008-01-24 08:23:13.000000000 -0800
++++ gcc-4.3.3/libgomp/configure	2009-01-25 00:53:32.464042184 -0800
+@@ -17600,7 +17600,7 @@
    # Start by getting the version number.  I think the libtool test already
    # does some of this, but throws away the result.
  
@@ -97,11 +112,10 @@ index 7f4be76..755880f 100755
           sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
    libgomp_gnu_ld_version=`echo $ldver | \
-diff --git a/libjava/classpath/configure b/libjava/classpath/configure
-index c72bb75..c9b89f1 100755
---- a/libjava/classpath/configure
-+++ b/libjava/classpath/configure
-@@ -29126,7 +29126,7 @@ echo "${ECHO_T}$ac_cv_type_intmax_t" >&6
+diff -Naur gcc-4.3.3.orig/libjava/classpath/configure gcc-4.3.3/libjava/classpath/configure
+--- gcc-4.3.3.orig/libjava/classpath/configure	2008-02-29 15:47:54.000000000 -0800
++++ gcc-4.3.3/libjava/classpath/configure	2009-01-25 00:53:32.480448386 -0800
+@@ -29126,7 +29126,7 @@
  fi # shortcircut to system "stdint.h"
  # ------------------ PREPARE VARIABLES ------------------------------
  if test "$GCC" = "yes" ; then
@@ -110,11 +124,10 @@ index c72bb75..c9b89f1 100755
  else
  ac_cv_stdint_message="using $CC"
  fi
-diff --git a/libjava/classpath/ltcf-c.sh b/libjava/classpath/ltcf-c.sh
-index 5eb05db..2df14d5 100644
---- a/libjava/classpath/ltcf-c.sh
-+++ b/libjava/classpath/ltcf-c.sh
-@@ -153,7 +153,7 @@ EOF
+diff -Naur gcc-4.3.3.orig/libjava/classpath/ltcf-c.sh gcc-4.3.3/libjava/classpath/ltcf-c.sh
+--- gcc-4.3.3.orig/libjava/classpath/ltcf-c.sh	2006-01-17 10:09:40.000000000 -0800
++++ gcc-4.3.3/libjava/classpath/ltcf-c.sh	2009-01-25 00:53:32.484550356 -0800
+@@ -153,7 +153,7 @@
      # If the export-symbols file already is a .def file (1st line
      # is EXPORTS), use it as is.
      # If DATA tags from a recent dlltool are present, honour them!
@@ -123,11 +136,10 @@ index 5eb05db..2df14d5 100644
          cp $export_symbols $output_objdir/$soname-def;
        else
          echo EXPORTS > $output_objdir/$soname-def;
-diff --git a/libjava/classpath/ltcf-gcj.sh b/libjava/classpath/ltcf-gcj.sh
-index 3f1c281..2422895 100644
---- a/libjava/classpath/ltcf-gcj.sh
-+++ b/libjava/classpath/ltcf-gcj.sh
-@@ -156,7 +156,7 @@ EOF
+diff -Naur gcc-4.3.3.orig/libjava/classpath/ltcf-gcj.sh gcc-4.3.3/libjava/classpath/ltcf-gcj.sh
+--- gcc-4.3.3.orig/libjava/classpath/ltcf-gcj.sh	2005-09-23 14:31:04.000000000 -0700
++++ gcc-4.3.3/libjava/classpath/ltcf-gcj.sh	2009-01-25 00:53:32.484550356 -0800
+@@ -156,7 +156,7 @@
      # If the export-symbols file already is a .def file (1st line
      # is EXPORTS), use it as is.
      # If DATA tags from a recent dlltool are present, honour them!
@@ -136,11 +148,10 @@ index 3f1c281..2422895 100644
          cp $export_symbols $output_objdir/$soname-def;
        else
          echo EXPORTS > $output_objdir/$soname-def;
-diff --git a/libjava/classpath/m4/ax_create_stdint_h.m4 b/libjava/classpath/m4/ax_create_stdint_h.m4
-index 453af07..7868464 100644
---- a/libjava/classpath/m4/ax_create_stdint_h.m4
-+++ b/libjava/classpath/m4/ax_create_stdint_h.m4
-@@ -217,7 +217,7 @@ AC_CHECK_TYPE(intmax_t,,,[#include <$ac_cv_header_stdint>])
+diff -Naur gcc-4.3.3.orig/libjava/classpath/m4/ax_create_stdint_h.m4 gcc-4.3.3/libjava/classpath/m4/ax_create_stdint_h.m4
+--- gcc-4.3.3.orig/libjava/classpath/m4/ax_create_stdint_h.m4	2007-05-19 13:44:43.000000000 -0700
++++ gcc-4.3.3/libjava/classpath/m4/ax_create_stdint_h.m4	2009-01-25 00:53:32.484550356 -0800
+@@ -217,7 +217,7 @@
  fi # shortcircut to system "stdint.h"
  # ------------------ PREPARE VARIABLES ------------------------------
  if test "$GCC" = "yes" ; then
@@ -149,26 +160,24 @@ index 453af07..7868464 100644
  else
  ac_cv_stdint_message="using $CC"
  fi
-diff --git a/libjava/configure b/libjava/configure
-index a15cae8..a087d0a 100755
---- a/libjava/configure
-+++ b/libjava/configure
-@@ -18673,8 +18673,8 @@ echo "$as_me:$LINENO: checking whether 'ld' is at least 2.13" >&5
+diff -Naur gcc-4.3.3.orig/libjava/configure gcc-4.3.3/libjava/configure
+--- gcc-4.3.3.orig/libjava/configure	2009-01-24 02:32:29.000000000 -0800
++++ gcc-4.3.3/libjava/configure	2009-01-25 00:53:32.492753177 -0800
+@@ -18673,8 +18673,8 @@
  echo $ECHO_N "checking whether 'ld' is at least 2.13... $ECHO_C" >&6
  LD_PROG=`$CC --print-prog-name=ld`
  LD_VERSION=`$LD_PROG --version`
 -LD_VERSION_MAJOR=`echo "$LD_VERSION" | head -1 | cut -d '.' -f 1 | cut -d ' ' -f 4`
 -LD_VERSION_MINOR=`echo "$LD_VERSION" | head -1 | cut -d '.' -f 2`
-+LD_VERSION_MAJOR=`echo "$LD_VERSION" | head -n -1 | cut -d '.' -f 1 | cut -d ' ' -f 4`
-+LD_VERSION_MINOR=`echo "$LD_VERSION" | head -n -1 | cut -d '.' -f 2`
++LD_VERSION_MAJOR=`echo "$LD_VERSION" | head -n 1 | cut -d '.' -f 1 | cut -d ' ' -f 4`
++LD_VERSION_MINOR=`echo "$LD_VERSION" | head -n 1 | cut -d '.' -f 2`
  if expr "$LD_VERSION_MAJOR" \> 2 > /dev/null; then
    LD_OK="ok"
  else
-diff --git a/libjava/mingwld.m4 b/libjava/mingwld.m4
-index 9406798..d6cc6ad 100644
---- a/libjava/mingwld.m4
-+++ b/libjava/mingwld.m4
-@@ -3,8 +3,8 @@ AC_DEFUN([CHECK_FOR_BROKEN_MINGW_LD],
+diff -Naur gcc-4.3.3.orig/libjava/mingwld.m4 gcc-4.3.3/libjava/mingwld.m4
+--- gcc-4.3.3.orig/libjava/mingwld.m4	2005-08-22 15:36:35.000000000 -0700
++++ gcc-4.3.3/libjava/mingwld.m4	2009-01-25 00:53:32.492753177 -0800
+@@ -3,8 +3,8 @@
  AC_MSG_CHECKING(whether 'ld' is at least 2.13)
  LD_PROG=`$CC --print-prog-name=ld`
  LD_VERSION=`$LD_PROG --version`
@@ -179,11 +188,10 @@ index 9406798..d6cc6ad 100644
  if expr "$LD_VERSION_MAJOR" \> 2 > /dev/null; then
    LD_OK="ok"
  else
-diff --git a/libstdc++-v3/acinclude.m4 b/libstdc++-v3/acinclude.m4
-index 3b06899..e8b039a 100644
---- a/libstdc++-v3/acinclude.m4
-+++ b/libstdc++-v3/acinclude.m4
-@@ -234,7 +234,7 @@ AC_DEFUN([GLIBCXX_CHECK_LINKER_FEATURES], [
+diff -Naur gcc-4.3.3.orig/libstdc++-v3/acinclude.m4 gcc-4.3.3/libstdc++-v3/acinclude.m4
+--- gcc-4.3.3.orig/libstdc++-v3/acinclude.m4	2008-04-25 09:52:57.000000000 -0700
++++ gcc-4.3.3/libstdc++-v3/acinclude.m4	2009-01-25 00:53:32.500956558 -0800
+@@ -234,7 +234,7 @@
    if test x"$with_gnu_ld" = x"yes"; then
      AC_MSG_CHECKING([for ld version])
      changequote(,)
@@ -192,109 +200,105 @@ index 3b06899..e8b039a 100644
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
      changequote([,])
      glibcxx_gnu_ld_version=`echo $ldver | \
-diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index d34267c..a03def7 100755
---- a/libstdc++-v3/configure
-+++ b/libstdc++-v3/configure
-@@ -17490,7 +17490,7 @@ with_gnu_ld=$lt_cv_prog_gnu_ld
+diff -Naur gcc-4.3.3.orig/libstdc++-v3/configure gcc-4.3.3/libstdc++-v3/configure
+--- gcc-4.3.3.orig/libstdc++-v3/configure	2008-07-07 12:49:54.000000000 -0700
++++ gcc-4.3.3/libstdc++-v3/configure	2009-01-25 00:53:32.582987288 -0800
+@@ -17490,7 +17490,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
-@@ -42215,7 +42215,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
+@@ -42215,7 +42215,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
-@@ -84606,7 +84606,7 @@ done
+@@ -84606,7 +84606,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
-@@ -85622,7 +85622,7 @@ done
+@@ -85622,7 +85622,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
-@@ -86610,7 +86610,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
+@@ -86610,7 +86610,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
-@@ -109089,7 +109089,7 @@ done
+@@ -109089,7 +109089,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
-@@ -109934,7 +109934,7 @@ done
+@@ -109934,7 +109934,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
-@@ -110828,7 +110828,7 @@ done
+@@ -110828,7 +110828,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
-@@ -112114,7 +112114,7 @@ echo "${ECHO_T}$glibcxx_cv_WRITEV" >&6
+@@ -112114,7 +112114,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
-@@ -112850,7 +112850,7 @@ _ACEOF
+@@ -112850,7 +112850,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
-@@ -113351,7 +113351,7 @@ done
+@@ -113351,7 +113351,7 @@
      echo "$as_me:$LINENO: checking for ld version" >&5
  echo $ECHO_N "checking for ld version... $ECHO_C" >&6
  
 -    ldver=`$LD --version 2>/dev/null | head -1 | \
-+    ldver=`$LD --version 2>/dev/null | head -n -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
             sed -e 's/GNU ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\3/'`
  
      glibcxx_gnu_ld_version=`echo $ldver | \
--- 
-1.6.0.3
-

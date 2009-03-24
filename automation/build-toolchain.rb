@@ -55,3 +55,5 @@ gcc.build('full compiler')
 linux.build('temporary tool headers')
 glibc.build('temporary tool glibc')
 specs.build
+
+[ binutils, gcc, glibc, linux ].each { |r| r.cleanup }
