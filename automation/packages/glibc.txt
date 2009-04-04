@@ -110,7 +110,7 @@ test-commands:
 
 install-commands:
  - mkdir -p PARAM[SYSROOT]/lib
- - cp csu/crt{1,i,n}.o PARAM[SYSROOT]/lib
+ - bash -c cp csu/crt{1,i,n}.o PARAM[SYSROOT]/lib
 
 
 phase: full glibc

@@ -482,10 +482,6 @@ package owners stuff):
    --without-libpam --disable-nls --without-audit  &&
 make && make install
 
-and vim (so we can edit options files):
-
-./configure --prefix=/tools && make && make install
-
 also change the "chroot" command so that it adds /tools/sbin to the PATH in
 the chrooted environment; or set it up that way in /root/.bashrc or
 whatever.
