@@ -480,7 +480,8 @@ package owners stuff):
 
 ./configure --prefix=/tools --sysconfdir=/etc --without-selinux \
    --without-libpam --disable-nls --without-audit  &&
-make && make install
+make && make install &&
+sed -i "/CREATE_MAIL_SPOOL/s/yes/no/" /etc/default/useradd
 
 also change the "chroot" command so that it adds /tools/sbin to the PATH in
 the chrooted environment; or set it up that way in /root/.bashrc or

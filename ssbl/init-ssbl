@@ -1,0 +1,77 @@
+#!/sbin/busybox sh
+#
+# There is a reference to /dev/hde11 which happens to be eric's root.
+# Brett uses /dev/hde10 because he only has one swap partition.
+#
+# Yes, this value should be injected/auto-adjusted rather than hard-coded
+#
+# Better yet, we could build busybox with fdisk (which we want anyway)
+# and grep or sed and search for the bootable partition marked with an
+# asterisk
+#
+
+
+PATH=/sbin
+export PATH
+#
+# What the heck ... is PATH not working, that is weird
+# TODO FIXME what is going on, can we please get rid of all the /sbin/foo 
+#
+
+/sbin/mount -t sysfs none /sys
+/sbin/mount -t proc none /proc
+
+#/sbin/mount -n -t ramfs none /dev
+#/sbin/mount -t tmpfs mdev /dev
+
+echo "Creating device nodes..."
+echo /sbin/mdev > /proc/sys/kernel/hotplug
+/sbin/mdev -s
+
+/sbin/mount -t tmpfs mdev /dev
+#mkdir /dev/pts
+#mount -t devpts devpts /dev/pts
+
+#
+# This activates the hard disk.
+# The timing is quite sensitive.  Shorter sleeps will certainly
+# work but removing the sleeps entirely prevents the hard disk
+# from being recognized.  We do not yet understand why.
+#
+echo "activating hard disk"
+cd /modules
+echo "insmod diag.ko"
+/sbin/insmod diag.ko
+/sbin/sleep 10
+
+echo "enabling pci devices"
+cd /sys/devices/pci0000:00
+for FILE in */enable
+do 
+    echo -n 1 > $FILE
+done
+
+cd /modules
+/sbin/sleep 5
+echo "insmod ide-core.ko"
+/sbin/insmod ide-core.ko
+
+/sbin/sleep 5
+echo "insmod ide-disk.ko"
+/sbin/insmod ide-disk.ko
+
+/sbin/sleep 5
+echo "insmod aec62xx.ko"
+/sbin/insmod aec62xx.ko
+
+echo "mount /dev/hde11 /mnt"
+/sbin/mount /dev/hde11 /mnt
+
+echo "cd /mnt"
+cd /mnt
+echo "pivot_root . old_root"
+/sbin/pivot_root . old_root 
+
+echo "chrooting"
+exec /sbin/chroot . /sbin/init </dev/console >/dev/console 2>&1
+

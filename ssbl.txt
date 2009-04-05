@@ -15,7 +15,7 @@ the ssbl image, but absolutely nothing else, because (I can't
 reiterate this enough) we only have 1728mb for the kernel image
 plus root filesystem.
 
-Use busybox 1.12.2.
+Use busybox busybox-1.13.1.
 
 Set PATH to include /opt/uclibc/bin as its first element.
 
@@ -24,3 +24,86 @@ like the linux kernel and uclibc.
 
 I turned off everything I could turn off, including even such
 things as terse applet usage messages
+
+Eric used: ssbl/config-busybox-eric-05
+
+As a first pass at testing a SSBL, we build a kernel with an
+NFS root which contains the filesystem that we imagine we will
+compress into flash. Eric had success using:
+ kernel-config-2.6.23.16-nb6eric
+
+Next, once we have tftp booted that kernel with the NFS root
+to the minimal ssbl-simulated filesystem, demonstrated the
+pivot-root, and seen ntp & sshd start and are able to ssh in
+then rebuild the kernel without NFS in preperation for flash
+boot.
+ kernel-config-2.6.23.16-fb1eric
+
+be sure to rebuild "diag.ko" ... and curse out of tree .ko's
+
+The script for making the SSBL filesystem is "make_ssbl" but
+you will need to adjust the variables at the top to match
+paths for your system. The script makes the essential dirs
+and creates symlinks for the busybox applets. The calls to
+mknode for /dev/null and /dev/console will fail since you
+are not root, so be sure to do those. Also, there are some
+assumptions about the hard disk layout.
+
+1) change the /sbin/init to have the correct /dev/hdeX
+
+2) /sbin/chroot is the host system and it needs to be that
+way on the hard disk as well. This is not where it was by
+default on my system. I moved it. You may wish to symlink.
+  man 8 pivot_root
+
+3) mkdir /old_root on the hard disk filesystem.
+
+
+Once we're tftp booted & NFS rooted to the ssbl and we've
+seen the pivot root kick off to the hard disk's init and
+thus seen sshd start and been able to ssh into the box,
+then rebuild the kernel without NFS for creating a flash
+boot kernel for the trx image:
+  config/kernel-config-2.6.23.16-fb1eric
+
+
+
+Now that we have a ssbl, we need to package it up.
+
+The instructions are in BUILDING THE TRX IMAGE of the
+freesa-notes.txt in detail.
+
+1) lzma the kernel
+
+2) build lzma-loader
+
+3) build squashfs with lzma
+
+   squashfs 3.4:
+   ftp://ftp.slax.org/source/slax/sqlzma/squashfs3.4.tar.gz
+
+   SquashFS-LZMA 3.4-457:
+   ftp://ftp.slax.org/source/slax/sqlzma/sqlzma3.4-457.tar.bz2
+
+   squashfs3.4/squashfs-tools/mksquashfs /opt/ssbl ssbl.squashfs -all-root
+
+4) make the "fs_mark" file
+
+5) build trx
+
+./trx -o freesa-suicide0.trx \
+   -f lzma-loader/loader.gz \
+   -f /usr/src/kernel/linux/vmlinux.lzma \
+   -a 1024 \
+   -f ssbl.squashfs \
+   -a 0x10000 \
+   -A fs_mark
+
+mjn3's trx replacement - v0.81.1
+bob:~/openwrt$ ls -ltr freesa-suicide0.trx 
+-rw-rw-r-- 1 bob bob 1380352 2009-02-03 12:00 freesa-suicide0.trx
+bob:~/openwrt$ 
+
+But this didn't work from CFE. Eric thinks he may have a problem
+with his SquashFS-LZMA.
+

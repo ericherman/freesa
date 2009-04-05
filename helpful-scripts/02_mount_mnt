@@ -1,0 +1,9 @@
+#!/bin/bash
+mount /dev/hde11 /mnt
+mount /dev/hde10 /mnt/home
+mount /dev/hde8 /mnt/var  
+mount /dev/hde9 /mnt/var/spool
+mount /dev/hde5 /mnt/boot     
+swapon /dev/hde6
+swapon /dev/hde7
+

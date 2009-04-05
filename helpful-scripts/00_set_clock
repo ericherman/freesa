@@ -4,5 +4,6 @@
 # Freesa system clock with the NFS server machine's clock.
 
 touch /tmp/xx-clockfile
+date
 date -s "$(date -r /tmp/xx-clockfile)"
 rm /tmp/xx-clockfile

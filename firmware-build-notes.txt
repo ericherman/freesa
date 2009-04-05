@@ -131,7 +131,7 @@ mipsel-unknown-linux-gnu-objcopy -O binary -R .reginfo \
 
 Now compress it with lzma:
 
-cat fixed-vmlinux | lzma e si -so -eos -lc1 -lp2 -pb2 > vmlinux.lzma
+cat fixed-vmlinux | lzma e -si -so -eos -lc1 -lp2 -pb2 > vmlinux.lzma
 
 b. invoke trx
 
@@ -147,3 +147,20 @@ stored in its NVRAM area.  By default this is 192.168.1.1.
 Ensure you can ping that IP address [CHECK: does CFE support
 ICMP? does ping work?], then use a tftp client to send
 freesa-nfsboot.trx to it.  Remember to use binary mode!
+
+Refresher for ifconfig usage:
+
+If you can't ping 192.168.1.1 then you need to get your network going.
+1. take stock of the current situation:
+    /sbin/ifconfig
+    route
+2. add an ip address and route:
+    sudo /sbin/ifconfig eth0:0 192.168.1.2
+    /sbin/ifconfig
+    sudo /sbin/route add -host 192.168.1.2 dev eth0:0
+    route
+3. make sure you can ping yourself and the WL-700gE
+    ping -c1 192.168.1.2
+    ping -c1 192.168.1.1
+
+Now you should be able to tftp to the WL-700gE.

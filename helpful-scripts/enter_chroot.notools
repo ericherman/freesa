@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# This enters the chroot environment.  Run "pre-chroot-mounting"
+# first; and the first time you chroot after booting the Freesa
+# box, follow the "after chrooting" instructions.
+
+echo "AFTER CHROOTING:"
+echo "mount -vt devpts -o gid=4,mode=620 none /dev/pts"
+echo "mount -vt tmpfs none /dev/shm"
+
+chroot "/mnt" /bin/env -i \
+    HOME=/root TERM="${TERM}" PS1='\u:\w\$ ' \
+    PATH=/bin:/usr/bin:/sbin:/usr/sbin \
+    /bin/bash --login +h
