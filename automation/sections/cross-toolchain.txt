@@ -76,10 +76,12 @@ built, most programs built using it will be configured with
 "build" set to the host computer and "host" set to the target
 computer.
 
-The cross-toolchain built here uses a the sysroot framework, as
-recommended by the GCC developers.  (It used to be possible to do
-non-sysroot builds, but that may not even be possible with the
-current release of all the components.)  That means means that a
+The cross-toolchain built here uses the sysroot framework, as
+recommended by the GCC developers.  (The upstream source from
+which we've adapted these instructions, Cross Linux From Scratch,
+still uses non-sysroot builds.  We think that it is a better idea
+to use the sysroot framework, because the toolchain developers
+recommend doing so.)  The idea behind a sysroot toolchain is:  a
 directory on the host system (the "sysroot" directory) is set up
 to contain a subset of the root filesystem of the target system:
 +/bin+, +/lib+, +/usr/lib+, +/etc+, that sort of thing.  Header
@@ -113,23 +115,23 @@ export KERNEL_ARCH="ARCH=mips"
 steps: glibc
  - [[gmp]]
  - [[mpfr]]
- - [[kernel-headers]]
+ - [[linux: sysroot headers]]
  - [[binutils]]
  - [[glibc: headers]]
  - [[gcc: bare compiler]]
- - [[glibc: startup]]
+ - [[glibc: startup files]]
  - [[gcc: libgcc]]
- - [[glibc]]
- - [[gcc]]
+ - [[glibc: full glibc]]
+ - [[gcc: full compiler]]
 
 steps: uclibc
  - [[gmp]]
  - [[mpfr]]
- - [[kernel-headers]]
+ - [[linux: sysroot headers]]
  - [[binutils]]
  - [[uclibc: headers]]
  - [[gcc: bare compiler]]
  - [[uclibc: library]]
- - [[gcc]]
+ - [[gcc: full compiler]]
  - [[uclibc: utilities]]
 
