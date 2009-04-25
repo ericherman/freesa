@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
 # run with:
 # ruby -I /path/to/litbuild/lib build-toolchain.rb
+# REMEMBER TO SET PATH TO INCLUDE /path/to/cross-tools/bin
+# and set LC_ALL=POSIX and unset CFLAGS, CXXFLAGS
 
 require 'litbuild'
 
-@log = GlobalLogPolicy.new('/mnt/Build/logs')
+@log = GlobalLogPolicy.new('/tmp/Build/logs')
 
 class ShuntExecutioner < Executioner
   def execute_in_dir(shell_command, output_file, cwd)
@@ -17,7 +19,7 @@ def load_misc(name)
 end
 def package(name)
   text = File.read(File.join('packages', "#{name}.txt"))
-  parent_dir = File.join("/mnt", "Build")
+  parent_dir = File.join("/tmp", "Build")
   Package.new(text, @exec, @log, parent_dir)
 end
 
@@ -26,14 +28,12 @@ end
 
 cfg = {
   'KERNEL_ARCH' => '',
-  'SYSROOT' => '/cross-tools/sysroot',
-  'TARFILE_DIR' => '/mnt/Sources',
+  'SYSROOT' => '/tmp/cross-tools/sysroot',
   'HOST' => 'i686-cross-linux-gnu',
-  'PATCH_DIR' => '/mnt/Freesa/patches',
   'TARGET' => 'i686-pc-linux-gnu',
-  'TOOL_PREFIX' => '/cross-tools',
-  'GLIBCFLAG' => '-march=i686 -mtune=generic -g -O2',
-  'KERNEL_VERSION' => '2.6.28'
+  'TOOL_PREFIX' => '/tmp/cross-tools',
+  'GLIBCFLAG' => '-march=i686 -g -O2',
+  'KERNEL_VERSION' => '2.6.29'
 }
 
 binutils = package('binutils')

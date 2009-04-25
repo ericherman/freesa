@@ -1,2 +1,0 @@
-for at least a faux-cross-build, ensure that PATH does not
-include TOOL_PREFIX/bin.

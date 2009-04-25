@@ -1,0 +1,253 @@
+Originally by Jim Gifford
+Re-implemented by Brett Neumeier
+Date: 2009-04-25
+Initial Package Version: 4.4.0
+Upstream Status: On Hold
+Description: Makes GCC Posix Compliant
+
+diff --git a/contrib/patch_tester.sh b/contrib/patch_tester.sh
+index 83f3322..73365a5 100755
+--- a/contrib/patch_tester.sh
++++ b/contrib/patch_tester.sh
+@@ -464,7 +464,7 @@ announce () {
+ # After selfexec, $TESTING is already set up.  
+ if [ -d $TESTING ]; then
+     # The only file in $TESTING is the patch.
+-    PATCH=`ls -rt -1 $TESTING | head -1`
++    PATCH=`ls -rt -1 $TESTING | head -n 1`
+     PATCH=$TESTING/$PATCH
+     if [ -f $PATCH ]; then
+ 	bootntest_patched && bootntest_pristine && compare_passes
+@@ -474,7 +474,7 @@ fi
+ 
+ firstpatch=true
+ while true; do
+-    PATCH=`ls -rt -1 $PATCHES | head -1`
++    PATCH=`ls -rt -1 $PATCHES | head -n 1`
+     if [ x$PATCH = x ]; then
+ 	if [ $stop = true ]; then
+ 	    if [ $firstpatch = true ]; then
+diff --git a/gcc/configure b/gcc/configure
+index 04775ac..4a575ac 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -21750,7 +21750,7 @@ EOF
+   # Therefore, use diff -b for the comparisons.
+   if test x$gcc_cv_objdump != x \
+   && $gcc_cv_objdump -s -j .eh_frame conftest.o 2>/dev/null \
+-     | tail -3 > conftest.got \
++     | tail -n 3 > conftest.got \
+   && { diff -b conftest.lit conftest.got > /dev/null 2>&1 \
+     || diff -b conftest.big conftest.got > /dev/null 2>&1; }
+   then
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index 04ea19d..16d281f 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -2351,7 +2351,7 @@ EOF
+   # Therefore, use diff -b for the comparisons.
+   if test x$gcc_cv_objdump != x \
+   && $gcc_cv_objdump -s -j .eh_frame conftest.o 2>/dev/null \
+-     | tail -3 > conftest.got \
++     | tail -n 3 > conftest.got \
+   && { diff -b conftest.lit conftest.got > /dev/null 2>&1 \
+     || diff -b conftest.big conftest.got > /dev/null 2>&1; }
+   then
+diff --git a/libgomp/acinclude.m4 b/libgomp/acinclude.m4
+index ac450ca..d71293a 100644
+--- a/libgomp/acinclude.m4
++++ b/libgomp/acinclude.m4
+@@ -152,7 +152,7 @@ AC_DEFUN([LIBGOMP_CHECK_LINKER_FEATURES], [
+     libgomp_ld_is_gold=yes
+   fi
+   changequote(,)
+-  ldver=`$LD --version 2>/dev/null | head -1 | \
++  ldver=`$LD --version 2>/dev/null | head -n 1 | \
+          sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+   changequote([,])
+   libgomp_gnu_ld_version=`echo $ldver | \
+diff --git a/libgomp/configure b/libgomp/configure
+index deef673..3ee7b59 100755
+--- a/libgomp/configure
++++ b/libgomp/configure
+@@ -18486,7 +18486,7 @@ with_gnu_ld=$lt_cv_prog_gnu_ld
+     libgomp_ld_is_gold=yes
+   fi
+ 
+-  ldver=`$LD --version 2>/dev/null | head -1 | \
++  ldver=`$LD --version 2>/dev/null | head -n 1 | \
+          sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+   libgomp_gnu_ld_version=`echo $ldver | \
+diff --git a/libjava/classpath/configure b/libjava/classpath/configure
+index 466fa46..fbc9ba0 100755
+--- a/libjava/classpath/configure
++++ b/libjava/classpath/configure
+@@ -29072,7 +29072,7 @@ echo "${ECHO_T}$ac_cv_type_intmax_t" >&6
+ fi # shortcircut to system "stdint.h"
+ # ------------------ PREPARE VARIABLES ------------------------------
+ if test "$GCC" = "yes" ; then
+-ac_cv_stdint_message="using gnu compiler "`$CC --version | head -1`
++ac_cv_stdint_message="using gnu compiler "`$CC --version | head -n 1`
+ else
+ ac_cv_stdint_message="using $CC"
+ fi
+diff --git a/libjava/classpath/m4/ax_create_stdint_h.m4 b/libjava/classpath/m4/ax_create_stdint_h.m4
+index 453af07..7868464 100644
+--- a/libjava/classpath/m4/ax_create_stdint_h.m4
++++ b/libjava/classpath/m4/ax_create_stdint_h.m4
+@@ -217,7 +217,7 @@ AC_CHECK_TYPE(intmax_t,,,[#include <$ac_cv_header_stdint>])
+ fi # shortcircut to system "stdint.h"
+ # ------------------ PREPARE VARIABLES ------------------------------
+ if test "$GCC" = "yes" ; then
+-ac_cv_stdint_message="using gnu compiler "`$CC --version | head -1`
++ac_cv_stdint_message="using gnu compiler "`$CC --version | head -n 1`
+ else
+ ac_cv_stdint_message="using $CC"
+ fi
+diff --git a/libjava/configure b/libjava/configure
+index 5e6adf1..0f35226 100755
+--- a/libjava/configure
++++ b/libjava/configure
+@@ -18919,8 +18919,8 @@ echo "$as_me:$LINENO: checking whether 'ld' is at least 2.13" >&5
+ echo $ECHO_N "checking whether 'ld' is at least 2.13... $ECHO_C" >&6
+ LD_PROG=`$CC --print-prog-name=ld`
+ LD_VERSION=`$LD_PROG --version`
+-LD_VERSION_MAJOR=`echo "$LD_VERSION" | head -1 | cut -d '.' -f 1 | cut -d ' ' -f 4`
+-LD_VERSION_MINOR=`echo "$LD_VERSION" | head -1 | cut -d '.' -f 2`
++LD_VERSION_MAJOR=`echo "$LD_VERSION" | head -n 1 | cut -d '.' -f 1 | cut -d ' ' -f 4`
++LD_VERSION_MINOR=`echo "$LD_VERSION" | head -n 1 | cut -d '.' -f 2`
+ if expr "$LD_VERSION_MAJOR" \> 2 > /dev/null; then
+   LD_OK="ok"
+ else
+diff --git a/libjava/mingwld.m4 b/libjava/mingwld.m4
+index 9406798..d6cc6ad 100644
+--- a/libjava/mingwld.m4
++++ b/libjava/mingwld.m4
+@@ -3,8 +3,8 @@ AC_DEFUN([CHECK_FOR_BROKEN_MINGW_LD],
+ AC_MSG_CHECKING(whether 'ld' is at least 2.13)
+ LD_PROG=`$CC --print-prog-name=ld`
+ LD_VERSION=`$LD_PROG --version`
+-LD_VERSION_MAJOR=`echo "$LD_VERSION" | head -1 | cut -d '.' -f 1 | cut -d ' ' -f 4`
+-LD_VERSION_MINOR=`echo "$LD_VERSION" | head -1 | cut -d '.' -f 2`
++LD_VERSION_MAJOR=`echo "$LD_VERSION" | head -n 1 | cut -d '.' -f 1 | cut -d ' ' -f 4`
++LD_VERSION_MINOR=`echo "$LD_VERSION" | head -n 1 | cut -d '.' -f 2`
+ if expr "$LD_VERSION_MAJOR" \> 2 > /dev/null; then
+   LD_OK="ok"
+ else
+diff --git a/libstdc++-v3/acinclude.m4 b/libstdc++-v3/acinclude.m4
+index 186916c..53b03fb 100644
+--- a/libstdc++-v3/acinclude.m4
++++ b/libstdc++-v3/acinclude.m4
+@@ -238,7 +238,7 @@ AC_DEFUN([GLIBCXX_CHECK_LINKER_FEATURES], [
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+     changequote([,])
+     glibcxx_gnu_ld_version=`echo $ldver | \
+diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
+index 31678eb..87f7afa 100755
+--- a/libstdc++-v3/configure
++++ b/libstdc++-v3/configure
+@@ -23489,7 +23489,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \
+@@ -42055,7 +42055,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \
+@@ -76333,7 +76333,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \
+@@ -76645,7 +76645,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \
+@@ -77328,7 +77328,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \
+@@ -95080,7 +95080,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \
+@@ -112274,7 +112274,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \
+@@ -112493,7 +112493,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \
+@@ -112678,7 +112678,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \
+@@ -112899,7 +112899,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \
+@@ -113121,7 +113121,7 @@ echo $ECHO_N "checking for ld version... $ECHO_C" >&6
+     if $LD --version 2>/dev/null | grep 'GNU gold' >/dev/null 2>&1; then
+       glibcxx_ld_is_gold=yes
+     fi
+-    ldver=`$LD --version 2>/dev/null | head -1 | \
++    ldver=`$LD --version 2>/dev/null | head -n 1 | \
+            sed -e 's/GNU \(go\)\{0,1\}ld \(version \)\{0,1\}\(([^)]*) \)\{0,1\}\([0-9.][0-9.]*\).*/\4/'`
+ 
+     glibcxx_gnu_ld_version=`echo $ldver | \

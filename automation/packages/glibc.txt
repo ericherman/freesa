@@ -110,7 +110,7 @@ test-commands:
 
 install-commands:
  - mkdir -p PARAM[SYSROOT]/lib
- - bash -c cp csu/crt{1,i,n}.o PARAM[SYSROOT]/lib
+ - bash -c 'cp csu/crt{1,i,n}.o PARAM[SYSROOT]/lib'
 
 
 phase: full glibc
@@ -154,6 +154,10 @@ conflict with the files we build as part of the file system.
 That means they must link against +/tools/lib/ld-linux.so.2+ and
 that ld-linux.so.2 library must look for other libraries only in
 +/tools/lib+ and +/tools/usr/lib+.
+
+The temporary tools location needs to be present with the same
+absolute path on both the build system and the final runtime
+system.
 
 We can control the dynamic linker location easily by overriding
 the default GCC +dynamic_linker+ spec, but we don't know how to

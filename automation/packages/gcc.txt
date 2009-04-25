@@ -1,6 +1,6 @@
 full-name: GNU Compiler Collection
 name: gcc
-version: 4.3.3
+version: 4.4.0
 project-url: http://gcc.gnu.org/
 
 GCC is the GNU Compiler Collection.  The most important compiler
@@ -52,12 +52,24 @@ sysroot builds is not particularly easy to find -- or at least,
 it wasn't when this was written.  (If you know where sysroot
 builds are documented, please tell us!)
 
+A few dependencies were added to gcc in recent releases (4.3 and
+higher):  the GMP and MPFR libraries are required for all
+compiler builds, and a few loop optimizations are only available
+if the Parma Polyhedra Library (PPL) and a version of the Chunky
+Loop Generator using that library (cloog-ppl) are available.
+Those latter two aren't hard dependencies, though; you only need
+those to be available if you want to enable three specific
+optimizations.  (The optimizations in question are
+loop-interchange, loop-strip-mine, and loop-block.  It's not
+clear to us whether or not those optimizations are particularly
+valuable, but we're certainly not worried about them for a
+cross-toolchain build.)
+
 No patches are strictly required for gcc.  The one patch we apply
 converts an archaic invocation syntax for programs like +head+
 and +tail+ to the POSIX-standard syntax.
 
 patches:
- - branch_update-5
  - posix-1
 
 phase: bare compiler
