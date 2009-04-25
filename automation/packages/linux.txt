@@ -79,4 +79,4 @@ make-commands:
 test-commands:
 
 install-commands:
- - make PARAM[KERNEL_ARCH] headers_install INSTALL_HDR_PATH=/tools
+ - make PARAM[KERNEL_ARCH] headers_install INSTALL_HDR_PATH=PARAM[TMPTOOLS]

@@ -33,7 +33,8 @@ cfg = {
   'TARGET' => 'i686-pc-linux-gnu',
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'GLIBCFLAG' => '-march=i686 -g -O2',
-  'KERNEL_VERSION' => '2.6.29'
+  'KERNEL_VERSION' => '2.6.29',
+  'TMPTOOLS' => '/tmp/tools'
 }
 
 binutils = package('binutils')

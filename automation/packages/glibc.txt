@@ -27,13 +27,13 @@ initial cross-glibc, not the final system glibc. -ed.]
 
 Note that we are building our glibc with a "minimum kernel
 version" set to the version of the actual runtime kernel that we
-will use to construct the final system using the programs in
-+/tools+.  According to the glibc documentation, the higher the
-kernel version number, the less unnecessary compatibility code is
-built into the C library.  It's kind of unnecessary to worry
-about optimizing the glibc here that way, since it won't wind up
-on the final system, but it won't hurt anything and is good
-practice in general.
+will use to construct the final system using the programs in the
+temporary tools directory.  According to the glibc documentation,
+the higher the kernel version number, the less unnecessary
+compatibility code is built into the C library.  It's kind of
+unnecessary to worry about optimizing the glibc here that way,
+since it won't wind up on the final system, but it won't hurt
+anything and is good practice in general.
 
 The libgcc_eh patch that we apply is very important:  it allows
 glibc to be built without the libgcc_eh library provided as part
@@ -144,16 +144,17 @@ phase: temporary tool glibc
 The glibc built as part of the cross-toolchain builds executables
 with the standard runtime linking paths -- that is, it links
 programs against +/lib/ld-linux.so.2+, and that +ld-linux.so.2+
-library looks for other libraries (like +libc.so.6+) in +/lib+ and
-+/usr/lib+.  That's the right assumption when the sysroot
+library looks for other libraries (like +libc.so.6+) in +/lib+
+and +/usr/lib+.  That's the right assumption when the sysroot
 directory structure is copied to the root directory of the
 runtime device, but that's not the way we want to do things with
 our from-source bootstrap:  we want the temporary tools to be
-self-contained within the +/tools+ directory, so they don't
-conflict with the files we build as part of the file system.
-That means they must link against +/tools/lib/ld-linux.so.2+ and
-that ld-linux.so.2 library must look for other libraries only in
-+/tools/lib+ and +/tools/usr/lib+.
+self-contained within the temporary tools directory, so they
+don't conflict with the files we build as part of the file
+system.  That means they must link against the
++lib/ld-linux.so.2+ in the temporary tools directory, and that
++ld-linux.so.2+ library must look for other libraries only in the
++lib and +usr/lib+ directories under that directory.
 
 The temporary tools location needs to be present with the same
 absolute path on both the build system and the final runtime
@@ -176,12 +177,12 @@ configure-commands:
  - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc"
       AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib"
       CFLAGS="PARAM[GLIBCFLAG]"
-      PARAM[SOURCE_DIR]/configure --prefix=/tools
+      PARAM[SOURCE_DIR]/configure --prefix=PARAM[TMPTOOLS]
       --host=PARAM[TARGET] --build=PARAM[HOST]
       --disable-profile --enable-add-ons --with-tls
       --enable-kernel=PARAM[KERNEL_VERSION] --with-__thread
       --with-binutils=PARAM[TOOL_PREFIX]/bin
-      --with-headers=/tools/include
+      --with-headers=PARAM[TMPTOOLS]/include
       --cache-file=config.cache
 
 test-commands:
@@ -189,8 +190,8 @@ test-commands:
 The +install_root+ is specified as +/+ for this installation
 because that causes the installation to occur directly in the
 prefix specified in configure, rather than a subdirectory of it.
-Since the build user can write to the +/tools+ directory, this
-winds up doing the right thing.
+Since the build user can write to the temporary tools directory,
+this winds up doing the right thing.
 
 install-commands:
  - make install_root=/ install
