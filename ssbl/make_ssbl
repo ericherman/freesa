@@ -8,7 +8,6 @@ export BUSYBOX=/opt/bbox/busybox-1.13.1
 
 mkdir -pv ${SSBL}
 mkdir -v ${SSBL}/etc
-#mkdir -v ${SSBL}/etc/fstab
 mkdir -v ${SSBL}/etc/opt
 mkdir -v ${SSBL}/mnt
 mkdir -v ${SSBL}/modules
