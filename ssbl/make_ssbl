@@ -40,24 +40,22 @@ mkdir -v ${SSBL}/sys
 install -dv -m 1777 ${SSBL}/tmp
 echo ""
 mkdir -v ${SSBL}/dev
-mknod -m 600 ${SSBL}/dev/console c 5 1
-mknod -m 666 ${SSBL}/dev/null c 1 3
-echo ""
-echo "CHECK NOW:"
-echo ""
-echo "1.  the /sbin/chroot specified in the init script must reside in"
-echo "    the same /sbin/chroot location. You may need to move or symlink it"
-echo "    from the /usr/sbin/chroot on the hard disk as noted in"
-echo "      man 8 pivot_root"
-echo ""
-echo "2.  the init script puts the original root in /old_root"
-echo "    make sure that /old_root exists on the hard disk"
-echo ""
-echo "3.  you may need to be root to execute mknode either delay this step"
-echo "    or perhaps try:"
-echo "      sudo mknod -m 600 ${SSBL}/dev/console c 5 1"
-echo "      sudo mknod -m 666 ${SSBL}/dev/null c 1 3"
-echo ""
-echo "3.  Cheers and good luck"
-echo ""
+cat <<HERE
+CHECK NOW:
 
+1.  The /sbin/chroot specified in the init script must reside at
+    the same filesystem location in the original and new roots.
+    You may need to move or symlink it from the /usr/sbin/chroot
+    on the hard disk as noted in
+      man 8 pivot_root
+
+2.  The init script puts the original root in /old_root
+    make sure that /old_root exists on the hard disk
+
+3.  You need to be root to execute mknode either delay this step
+    or perhaps try:
+      sudo mknod -m 600 ${SSBL}/dev/console c 5 1
+      sudo mknod -m 666 ${SSBL}/dev/null c 1 3
+
+4.  Cheers and good luck
+HERE

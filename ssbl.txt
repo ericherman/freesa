@@ -27,27 +27,19 @@ things as terse applet usage messages
 
 Eric used: ssbl/config-busybox-eric-05
 
-As a first pass at testing a SSBL, we build a kernel with an
-NFS root which contains the filesystem that we imagine we will
+As a first pass at testing a SSBL, we build a kernel with an NFS
+root that contains the filesystem that we imagine we will
 compress into flash. Eric had success using:
  kernel-config-2.6.23.16-nb6eric
 
-Next, once we have tftp booted that kernel with the NFS root
-to the minimal ssbl-simulated filesystem, demonstrated the
-pivot-root, and seen ntp & sshd start and are able to ssh in
-then rebuild the kernel without NFS in preperation for flash
-boot.
- kernel-config-2.6.23.16-fb1eric
-
-be sure to rebuild "diag.ko" ... and curse out of tree .ko's
-
-The script for making the SSBL filesystem is "make_ssbl" but
-you will need to adjust the variables at the top to match
-paths for your system. The script makes the essential dirs
-and creates symlinks for the busybox applets. The calls to
-mknode for /dev/null and /dev/console will fail since you
-are not root, so be sure to do those. Also, there are some
-assumptions about the hard disk layout.
+The script for making the SSBL filesystem is "make_ssbl", but you
+will need to adjust the variables at the top to match paths for
+your system. The script makes the essential dirs and creates
+symlinks for the busybox applets.  Pay attention to the output
+from the script:  it will remind you to create the nodes
+/dev/null and /dev/console.  The script makes some assumptions
+about the hard disk layout; make sure that those assumptions are
+correct.
 
 1) change the /sbin/init to have the correct /dev/hdeX
 
@@ -59,14 +51,14 @@ default on my system. I moved it. You may wish to symlink.
 3) mkdir /old_root on the hard disk filesystem.
 
 
-Once we're tftp booted & NFS rooted to the ssbl and we've
-seen the pivot root kick off to the hard disk's init and
-thus seen sshd start and been able to ssh into the box,
-then rebuild the kernel without NFS for creating a flash
-boot kernel for the trx image:
-  config/kernel-config-2.6.23.16-fb1eric
+Next, once we have tftp booted that kernel with the NFS root
+to the minimal ssbl-simulated filesystem, demonstrated the
+pivot-root, and seen ntp & sshd start successfully so that we are
+able to ssh in, rebuild the kernel without NFS.  This will be the
+kernel we boot from the flash device.
+ kernel-config-2.6.23.16-fb1eric
 
-
+Remember to rebuild "diag.ko".
 
 Now that we have a ssbl, we need to package it up.
 
