@@ -43,14 +43,9 @@ configure-commands:
  - bash -c 'echo UCLIBC_EXTRA_CFLAGS=\"-isystem 
      $(ls -1d PARAM[TOOL_PREFIX]/lib/gcc/PARAM[TARGET]/*/include-fixed)\"' 
      >> .config
- - =(PARAM[ENDIANNESS])(big) echo "ARCH_BIG_ENDIAN=y" >> .config
- - =(PARAM[ENDIANNESS])(big) echo "ARCH_WANTS_BIG_ENDIAN=y" >> .config
- - =(PARAM[ENDIANNESS])(big) 
-     echo "# ARCH_WANTS_LITTLE_ENDIAN is not set" >> .config
- - =(PARAM[ENDIANNESS])(little) echo "ARCH_LITTLE_ENDIAN=y" >> .config
- - =(PARAM[ENDIANNESS])(little) 
-     echo "# ARCH_WANTS_BIG_ENDIAN is not set" >> .config
- - =(PARAM[ENDIANNESS])(little) echo "ARCH_WANTS_LITTLE_ENDIAN=y" >> .config
+ - echo "ARCH_PARAM[ENDIANNESS]_ENDIAN=y" >> .config
+ - echo "ARCH_WANTS_PARAM[ENDIANNESS]_ENDIAN=y" >> .config
+ - echo "# ARCH_WANTS_PARAM[NOT_ENDIANNESS]_ENDIAN is not set" >> .config
  - make oldconfig
 
 make-commands:
