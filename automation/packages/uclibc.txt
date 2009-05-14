@@ -9,11 +9,6 @@ the WL-700gE.
 In most cases, uClibc can be used instead of glibc without any
 application code changes.
 
-EDITPOINT
-
-configuration-defaults:
-
-patches:
 
 phase: headers
 
@@ -49,28 +44,40 @@ configure-commands:
  - make oldconfig
 
 make-commands:
- - make PREFIX=PARAM[SYSROOT] install_headers
 
 test-commands:
 
 install-commands:
+ - make PREFIX=PARAM[SYSROOT] install_headers
 
 
 phase: startup files
 
-The build commands here just build the startup files we need.
-We'll build the rest of glibc after we build libgcc.
+At this point we can only build the C runtime startup files,
+because we don't have libgcc yet.  Some of the headers may not
+have been installed properly before (e.g. uClibc_config.h) so we
+also do another install_headers at this point.
 
 configure-commands:
 
 make-commands:
+ - make PARAM[UCLIBC_CROSS_PARAM] pregen
+ - install -d lib/
+ - make PARAM[UCLIBC_CROSS_PARAM] lib/crt1.o
+ - PARAM[TARGET]-strip -x -R .note -R .comment lib/crt1.o
+ - make PARAM[UCLIBC_CROSS_PARAM] lib/crti.o
+ - make PARAM[UCLIBC_CROSS_PARAM] lib/crtn.o
 
 test-commands:
 
 install-commands:
+ - make PREFIX=PARAM[SYSROOT] install_headers
+ - install -d PARAM[SYSROOT]/lib/
+ - cp lib/crt?.o PARAM[SYSROOT]/lib
+ - rm -rf lib
 
 
-phase: full uclibc
+phase: full library
 
 Now we have a usable GCC, complete with libgcc, and we can build
 uClibc at last!
@@ -78,7 +85,25 @@ uClibc at last!
 configure-commands:
 
 make-commands:
+ - make PARAM[UCLIBC_CROSS_PARAM]
 
 test-commands:
 
 install-commands:
+ - make PARAM[UCLIBC_CROSS_PARAM] PREFIX=PARAM[SYSROOT] install
+
+
+phase: utilities
+
+Unlike glibc, the full uClibc build and install doesn't create a
+couple of utilities (like ldd).  They are created separately.
+
+configure-commands:
+
+make-commands:
+ - make PARAM[UCLIBC_CROSS_PARAM] utils
+
+test-commands:
+
+install-commands:
+ - make PARAM[UCLIBC_CROSS_PARAM] PREFIX=PARAM[SYSROOT] install_utils

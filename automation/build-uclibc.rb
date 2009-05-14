@@ -30,14 +30,20 @@ cfg = {
   'TARGET' => 'i686-pc-linux-gnu',
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'GLIBCFLAG' => '-march=i686 -g -O2',
-  'KERNEL_VERSION' => '2.6.29',
   'TMPTOOLS' => '/tmp/tools',
   'PATCH_DIR' => '/patches',
   'TARFILE_DIR' => '/sources',
-  'UCLIBC_CONFIG' => '/path/to/uclibc.config'
+  'UCLIBC_CONFIG' => '/path/to/uclibc.config',
+  'UCLIBC_CROSS_PARAM' => ''
 }
+
+# UCLIBC_CROSS_PARAM is CROSS=PARAM[TARGET]- when cross-compiling
+# This can probably be moved to .config CROSS_COMPILER_PREFIX!!
 
 uclibc = package('uclibc')
 uclibc.set(cfg)
 
 uclibc.build('headers')
+uclibc.build('startup files')
+uclibc.build('full library')
+uclibc.build('utilities')
