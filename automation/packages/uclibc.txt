@@ -1,4 +1,4 @@
-name: uClibc
+name: uclibc
 version: 0.9.30.1
 
 uClibc is a small C library designed expressly for situations in
@@ -22,22 +22,22 @@ a default configuration file, but then we need to include a bunch
 of other parameters based on the runtime parameters of the build.
 In particular, one parameter needs to include the "fixed" header
 files built by GCC, the location of which depends on what GCC
-version is built and where it's installed; and three
-configuration parameters need to be specified differently
-depending on whether the library being built is big-endian or
-little-endian, which is significant when building a toolchain for
-MIPS, which can use either.
+version is built and where it's installed.  There is also one
+parameter for the endianness of the build system, and when
+building for a target like MIPS that can use either endianness
+there are two additional parameters that determine the endianness
+that will be built for the target.  Here, we specify all of those
+parameters regardless of whether the target supports both big and
+little endianness, because it doesn't do any harm to specify
+unnecessary parameters.
 
 configure-commands:
- - make distclean
+ - make distclean || echo "never mind"
  - cp PARAM[UCLIBC_CONFIG] .config
  - echo 'KERNEL_HEADERS="PARAM[SYSROOT]/usr/include"' >> .config
  - echo 'SHARED_LIB_LOADER_PREFIX="/lib"' >> .config
  - echo 'RUNTIME_PREFIX="/"' >> .config
  - echo 'DEVEL_PREFIX="/usr"' >> .config
- - bash -c 'echo UCLIBC_EXTRA_CFLAGS=\"-isystem 
-     $(ls -1d PARAM[TOOL_PREFIX]/lib/gcc/PARAM[TARGET]/*/include-fixed)\"' 
-     >> .config
  - echo "ARCH_PARAM[ENDIANNESS]_ENDIAN=y" >> .config
  - echo "ARCH_WANTS_PARAM[ENDIANNESS]_ENDIAN=y" >> .config
  - echo "# ARCH_WANTS_PARAM[NOT_ENDIANNESS]_ENDIAN is not set" >> .config
@@ -61,6 +61,10 @@ also do another install_headers at this point.
 configure-commands:
 
 make-commands:
+ - sed -i '/UCLIBC_EXTRA_CFLAGS/d' .config
+ - bash -c 'echo UCLIBC_EXTRA_CFLAGS=\"-isystem 
+     $(ls -1d PARAM[TOOL_PREFIX]/lib/gcc/PARAM[TARGET]/*/include-fixed)\"' 
+     >> .config
  - make PARAM[UCLIBC_CROSS_PARAM] pregen
  - install -d lib/
  - make PARAM[UCLIBC_CROSS_PARAM] lib/crt1.o
