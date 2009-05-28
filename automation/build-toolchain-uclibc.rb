@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
 # run with:
 # ruby -I /path/to/litbuild/lib build-toolchain.rb
+
 # REMEMBER TO SET PATH TO INCLUDE /path/to/cross-tools/bin
 # and set LC_ALL=POSIX and unset CFLAGS, CXXFLAGS
+# These things should be done in the Section being built.
 
 require 'litbuild'
 
