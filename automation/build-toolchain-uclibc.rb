@@ -28,7 +28,20 @@ end
 #@exec = ShuntExecutioner.new
 @exec = Executioner.new
 
-cfg = {
+cfg_mipsel = {
+  'KERNEL_ARCH' => 'ARCH=mips',
+  'HOST' => 'i686-cross-linux-gnu',
+  'TARGET' => 'mipsel-unknown-linux-uclibc',
+  'TOOL_PREFIX' => '/tmp/cross-tools',
+  'TMPTOOLS' => '/tmp/tools',
+  'SYSROOT' => '/tmp/cross-tools/sysroot',
+  'UCLIBC_CONFIG' => '/home/random/gits/freesa/config/uclibc-config-mips',
+  'UCLIBC_CROSS_PARAM' => 'CROSS=mipsel-unknown-linux-uclibc-',
+  'ENDIANNESS' => 'LITTLE',
+  'NOT_ENDIANNESS' => 'BIG'
+}
+
+cfg_x86 = {
   'KERNEL_ARCH' => '',
   'HOST' => 'i686-cross-linux-gnu',
   'TARGET' => 'i686-pc-linux-gnu',
@@ -40,6 +53,8 @@ cfg = {
   'ENDIANNESS' => 'little',
   'NOT_ENDIANNESS' => 'big'
 }
+
+cfg = cfg_mipsel
 
 # UCLIBC_CROSS_PARAM is CROSS=PARAM[TARGET]- when cross-compiling
 # This can probably be moved to .config CROSS_COMPILER_PREFIX!!

@@ -39,8 +39,8 @@ configure-commands:
  - echo 'RUNTIME_PREFIX="/"' >> .config
  - echo 'DEVEL_PREFIX="/usr"' >> .config
  - echo "ARCH_PARAM[ENDIANNESS]_ENDIAN=y" >> .config
- - echo "ARCH_WANTS_PARAM[ENDIANNESS]_ENDIAN=y" >> .config
  - echo "# ARCH_WANTS_PARAM[NOT_ENDIANNESS]_ENDIAN is not set" >> .config
+ - echo "ARCH_WANTS_PARAM[ENDIANNESS]_ENDIAN=y" >> .config
  - make oldconfig
 
 make-commands:
