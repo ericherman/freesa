@@ -69,7 +69,7 @@ contain, except that it does not contain device nodes.
     be the kernel user UID and GID, so that the stuff in the
     initramfs is owned by root:root
 - build the "diag.ko" module and other modules needed to boot the
-  system, if any
+  system, if any (see =MODULES= below)
 - build the kernel
 
 ssbl-nodes.txt should contain:
@@ -93,6 +93,26 @@ size.  If so, package it as a trx:
     trx -o woohoo.trx -f loader.gz -f vmlinux.lzma
 
 5) flash that sucker.
+
+=MODULES=
+
+To build modules before the kernel image is built:
+
+prepare the kernel source with:
+
+(the ARCH and CROSS_COMPILE are only needed if cross-compiling of
+course)
+
+make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- prepare scripts
+
+Then, for external modules:
+
+make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- KERNELDIR=/tmp/linux
+
+For in-tree modules, just "make ARCH.... modules" of course.
+
+This produces all of the kernel modules!  Copy only the important
+ones to ssbl.
 
 ---- the stuff below this line relates to the original ssbl work ----
 --------------- we hope that it is mostly obsolete ------------------

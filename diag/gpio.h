@@ -5,6 +5,10 @@
 #ifndef BCMDRIVER
 #include <linux/ssb/ssb_embedded.h>
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25)
+#include <linux/gpio.h>
+#define ssb ssb_bcm47xx
+#endif
 extern struct ssb_bus ssb;
 
 
@@ -28,7 +32,7 @@ static inline u32 gpio_control(u32 mask, u32 value)
 	return ssb_gpio_control(&ssb, mask, value);
 }
 
-static inline u32 gpio_intmask(u32 mask, u32 value)
+static inline u32 gpio_setintmask(u32 mask, u32 value)
 {
 	return ssb_gpio_intmask(&ssb, mask, value);
 }
@@ -51,11 +55,16 @@ static void gpio_set_irqenable(int enabled, irqreturn_t (*handler)(int, void *))
 {
 	int irq;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25)
+	irq = gpio_to_irq(0);
+	if (irq == -EINVAL) return;
+#else
 	if (ssb.chipco.dev)
 		irq = ssb_mips_irq(ssb.chipco.dev) + 2;
 	else if (ssb.extif.dev)
 		irq = ssb_mips_irq(ssb.extif.dev) + 2;
 	else return;
+#endif
 	
 	if (enabled) {
 		if (request_irq(irq, handler, IRQF_SHARED | IRQF_SAMPLE_RANDOM, "gpio", handler))
@@ -94,7 +103,7 @@ extern spinlock_t sbh_lock;
 #define gpio_out(mask, value) 	sb_gpioout(sbh, mask, ((value) & (mask)), GPIO_DRV_PRIORITY)
 #define gpio_outen(mask, value) 	sb_gpioouten(sbh, mask, value, GPIO_DRV_PRIORITY)
 #define gpio_control(mask, value) 	sb_gpiocontrol(sbh, mask, value, GPIO_DRV_PRIORITY)
-#define gpio_intmask(mask, value) 	sb_gpiointmask(sbh, mask, value, GPIO_DRV_PRIORITY)
+#define gpio_setintmask(mask, value) 	sb_gpiointmask(sbh, mask, value, GPIO_DRV_PRIORITY)
 #define gpio_intpolarity(mask, value) 	sb_gpiointpolarity(sbh, mask, value, GPIO_DRV_PRIORITY)
 
 static void gpio_set_irqenable(int enabled, irqreturn_t (*handler)(int, void *, struct pt_regs *))
