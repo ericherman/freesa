@@ -1,7 +1,8 @@
-#!/sbin/busybox sh
+#!/bin/sh
 #
-# There is a reference to /dev/hde11 which happens to be eric's root.
-# Brett uses /dev/hde10 because he only has one swap partition.
+# ROOT needs to be the correct root device name (for the real
+# root filesystem).  For brett this is /dev/hde10. For eric it is
+# /dev/hde11.
 #
 # Yes, this value should be injected/auto-adjusted rather than hard-coded
 #
@@ -10,39 +11,31 @@
 # asterisk
 #
 
+ROOT=/dev/hde10
 
-PATH=/sbin
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
 export PATH
-#
-# What the heck ... is PATH not working, that is weird
-# TODO FIXME what is going on, can we please get rid of all the /sbin/foo 
-#
 
-/sbin/mount -t sysfs none /sys
-/sbin/mount -t proc none /proc
+mount -t sysfs none /sys
+mount -t proc none /proc
 
-#/sbin/mount -n -t ramfs none /dev
-#/sbin/mount -t tmpfs mdev /dev
+mount -t tmpfs -o size=64k,mode=0755 tmpfs /dev
+mkdir /dev/pts
+mount -t devpts devpts /dev/pts
 
 echo "Creating device nodes..."
-echo /sbin/mdev > /proc/sys/kernel/hotplug
-/sbin/mdev -s
+echo mdev > /proc/sys/kernel/hotplug
+mdev -s
 
-/sbin/mount -t tmpfs mdev /dev
-#mkdir /dev/pts
-#mount -t devpts devpts /dev/pts
-
-#
 # This activates the hard disk.
 # The timing is quite sensitive.  Shorter sleeps will certainly
 # work but removing the sleeps entirely prevents the hard disk
 # from being recognized.  We do not yet understand why.
-#
 echo "activating hard disk"
 cd /modules
 echo "insmod diag.ko"
-/sbin/insmod diag.ko
-/sbin/sleep 10
+insmod diag.ko
+sleep 10
 
 echo "enabling pci devices"
 cd /sys/devices/pci0000:00
@@ -52,26 +45,20 @@ do
 done
 
 cd /modules
-/sbin/sleep 5
+sleep 5
 echo "insmod ide-core.ko"
-/sbin/insmod ide-core.ko
+insmod ide-core.ko
 
-/sbin/sleep 5
-echo "insmod ide-disk.ko"
-/sbin/insmod ide-disk.ko
+sleep 5
+echo "insmod ide-gd_mod.ko"
+insmod ide-gd_mod.ko
 
-/sbin/sleep 5
+sleep 5
 echo "insmod aec62xx.ko"
-/sbin/insmod aec62xx.ko
+insmod aec62xx.ko
 
-echo "mount /dev/hde11 /mnt"
-/sbin/mount /dev/hde11 /mnt
-
-echo "cd /mnt"
-cd /mnt
-echo "pivot_root . old_root"
-/sbin/pivot_root . old_root 
+echo "mount $ROOT /mnt"
+mount $ROOT /mnt
 
 echo "chrooting"
-exec /sbin/chroot . /sbin/init </dev/console >/dev/console 2>&1
-
+exec switch_root -c /dev/console /mnt /sbin/init

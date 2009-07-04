@@ -70,6 +70,9 @@ contain, except that it does not contain device nodes.
     initramfs is owned by root:root
 - build the "diag.ko" module and other modules needed to boot the
   system, if any (see =MODULES= below)
+- build the LZMA SDK so that the kernel can lzma-compress the
+  CPIO image (the same thing will be used to compress the kernel
+  image itself)
 - build the kernel
 
 ssbl-nodes.txt should contain:
@@ -115,6 +118,11 @@ make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- KERNELDIR=/tmp/linux
 
 This produces all of the kernel modules!  Copy only the important
 ones to ssbl.
+
+Finish reparing ssbl, then:
+
+make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc-
+
 
 ---- the stuff below this line relates to the original ssbl work ----
 --------------- we hope that it is mostly obsolete ------------------

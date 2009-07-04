@@ -69,21 +69,21 @@ BUILD OVERVIEW -- initial (nfs-booting) firmware
 
 a. lzma
 
-This is from the 7zip LZMA SDK, version 4.32, available from
-[URL], by Igor Pavlov.  That is /not/ the same as the lzma-utils
-project by Ville Koskinen.
+This is from the 7zip LZMA SDK by Igor Pavlov, version 4.65,
+available from http://www.7-zip.org/sdk.html.  That is /not/ the
+same as the lzma-utils project by Ville Koskinen.
 
-Apply two patches from OpenWRT (first zlib, then ranlib), and
-build using a native toolchain wherever you are doing this work:
+Apply two patches from OpenWRT (large_files, lzmp, compile_fixes,
+static_library), and build using a native toolchain wherever you
+are doing this work:
 
-make -C C/7zip/Compress/LZMA_Lib
-make -f makefile.gcc -C C/7zip/Compress/LZMA_Alone
+make -f makefile.gcc -C C/LzmaUtil
+make -f makefile.gcc -C CPP/7zip/Compress/LZMA_Alone
 
-The result is in C/7zip/Compress/LZMA_Alone/lzma.  Put it
-somewhere convenient.  Keep in mind that you shouldn't install it
-anywhere on your $PATH -- if you do, it might conflict with the
-lzma program from lzma-utils, leading to confusion and
-unhappiness.
+The result is in C/LzmaUtil/lzma.  Put it somewhere convenient.
+Keep in mind that you shouldn't install it anywhere on your
+$PATH.  If you do, it might conflict with the lzma program from
+lzma-utils, leading to confusion and unhappiness.
 
 b. trx
 

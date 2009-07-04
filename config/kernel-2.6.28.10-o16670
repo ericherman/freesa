@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.28.10
-# Sat Jul  4 12:54:44 2009
+# Sat Jul  4 12:57:57 2009
 #
 CONFIG_MIPS=y
 
@@ -1205,7 +1205,7 @@ CONFIG_OCF_SAFE=m
 # CONFIG_OCF_IXP4XX is not set
 # CONFIG_OCF_HIFN is not set
 # CONFIG_OCF_HIFNHIPP is not set
-CONFIG_OCF_TALITOS=m
+# CONFIG_OCF_TALITOS is not set
 CONFIG_OCF_EP80579=m
 CONFIG_OCF_OCFNULL=m
 CONFIG_OCF_BENCH=m
