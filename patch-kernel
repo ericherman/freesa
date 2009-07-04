@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# This applies all openwrt patches and modifications to a vanilla
+# kernel.  Run it from the top directory of the kernel source to
+# modify.  The kernel source should be a git repository: each
+# openwrt change will become a separate commit.
+
+# Make sure the kernel source is the right version first: look at
+# $OPENWRT/brcm47xx/Makefile.
+
+# Currently this script assumes that the kernel is version
+# 2.6.28.  Change the appropriate commands below if that is not
+# the case.
+
+OPENWRT=/usr/local/rnd/checkouts/openwrt.sgit/target/linux
+
+cp -a $OPENWRT/generic-2.6/files/* .
+git add .
+git commit -a -m \
+"Flat files from openwrt (generic 2.6)
+        
+These are files from target/linux/generic-2.6/files, which are
+added to the kernel sources as the first change from the Linus
+version."
+
+cp -a $OPENWRT/generic-2.6/files-2.6.28/* .
+git add .
+git commit -a -m \
+"Flat files from openwrt (generic 2.6.28)
+        
+These are files from target/linux/generic-2.6/files-2.6.28, which
+are added to the kernel sources as the second change from the
+Linus version."
+
+cp -a $OPENWRT/brcm47xx/files/* .
+git add .
+git commit -a -m \
+"Flat files from openwrt (brcm47xx)
+        
+These are files from target/linux/brcm47xx/files, which are added
+to the kernel sources as the third change from the Linus
+version."
+
+for FILE in $(ls -1 $OPENWRT/generic-2.6/patches-2.6.28/*)
+do
+    patch -p1 < $FILE
+    git add .
+    git commit -a -m "apply patch $(basename $FILE) from generic-2.6 series"
+done
+
+for FILE in $(ls -1 $OPENWRT/brcm47xx/patches-2.6.28/*)
+do
+    patch -p1 < $FILE
+    git add .
+    git commit -a -m "apply patch $(basename $FILE) from brcm47xx series"
+done
+
