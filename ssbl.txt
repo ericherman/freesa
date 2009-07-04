@@ -119,7 +119,7 @@ make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- KERNELDIR=/tmp/linux
 This produces all of the kernel modules!  Copy only the important
 ones to ssbl.
 
-Finish reparing ssbl, then:
+Finish preparing ssbl, then:
 
 make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc-
 

@@ -1,0 +1,18 @@
+See http://forum.openwrt.org/viewtopic.php?id=10528
+
+*** ./build_mipsel/linux-2.6-brcm47xx/linux-2.6.19.2/drivers/net/b44.c~ 2007-04-27 21:36:05.000000000 -0500
+--- ./build_mipsel/linux-2.6-brcm47xx/linux-2.6.19.2/drivers/net/b44.c  2007-04-28 19:32:43.000000000 -0500
+***************
+*** 296,301 ****
+--- 296,306 ----
+        u32 val;
+        int err;
+ 
++       /* hackish fix for wrtsl54gs, 5 fails, 30 works for eth1 */
++       if ( bp->phy_addr == 5) {
++           printk(KERN_INFO PFX "%s: Forcing PHY address to 30.\n", bp->dev->name);
++           bp->phy_addr = 30;
++       }
+        if (bp->phy_addr == B44_PHY_ADDR_NO_PHY)
+                return 0;
+        err = b44_writephy(bp, MII_BMCR, BMCR_RESET);

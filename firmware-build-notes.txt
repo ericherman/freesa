@@ -80,10 +80,11 @@ are doing this work:
 make -f makefile.gcc -C C/LzmaUtil
 make -f makefile.gcc -C CPP/7zip/Compress/LZMA_Alone
 
-The result is in C/LzmaUtil/lzma.  Put it somewhere convenient.
-Keep in mind that you shouldn't install it anywhere on your
-$PATH.  If you do, it might conflict with the lzma program from
-lzma-utils, leading to confusion and unhappiness.
+The result is CPP/7zip/Compress/LZMA_Alone/lzma_alone.  Put it
+somewhere convenient, and name it lzma.  Keep in mind that you
+shouldn't install it anywhere on your $PATH ... except that when
+building the kernel image, it must be found on the PATH instead
+of the one from lzma-utils.  Feh.
 
 b. trx
 
