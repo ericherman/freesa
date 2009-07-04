@@ -23,8 +23,8 @@ extraction).
 There are a couple of benefits of this approach.
 
 First:  the kernel doesn't have to find a separate filesystem
-partition on the flash chip; when the kernel is loaded from
-flash, the initramfs archive is loaded as part of it.
+partition on the flash chip; when the kernel is loaded from flash
+(or TFTP), the initramfs archive is loaded as part of it.
 
 Second:  we don't have to be root for any part of the kernel
 image build, because we can tell the kernel to add node entries
@@ -79,8 +79,10 @@ nod /dev/console 600 0 0 c 5 1
 nod /dev/null 666 0 0 c 1 3
 ----
 
-After building the kernel, ensure that it is 1728kb or less in
-size.  If so, package it as a trx:
+After building the kernel and lzma-compressing it, ensure that it
+is 1728kb or less in size.  (Actually it needs to be a little
+less than 1728kb, since lzma-loader must also fit.)  If so,
+package it as a trx:
 
 1) lzma the kernel
 
@@ -104,12 +106,11 @@ prepare the kernel source with:
 course)
 
 make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- prepare scripts
+make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- modules
 
-Then, for external modules:
+Then, for external modules, go to the module directory and:
 
 make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- KERNELDIR=/tmp/linux
-
-For in-tree modules, just "make ARCH.... modules" of course.
 
 This produces all of the kernel modules!  Copy only the important
 ones to ssbl.
