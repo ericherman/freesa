@@ -14,3 +14,5 @@ rpc.rquotad
 
 echo "in CFE console use:"
 echo "boot -addr=0x80001000 -max=0x800000 -tftp 192.168.236.5:vmlinux"
+echo "or"
+echo "boot -addr=0x80001000 -max=0x800000 -tftp 192.168.236.16:vmlinux"

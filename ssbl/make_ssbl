@@ -2,59 +2,22 @@
 #
 
 #SSBL is where we want to build the Second Stage Boot Loader root
-export SSBL=/opt/ssbl
-export FREESA=/home/eric/src/freesa
-export BUSYBOX=/opt/bbox/busybox-1.13.1
+export SSBL=/tmp/ssbl
+export KERNEL=/usr/local/rnd/toolchain/linux
+export FREESA=$(pwd)
 
-mkdir -pv ${SSBL}
+if [ ! -f ${SSBL}/bin/busybox ]
+then
+    echo "First build and install busybox to create the skeleton of SSBL!"
+    echo "copy the config file to .config, then make oldconfig && "
+    echo "make && make install"
+    exit 0
+fi
+
+install -dv -m 1777 ${SSBL}/tmp
+mkdir -v ${SSBL}/dev
 mkdir -v ${SSBL}/etc
-mkdir -v ${SSBL}/etc/opt
 mkdir -v ${SSBL}/mnt
 mkdir -v ${SSBL}/modules
-cp /usr/src/kernel/linux/drivers/ide/pci/aec62xx.ko ${SSBL}/modules/
-cp /usr/src/diag/diag/diag.ko ${SSBL}/modules/
-cp /usr/src/kernel/linux/drivers/ide/ide-core.ko ${SSBL}/modules/
-cp /usr/src/kernel/linux/drivers/ide/ide-disk.ko ${SSBL}/modules/
-mkdir -v ${SSBL}/new-root
 mkdir -v ${SSBL}/proc
-mkdir -v ${SSBL}/sbin
-cp ${FREESA}/ssbl/init-ssbl ${SSBL}/sbin/
-cp ${BUSYBOX}/busybox ${SSBL}/sbin/
-cd ${SSBL}/sbin
-ln -s init-ssbl init
-ln -s busybox chroot
-ln -s busybox depmod
-ln -s busybox echo
-ln -s busybox hush
-ln -s busybox insmod
-ln -s busybox lsmod
-ln -s busybox mdev
-ln -s busybox modprobe
-ln -s busybox mount
-ln -s busybox pivot_root
-ln -s busybox rmmod
-ln -s busybox sh
-ln -s busybox sleep
 mkdir -v ${SSBL}/sys
-install -dv -m 1777 ${SSBL}/tmp
-echo ""
-mkdir -v ${SSBL}/dev
-cat <<HERE
-CHECK NOW:
-
-1.  The /sbin/chroot specified in the init script must reside at
-    the same filesystem location in the original and new roots.
-    You may need to move or symlink it from the /usr/sbin/chroot
-    on the hard disk as noted in
-      man 8 pivot_root
-
-2.  The init script puts the original root in /old_root
-    make sure that /old_root exists on the hard disk
-
-3.  You need to be root to execute mknode either delay this step
-    or perhaps try:
-      sudo mknod -m 600 ${SSBL}/dev/console c 5 1
-      sudo mknod -m 666 ${SSBL}/dev/null c 1 3
-
-4.  Cheers and good luck
-HERE

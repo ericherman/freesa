@@ -7,25 +7,12 @@ b44: eth1: BUG!  Timeout waiting for bit 80000000 of register 428 to clear.
 BUILDING THE TRX IMAGE:
 
 UTILITIES NEEDED:
-lzma -- this is LZMA SDK 4.32 by Igor Pavlov, not the lzma utils
-  program by ville koskinen. There are two OWRT patches. Needs to
-  be built using the cross-toolchain as well as native toolchain,
-  probably.
-mksquashfs-lzma -- from OWRT squashfs-tools. needed on host.
+lzma -- this is LZMA SDK by Igor Pavlov, not the lzma utils
+  program by ville koskinen. See firmware-build-notes for build
+  instructions.
 trx -- from OWRT firmware-utils. needed on host.
 
-Requires file components loader.gz, vmlinux.lzma, root.squashfs, fs_mark
-
-lzma sdk:
-
-Apply the two openwrt patches (zlib, then ranlib).
-Build with:
-
-make -C C/7zip/Compress/LZMA_Lib
-make -f makefile.gcc -C C/7zip/Compress/LZMA_Alone
-
-put C/7zip/Compress/LZMA_Alone/lzma somewhere convenient for
-later use.
+Requires file components loader.gz, vmlinux.lzma
 
 vmlinux.lzma:
 
@@ -60,53 +47,12 @@ echo -ne "\\x00" >> loader.gz
 
 --
 
-fs_mark:
-
-This is probably a set of bytes that are used as an indicator of
-where the filesystem part of the trx begins.
-
-touch fs_mark
-dd if=fs_mark of=tmpfile.1 bs=64k conv=sync
-echo -ne '\xde\xad\xc0\xde' >> tmpfile.1
-dd if=tmpfile.1 of=fs_mark bs=64k conv=sync
-echo -ne '\xde\xad\xc0\xde' >> fs_mark
-
-(That all seems kind of kludgy.  The first two commands, for
-example, only produce a couple of empty files.  What's the
-point?)
-
-root.squashfs:
-
-This is the root filesystem that will be available to the kernel.
-It is vital when we are done with the entire build, but can
-hopefully be empty when we are NFS-mounting the kernel.
-
-assemble files in root-brcm47xx; then:
-find root-brcm47xx -type f -not -perm +0100 \
-   -not -name 'ssh_host*' | xargs -r chmod 0644
-find root-brcm47xx -type f -perm +0100 | xargs -r chmod 0755
-find root-brcm47xx -type d | xargs -r chmod 0755
-mkdir root-brcm47xx/tmp
-chmod 777 root-brcm47xx/tmp
-mksquashfs-lzma root-brcm47xx root-squashfs -nopad -noappend -root-owned -le
-
 trx:
 
 this is as simple as "gcc -o trx trx.c", wahoo!
 
 invoking trx:
 
-trx -o OUTPUT_FILENAME.trx -f loader.gz -f vmlinux.lzma \
-   -a 1024 -f root.squashfs -a 0x10000 -A fs_mark
-
-(For the initial image (used with the NFS root kernel), let's try
-omitting root.squashfs and fs_mark.)
-
-INITIAL TRIAL:
-
-trx -o NFSBOOT.trx -f loader.gz -f vmlinux.lzma
+trx -o OUTPUT_FILENAME.trx -f loader.gz -f vmlinux.lzma
 
 WORKS FINE.
-
-We can therefore defer the construction of root.squashfs until we
-are ready to make the final system bootable.

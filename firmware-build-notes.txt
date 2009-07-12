@@ -73,7 +73,7 @@ This is from the 7zip LZMA SDK by Igor Pavlov, version 4.65,
 available from http://www.7-zip.org/sdk.html.  That is /not/ the
 same as the lzma-utils project by Ville Koskinen.
 
-Apply two patches from OpenWRT (large_files, lzmp, compile_fixes,
+Apply four patches from OpenWRT (large_files, lzmp, compile_fixes,
 static_library), and build using a native toolchain wherever you
 are doing this work:
 

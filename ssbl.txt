@@ -99,11 +99,16 @@ package it as a trx:
 
 5) flash that sucker.
 
-=MODULES=
+= SCRIPTY PART =
+
+This is how to build the ssbl, more or less.
+
+export SSBL=/tmp/ssbl
+export FREESAGIT=~/gits/freesa
 
 To build modules before the kernel image is built:
 
-prepare the kernel source with:
+prepare the kernel source and build modules with:
 
 (the ARCH and CROSS_COMPILE are only needed if cross-compiling of
 course)
@@ -111,115 +116,28 @@ course)
 make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- oldconfig
 make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- prepare scripts
 make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- modules
+cp drivers/ide/{aec62xx,ide-core,ide-gd_mod}.ko ${SSBL}/modules
 
-Then, for external modules, go to the module directory and:
+# Then, for external modules:
 
-make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- KERNELDIR=/tmp/linux
+pushd ${FREESAGIT}/diag
+make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- KERNELDIR=$(dirs +1)
+cp diag.ko ${SSBL}/modules
+popd
 
-This produces all of the kernel modules!  Copy only the important
-ones to ssbl.
+cat > ${SSBL}-nodes.txt <<HERE
+dir /dev 0755 0 0
+nod /dev/console 600 0 0 c 5 1
+nod /dev/null 666 0 0 c 1 3
+HERE
 
-Finish preparing ssbl, then:
+# Finish preparing ssbl (create directories, install init), then:
 
-make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc-
+make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- vmlinux
 
+# fixup vmlinux so it is bootable...
 
----- the stuff below this line relates to the original ssbl work ----
---------------- we hope that it is mostly obsolete ------------------
+mipsel-unknown-linux-uclibc-objcopy -O binary -R .reginfo \
+  -R .note -R .comment -R .mdebug -S vmlinux fixed-vmlinux
 
-Create a user who will do all of the flash image construction. I
-called it ssbl for "Second Stage Boot Loader."  This can be a
-package user if you'd like, or a normal user.  In this file I'm
-assuming the user is called "ssbl".
-
-Start by copying /opt/uclibc/sysroot to the ssbl home directory.
-
-Now configure busybox -- we need to build everything we need in
-the ssbl image, but absolutely nothing else, because (I can't
-reiterate this enough) we only have 1728kb for the kernel image
-plus root filesystem.
-
-Use busybox busybox-1.13.1.
-
-Set PATH to include /opt/uclibc/bin as its first element.
-
-busybox can be configured with "make menuconfig" -- it is just
-like the linux kernel and uclibc.
-
-I turned off everything I could turn off, including even such
-things as terse applet usage messages
-
-Eric used: ssbl/config-busybox-eric-05
-
-As a first pass at testing a SSBL, we build a kernel with an NFS
-root that contains the filesystem that we imagine we will
-compress into flash. Eric had success using:
- kernel-config-2.6.23.16-nb6eric
-
-The script for making the SSBL filesystem is "make_ssbl", but you
-will need to adjust the variables at the top to match paths for
-your system. The script makes the essential dirs and creates
-symlinks for the busybox applets.  Pay attention to the output
-from the script:  it will remind you to create the nodes
-/dev/null and /dev/console.  The script makes some assumptions
-about the hard disk layout; make sure that those assumptions are
-correct.
-
-1) change the /sbin/init to have the correct /dev/hdeX
-
-2) /sbin/chroot is the host system and it needs to be that
-way on the hard disk as well. This is not where it was by
-default on my system. I moved it. You may wish to symlink.
-  man 8 pivot_root
-
-3) mkdir /old_root on the hard disk filesystem.
-
-
-Next, once we have tftp booted that kernel with the NFS root
-to the minimal ssbl-simulated filesystem, demonstrated the
-pivot-root, and seen ntp & sshd start successfully so that we are
-able to ssh in, rebuild the kernel without NFS.  This will be the
-kernel we boot from the flash device.
- kernel-config-2.6.23.16-fb1eric
-
-Remember to rebuild "diag.ko".
-
-Now that we have a ssbl, we need to package it up.
-
-The instructions are in BUILDING THE TRX IMAGE of the
-freesa-notes.txt in detail.
-
-1) lzma the kernel
-
-2) build lzma-loader
-
-3) build squashfs with lzma
-
-   squashfs 3.4:
-   ftp://ftp.slax.org/source/slax/sqlzma/squashfs3.4.tar.gz
-
-   SquashFS-LZMA 3.4-457:
-   ftp://ftp.slax.org/source/slax/sqlzma/sqlzma3.4-457.tar.bz2
-
-   squashfs3.4/squashfs-tools/mksquashfs /opt/ssbl ssbl.squashfs -all-root
-
-4) make the "fs_mark" file
-
-5) build trx
-
-./trx -o freesa-suicide0.trx \
-   -f lzma-loader/loader.gz \
-   -f /usr/src/kernel/linux/vmlinux.lzma \
-   -a 1024 \
-   -f ssbl.squashfs \
-   -a 0x10000 \
-   -A fs_mark
-
-mjn3's trx replacement - v0.81.1
-bob:~/openwrt$ ls -ltr freesa-suicide0.trx 
--rw-rw-r-- 1 bob bob 1380352 2009-02-03 12:00 freesa-suicide0.trx
-bob:~/openwrt$ 
-
-But this didn't work from CFE. Eric thinks he may have a problem
-with his SquashFS-LZMA.
 
