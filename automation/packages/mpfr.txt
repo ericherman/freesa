@@ -1,5 +1,5 @@
 name: MPFR library
-version: 2.4.1
+version: "2.4.1"
 project-url: http://www.mpfr.org/
 
 configuration-defaults:

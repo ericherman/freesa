@@ -1,6 +1,6 @@
 full-name: GNU Compiler Collection
 name: gcc
-version: 4.4.0
+version: "4.4.1"
 project-url: http://gcc.gnu.org/
 
 GCC is the GNU Compiler Collection.  The most important compiler

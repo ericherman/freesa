@@ -1,6 +1,6 @@
 full-name: GNU binutils
 name: binutils
-version: 2.19.1
+version: "2.19.1"
 
 The GNU binary utilities are a collection of programs and
 libraries that produce and operate on object files.  The primary

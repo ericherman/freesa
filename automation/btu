@@ -1,6 +1,0 @@
-export PATH=/tmp/cross-tools/bin:$PATH
-export LC_ALL=POSIX
-unset CFLAGS
-unset CXXFLAGS
-
-time ruby -I /home/random/gits/litbuild/lib build-toolchain-uclibc.rb
