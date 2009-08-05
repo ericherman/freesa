@@ -1,6 +1,6 @@
 full-name: GNU libc
 name: glibc
-version: "2.9"
+version: "2.10.1"
 
 glibc is the standard C library produced as part of the GNU
 project.  It contains the implementation for all of the functions

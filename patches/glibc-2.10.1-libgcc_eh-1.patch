@@ -7,9 +7,10 @@ Description: Checks to see if libgcc_eh has been provided by gcc. If it has
              the glibc will attempt to link to it.
 
              Rediffed for 2.9 by Brett Neumeier
+             Rediffed for 2.10.1 by Brett Neumeier
 
 diff --git a/Makeconfig b/Makeconfig
-index 83e1409..0210ec8 100644
+index 875fb67..d273cce 100644
 --- a/Makeconfig
 +++ b/Makeconfig
 @@ -525,12 +525,20 @@ else
@@ -35,10 +36,10 @@ index 83e1409..0210ec8 100644
  endif
  ifeq ($(elf),yes)
 diff --git a/config.make.in b/config.make.in
-index aa73466..f6681d7 100644
+index e48ea26..85ebc71 100644
 --- a/config.make.in
 +++ b/config.make.in
-@@ -60,6 +60,7 @@ have-selinux = @have_selinux@
+@@ -61,6 +61,7 @@ have-selinux = @have_selinux@
  have-libaudit = @have_libaudit@
  have-libcap = @have_libcap@
  have-cc-with-libunwind = @libc_cv_cc_with_libunwind@
@@ -47,25 +48,25 @@ index aa73466..f6681d7 100644
  bind-now = @bindnow@
  have-hash-style = @libc_cv_hashstyle@
 diff --git a/configure b/configure
-index a2a792c..ea4e032 100755
+index 7555891..0194013 100755
 --- a/configure
 +++ b/configure
-@@ -716,6 +716,7 @@ INSTALL_INFO
- BISON
- VERSIONING
- libc_cv_cc_with_libunwind
-+libc_cv_cc_with_libgcc_eh
- libc_cv_Bgroup
- libc_cv_libgcc_s_suffix
+@@ -690,6 +690,7 @@ ASFLAGS_config
  libc_cv_as_needed
-@@ -6053,6 +6054,33 @@ _ACEOF
+ libc_cv_libgcc_s_suffix
+ libc_cv_Bgroup
++libc_cv_cc_with_libgcc_eh
+ libc_cv_cc_with_libunwind
+ VERSIONING
+ BISON
+@@ -6392,6 +6393,33 @@ _ACEOF
  
    fi
  
-+  { echo "$as_me:$LINENO: checking whether to link against libgcc_eh" >&5
-+echo $ECHO_N "checking whether to link against libgcc_eh... $ECHO_C" >&6; }
++  { $as_echo "$as_me:$LINENO: checking whether to link against libgcc_eh" >&5
++$as_echo_n "checking whether to link against libgcc_eh... " >&6; }
 +if test "${libc_cv_cc_with_libgcc_eh+set}" = set; then
-+  echo $ECHO_N "(cached) $ECHO_C" >&6
++  $as_echo_n "(cached) " >&6
 +else
 +
 +    cat > conftest.c <<EOF
@@ -79,8 +80,8 @@ index a2a792c..ea4e032 100755
 +    fi
 +    rm -f conftest*
 +fi
-+{ echo "$as_me:$LINENO: result: $libc_cv_cc_with_libgcc_eh" >&5
-+echo "${ECHO_T}$libc_cv_cc_with_libgcc_eh" >&6; }
++{ $as_echo "$as_me:$LINENO: result: $libc_cv_cc_with_libgcc_eh" >&5
++$as_echo "$libc_cv_cc_with_libgcc_eh" >&6; }
 +
 +  if test $libc_cv_cc_with_libgcc_eh = yes; then
 +    cat >>confdefs.h <<\_ACEOF
@@ -89,31 +90,14 @@ index a2a792c..ea4e032 100755
 +
 +  fi
 +
-   { echo "$as_me:$LINENO: checking for -z nodelete option" >&5
- echo $ECHO_N "checking for -z nodelete option... $ECHO_C" >&6; }
+   { $as_echo "$as_me:$LINENO: checking for -z nodelete option" >&5
+ $as_echo_n "checking for -z nodelete option... " >&6; }
  if test "${libc_cv_z_nodelete+set}" = set; then
-@@ -9282,6 +9310,7 @@ for ac_last_try in false false false false false :; do
- BISON!$BISON$ac_delim
- VERSIONING!$VERSIONING$ac_delim
- libc_cv_cc_with_libunwind!$libc_cv_cc_with_libunwind$ac_delim
-+libc_cv_cc_with_libgcc_eh!$libc_cv_cc_with_libgcc_eh$ac_delim
- libc_cv_Bgroup!$libc_cv_Bgroup$ac_delim
- libc_cv_libgcc_s_suffix!$libc_cv_libgcc_s_suffix$ac_delim
- libc_cv_as_needed!$libc_cv_as_needed$ac_delim
-@@ -9335,7 +9364,7 @@ LIBOBJS!$LIBOBJS$ac_delim
- LTLIBOBJS!$LTLIBOBJS$ac_delim
- _ACEOF
- 
--  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 54; then
-+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 55; then
-     break
-   elif $ac_last_try; then
-     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
 diff --git a/configure.in b/configure.in
-index 4a2b546..29ad067 100644
+index d54e952..daaa30d 100644
 --- a/configure.in
 +++ b/configure.in
-@@ -1394,6 +1394,23 @@ EOF
+@@ -1470,6 +1470,23 @@ EOF
      AC_DEFINE(HAVE_CC_WITH_LIBUNWIND)
    fi
  
@@ -137,6 +121,3 @@ index 4a2b546..29ad067 100644
    AC_CACHE_CHECK(for -z nodelete option,
  		 libc_cv_z_nodelete, [dnl
    cat > conftest.c <<EOF
--- 
-1.6.0.3
-
