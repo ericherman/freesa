@@ -24,7 +24,7 @@ apply converts an archaic invocation syntax for programs like
 +head+ and +tail+ to the POSIX-standard syntax.
 
 patches:
- - branch_update-1
+ - branch_update-5
  - posix-1
 
 GNU binutils, like many toolchain components,  must be
@@ -46,12 +46,14 @@ that location.
 configure-commands:
  - PARAM[SOURCE_DIR]/configure --prefix=PARAM[TOOL_PREFIX]
      --build=PARAM[HOST] --target=PARAM[TARGET]
-     --disable-nls --enable-shared --disable-multilib
      --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
+     --disable-nls --enable-shared --disable-multilib
+     --with-lib-path=PARAM[TMPTOOLS]/lib
  - make configure-host
 
 test-commands:
 
 install-commands:
  - make install
- - cp -v PARAM[SOURCE_DIR]/include/libiberty.h PARAM[SYSROOT]/usr/include
+ - mkdir -p PARAM[TMPTOOLS]/include
+ - cp -v PARAM[SOURCE_DIR]/include/libiberty.h PARAM[TMPTOOLS]/include

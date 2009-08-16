@@ -65,17 +65,28 @@ clear to us whether or not those optimizations are particularly
 valuable, but we're certainly not worried about them for a
 cross-toolchain build.)
 
-No patches are strictly required for gcc.  The one patch we apply
+No patches are strictly required for gcc.  There are updates from
+the current maintenance branch that haven't made it into a point
+release yet, as is often the case, and we also apply a patch that
 converts an archaic invocation syntax for programs like +head+
 and +tail+ to the POSIX-standard syntax.
 
 patches:
+ - branch_update-1
  - posix-1
 
-phase: bare compiler
+phase: static compiler
 
-After doing this part of the build, keep the build directory
-around; it should be used again when building libgcc.
+Initially we'll build a compiler with a static libgcc and no
+threading support.  This will be good enough to compile libc, but
+not adequate for practically anything else.
+
+To build a static libgcc (which is the only kind that can be
+built at this point, since we don't have libc headers installed
+yet), the configuration options +--without-headers+ and
++--with-newlib+ can be used.  This is a bit sloppy -- the first
+of those options is the only one that should be necessary, but at
+the moment both are.
 
 environment:
  CPPFLAGS_FOR_TARGET: --sysroot=PARAM[SYSROOT]
@@ -86,50 +97,26 @@ build-dir: ../build-gcc
 configure-commands:
  - PARAM[SOURCE_DIR]/configure --prefix=PARAM[TOOL_PREFIX]
      --build=PARAM[HOST] --host=PARAM[HOST] --target=PARAM[TARGET]
-     --disable-multilib --disable-nls --disable-shared
-     --disable-libmudflap --disable-libssp
-     --disable-threads --enable-languages=c
      --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
+     --disable-decimal-float --disable-libgomp --disable-libmudflap
+     --disable-libssp --disable-multilib  --disable-nls --disable-shared 
+     --disable-threads --enable-languages=c --with-newlib --without-headers 
 
 make-commands:
- - make all-gcc
+ - make all-gcc all-target-libgcc
 
 test-commands:
 
 install-commands:
- - make install-gcc
-
-
-phase: libgcc
-
-Now we can build and install libgcc, after which we can get rid
-of the crt* object files from the C library.  (They're going to be
-rebuilt as part of the full C library build.)
-
-environment:
- CPPFLAGS_FOR_TARGET: --sysroot=PARAM[SYSROOT]
- LDFLAGS_FOR_TARGET: --sysroot=PARAM[SYSROOT]
-
-build-dir: ../build-gcc
-
-configure-commands:
-
-make-commands:
- - make all-target-libgcc
-
-test-commands:
-
-install-commands:
- - make install-target-libgcc
- - rm -f PARAM[SYSROOT]/lib/crt{1,i,n}.o
+ - make install-gcc install-target-libgcc
 
 
 phase: full compiler
 
-Now that we can finally do a full GCC build, we will build both
-the C and C++ compilers, and enable multi-threaded code.  Other
-than that, the configuration is fairly similar to the partial
-builds we've done so far.
+Now that we have a C library installed, we can finally do a full
+GCC build.  So we'll build both the C and C++ compilers, and
+enable multi-threaded code and all of the various runtime
+libraries we turned off previously.
 
 build-dir: ../build-gcc-2
 
@@ -140,10 +127,10 @@ environment:
 configure-commands:
  - PARAM[SOURCE_DIR]/configure --prefix=PARAM[TOOL_PREFIX]
     --build=PARAM[HOST] --host=PARAM[HOST] --target=PARAM[TARGET]
+    --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
     --disable-multilib --disable-nls --enable-shared
     --enable-languages=c,c++ --enable-__cxa_atexit
     --enable-c99 --enable-long-long --enable-threads=posix
-    --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
 
 make-commands:
  - make AS_FOR_TARGET="PARAM[TARGET]-as" LD_FOR_TARGET="PARAM[TARGET]-ld"

@@ -26,20 +26,21 @@ request its services.
 phase: sysroot headers
 
 The way that programs make requests of the kernel is by invoking
-kernel functions called "system calls."  The Linux kernel sources
-include header files that define all of the system calls it makes
-available to userspace programs.
+kernel functions known as "system calls."  The Linux kernel
+sources include header files that define all of the system calls
+it makes available to userspace programs.
 
 Userspace programs don't usually invoke system calls themselves.
-Instead, they invoke library functions (such as the ones defined
-in the standard C library, which on GNU/Linux systems is
-typically glibc or uClibc) that invoke system calls as needed to
-accomplish their work.  (There are some cases, like the reiserfs
-utilities, where userspace programs and libraries besides the C
-library do include the kernel headers directly.)
+Instead, they invoke library functions -- such as the ones
+defined in the standard C library, which on GNU/Linux systems is
+typically glibc or uClibc -- that invoke system calls as needed
+to accomplish their work.  (There are some cases, like the
+reiserfs utilities, where userspace programs and libraries
+besides the C library include the kernel headers directly.)
 
 This step installs all of the Linux kernel header files that the
-C library needs.
+C library and certain other userspace libraries and programs
+need.
 
 The kernel source tree also includes a number of other, private,
 header files -- these define data structures and functions that
@@ -61,7 +62,7 @@ make-commands:
 test-commands:
 
 install-commands:
- - make PARAM[KERNEL_ARCH] headers_install INSTALL_HDR_PATH=PARAM[SYSROOT]/usr
+ - make PARAM[KERNEL_ARCH] INSTALL_HDR_PATH=PARAM[SYSROOT]/usr headers_install
 
 
 phase: temporary tool headers
