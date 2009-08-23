@@ -7,10 +7,12 @@ for a resource-constrained environment like the flash EPROM on
 the WL-700gE.
 
 In most cases, uClibc can be used instead of glibc without any
-application code changes.
+application code changes.  However, some of the features provided
+by uClibc are not fully implemented -- which means that even if a
+program compiles cleanly against uClibc, it may not work
+properly.
 
-
-phase: headers
+phase: full library
 
 uClibc is configured like the Linux kernel:  a +.config+ file is
 constructed using "make config" or one of the other similar
@@ -42,51 +44,10 @@ configure-commands:
  - echo "# ARCH_WANTS_PARAM[NOT_ENDIANNESS]_ENDIAN is not set" >> .config
  - echo "ARCH_WANTS_PARAM[ENDIANNESS]_ENDIAN=y" >> .config
  - make oldconfig
-
-make-commands:
-
-test-commands:
-
-install-commands:
- - make PREFIX=PARAM[SYSROOT] install_headers
-
-
-phase: startup files
-
-At this point we can only build the C runtime startup files,
-because we don't have libgcc yet.  Some of the headers may not
-have been installed properly before (e.g. uClibc_config.h) so we
-also do another install_headers at this point.
-
-configure-commands:
-
-make-commands:
  - sed -i '/UCLIBC_EXTRA_CFLAGS/d' .config
  - bash -c 'echo UCLIBC_EXTRA_CFLAGS=\"-isystem 
      $(ls -1d PARAM[TOOL_PREFIX]/lib/gcc/PARAM[TARGET]/*/include-fixed)\"' 
      >> .config
- - make PARAM[UCLIBC_CROSS_PARAM] pregen
- - install -d lib/
- - make PARAM[UCLIBC_CROSS_PARAM] lib/crt1.o
- - PARAM[TARGET]-strip -x -R .note -R .comment lib/crt1.o
- - make PARAM[UCLIBC_CROSS_PARAM] lib/crti.o
- - make PARAM[UCLIBC_CROSS_PARAM] lib/crtn.o
-
-test-commands:
-
-install-commands:
- - make PREFIX=PARAM[SYSROOT] install_headers
- - install -d PARAM[SYSROOT]/lib/
- - cp lib/crt?.o PARAM[SYSROOT]/lib
- - rm -rf lib
-
-
-phase: full library
-
-Now we have a usable GCC, complete with libgcc, and we can build
-uClibc at last!
-
-configure-commands:
 
 make-commands:
  - make PARAM[UCLIBC_CROSS_PARAM]
@@ -94,6 +55,7 @@ make-commands:
 test-commands:
 
 install-commands:
+ - make PARAM[UCLIBC_CROSS_PARAM] PREFIX=PARAM[SYSROOT] install_headers
  - make PARAM[UCLIBC_CROSS_PARAM] PREFIX=PARAM[SYSROOT] install
 
 

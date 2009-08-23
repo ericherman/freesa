@@ -35,7 +35,7 @@ cfg_mipsel = {
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'TMPTOOLS' => '/tmp/tools',
   'SYSROOT' => '/tmp/cross-tools/sysroot',
-  'UCLIBC_CONFIG' => "ENV['HOME']/gits/freesa/config/uclibc-config-mips",
+  'UCLIBC_CONFIG' => "#{ENV['HOME']}/gits/freesa/config/uclibc-config-mips",
   'UCLIBC_CROSS_PARAM' => 'CROSS=mipsel-unknown-linux-uclibc-',
   'ENDIANNESS' => 'LITTLE',
   'NOT_ENDIANNESS' => 'BIG'
@@ -48,13 +48,13 @@ cfg_x86 = {
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'TMPTOOLS' => '/tmp/tools',
   'SYSROOT' => '/tmp/cross-tools/sysroot',
-  'UCLIBC_CONFIG' => "ENV['HOME']/gits/freesa/config/uclibc-config-x86",
+  'UCLIBC_CONFIG' => "#{ENV['HOME']}/gits/freesa/config/uclibc-config-x86",
   'UCLIBC_CROSS_PARAM' => '',
   'ENDIANNESS' => 'little',
   'NOT_ENDIANNESS' => 'big'
 }
 
-cfg = cfg_mipsel
+cfg = cfg_x86
 
 # UCLIBC_CROSS_PARAM is CROSS=PARAM[TARGET]- when cross-compiling
 # This can probably be moved to .config CROSS_COMPILER_PREFIX!!
@@ -69,10 +69,7 @@ specs = Commands.new(load_misc('specs'), @exec, @log)
 
 linux.build('sysroot headers')
 binutils.build
-uclibc.build('headers')
-gcc.build('bare compiler')
-uclibc.build('startup files')
-gcc.build('libgcc')
+gcc.build('static compiler')
 uclibc.build('full library')
 gcc.build('full compiler')
 uclibc.build('utilities')
