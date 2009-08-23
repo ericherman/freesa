@@ -94,7 +94,7 @@ so on.
 build-dir: ../build-eglibc-2
 
 configure-commands:
- - cp PARAM[SOURCE_DIR]/Makeconfig.orig PARAM[SOURCE_DIR]/Makeconfig
+ - mv PARAM[SOURCE_DIR]/Makeconfig.orig PARAM[SOURCE_DIR]/Makeconfig
  - echo "libc_cv_forced_unwind=yes" > config.cache
  - echo "libc_cv_c_cleanup=yes" >> config.cache
  - echo "libc_cv_gnu89_inline=yes" >> config.cache
