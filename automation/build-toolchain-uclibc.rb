@@ -35,7 +35,7 @@ cfg_mipsel = {
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'TMPTOOLS' => '/tmp/tools',
   'SYSROOT' => '/tmp/cross-tools/sysroot',
-  'UCLIBC_CONFIG' => '/home/random/gits/freesa/config/uclibc-config-mips',
+  'UCLIBC_CONFIG' => "ENV['HOME']/gits/freesa/config/uclibc-config-mips",
   'UCLIBC_CROSS_PARAM' => 'CROSS=mipsel-unknown-linux-uclibc-',
   'ENDIANNESS' => 'LITTLE',
   'NOT_ENDIANNESS' => 'BIG'
@@ -48,7 +48,7 @@ cfg_x86 = {
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'TMPTOOLS' => '/tmp/tools',
   'SYSROOT' => '/tmp/cross-tools/sysroot',
-  'UCLIBC_CONFIG' => '/home/random/gits/freesa/config/uclibc-config-x86',
+  'UCLIBC_CONFIG' => "ENV['HOME']/gits/freesa/config/uclibc-config-x86",
   'UCLIBC_CROSS_PARAM' => '',
   'ENDIANNESS' => 'little',
   'NOT_ENDIANNESS' => 'big'

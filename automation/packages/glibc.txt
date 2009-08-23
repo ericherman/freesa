@@ -54,78 +54,18 @@ patches:
  - libgcc_eh-1
  - localedef_segfault-1
 
-phase: headers
+phase: sysroot glibc
 
-build-dir: ../build-glibc
+This builds a compeltely standard sysroot libc.
 
-configure-commands:
- - CC=gcc PARAM[SOURCE_DIR]/configure --prefix=/usr
-    --host=PARAM[HOST] --build=PARAM[TARGET]
-    --disable-sanity-checks --enable-kernel=PARAM[KERNEL_VERSION]
-    --with-headers=PARAM[SYSROOT]/usr/include
-    --with-binutils=PARAM[TOOL_PREFIX]/PARAM[TARGET]/bin
-
-make-commands:
-
-test-commands:
-
-install-commands:
- - make cross-compiling=yes install_root=PARAM[SYSROOT] install-headers
- - cp -v bits/stdio_lim.h PARAM[SYSROOT]/usr/include/bits
- - touch PARAM[SYSROOT]/usr/include/gnu/stubs.h
- - cp -v PARAM[SOURCE_DIR]/nptl/sysdeps/pthread/pthread.h 
-     PARAM[SYSROOT]/usr/include
- - cp -v PARAM[SOURCE_DIR]/nptl/sysdeps/unix/sysv/linux/i386/bits/pthreadtypes.h
-     PARAM[SYSROOT]/usr/include/bits
-
-
-phase: startup files
-
-In this phase we just build the startup files that we need in
-order to build libgcc.  We'll build the rest of glibc later, once
-we have libgcc.
-
-build-dir: ../build-glibc-2
+build-dir: ../build-glibc-1
 
 configure-commands:
  - echo "libc_cv_forced_unwind=yes" > config.cache
  - echo "libc_cv_c_cleanup=yes" >> config.cache
- - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc"
-      AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib"
-      CFLAGS="PARAM[GLIBCFLAG]"
-      PARAM[SOURCE_DIR]/configure --prefix=/usr
-      --host=PARAM[TARGET] --build=PARAM[HOST]
-      --disable-profile --enable-add-ons --with-tls
-      --enable-kernel=PARAM[KERNEL_VERSION] --with-__thread
-      --with-binutils=PARAM[TOOL_PREFIX]/bin
-      --with-headers=PARAM[SYSROOT]/usr/include
-      --cache-file=config.cache
-
-make-commands:
- - make -r -C PARAM[SOURCE_DIR]/csu objdir=$(pwd) $(pwd)/csu/crt1.o
- - make -r -C PARAM[SOURCE_DIR]/csu objdir=$(pwd) $(pwd)/csu/crti.o
- - make -r -C PARAM[SOURCE_DIR]/csu objdir=$(pwd) $(pwd)/csu/crtn.o
-
-test-commands:
-
-install-commands:
- - mkdir -p PARAM[SYSROOT]/lib
- - bash -c 'cp csu/crt{1,i,n}.o PARAM[SYSROOT]/lib'
-
-
-phase: full glibc
-
-Now we have a usable GCC, complete with libgcc, and we can build
-glibc at last!
-
-build-dir: ../build-glibc-3
-
-configure-commands:
- - echo "libc_cv_forced_unwind=yes" > config.cache
- - echo "libc_cv_c_cleanup=yes" >> config.cache
- - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc"
-      AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib"
-      CFLAGS="PARAM[GLIBCFLAG]"
+ - echo "libc_cv_gnu89_inline=yes" >> config.cache
+ - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc" AR="PARAM[TARGET]-ar" 
+      RANLIB="PARAM[TARGET]-ranlib" CFLAGS="PARAM[GLIBCFLAG]"
       PARAM[SOURCE_DIR]/configure --prefix=/usr
       --host=PARAM[TARGET] --build=PARAM[HOST]
       --disable-profile --enable-add-ons --with-tls
@@ -166,17 +106,18 @@ change the runtime library lookup path used by the dynamic
 linker we've already built.
 
 The other reason we want to build an entirely new glibc here is
-that this is the first time we're building glibc when the
-libgcc_eh library is actually available.
+that this is the first time we're building glibc when gcc is 
+available in its normal configuration, with a shared libgcc and
+so on.
 
-build-dir: ../build-glibc-4
+build-dir: ../build-glibc-2
 
 configure-commands:
  - echo "libc_cv_forced_unwind=yes" > config.cache
  - echo "libc_cv_c_cleanup=yes" >> config.cache
- - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc"
-      AR="PARAM[TARGET]-ar" RANLIB="PARAM[TARGET]-ranlib"
-      CFLAGS="PARAM[GLIBCFLAG]"
+ - echo "libc_cv_gnu89_inline=yes" >> config.cache
+ - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc" AR="PARAM[TARGET]-ar" 
+      RANLIB="PARAM[TARGET]-ranlib" CFLAGS="PARAM[GLIBCFLAG]"
       PARAM[SOURCE_DIR]/configure --prefix=PARAM[TMPTOOLS]
       --host=PARAM[TARGET] --build=PARAM[HOST]
       --disable-profile --enable-add-ons --with-tls
@@ -190,8 +131,7 @@ test-commands:
 The +install_root+ is specified as +/+ for this installation
 because that causes the installation to occur directly in the
 prefix specified in configure, rather than a subdirectory of it.
-Since the build user can write to the temporary tools directory,
-this winds up doing the right thing.
+This winds up doing the right thing.
 
 install-commands:
  - make install_root=/ install

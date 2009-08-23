@@ -47,11 +47,8 @@ specs = Commands.new(load_misc('specs'), @exec, @log)
 
 linux.build('sysroot headers')
 binutils.build
-glibc.build('headers')
-gcc.build('bare compiler')
-glibc.build('startup files')
-gcc.build('libgcc')
-glibc.build('full glibc')
+gcc.build('static compiler')
+glibc.build('sysroot glibc')
 gcc.build('full compiler')
 linux.build('temporary tool headers')
 glibc.build('temporary tool glibc')
