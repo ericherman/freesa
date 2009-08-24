@@ -82,11 +82,11 @@ threading support.  This will be good enough to compile libc, but
 not adequate for practically anything else.
 
 To build a static libgcc (which is the only kind that can be
-built at this point, since we don't have libc headers installed
-yet), the configuration options +--without-headers+ and
-+--with-newlib+ can be used.  This is a bit sloppy -- the first
-of those options is the only one that should be necessary, but at
-the moment both are.
+built at this point, since we don't have any libc headers or
+runtime startup files installed yet), the configuration options
++--without-headers+ and +--with-newlib+ can be used.  This is a
+bit sloppy -- the first of those options is the only one that
+should be necessary, but at the moment both are.
 
 environment:
  CPPFLAGS_FOR_TARGET: --sysroot=PARAM[SYSROOT]

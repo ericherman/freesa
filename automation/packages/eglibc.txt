@@ -25,6 +25,9 @@ kind of unnecessary to worry about optimizing the eglibc here
 that way, since it won't wind up on the final system, but it
 won't hurt anything and is good practice in general.
 
+patches:
+ - branch_update-20090820
+
 phase: sysroot eglibc
 
 Eglibc always tries to link against libgcc_eh (an
