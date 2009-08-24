@@ -26,7 +26,7 @@ end
 #@exec = ShuntExecutioner.new
 @exec = Executioner.new
 
-cfg = {
+cfg_x86 = {
   'KERNEL_ARCH' => '',
   'SYSROOT' => '/tmp/cross-tools/sysroot',
   'HOST' => 'i686-cross-linux-gnu',
@@ -36,6 +36,19 @@ cfg = {
   'KERNEL_VERSION' => '2.6.29',
   'TMPTOOLS' => '/tmp/tools'
 }
+
+cfg_mips = {
+  'KERNEL_ARCH' => 'ARCH=mips',
+  'SYSROOT' => '/tmp/cross-tools/sysroot',
+  'HOST' => 'i686-cross-linux-gnu',
+  'TARGET' => 'mipsel-unknown-linux-gnu',
+  'TOOL_PREFIX' => '/tmp/cross-tools',
+  'GLIBCFLAG' => '-g -O2',
+  'KERNEL_VERSION' => '2.6.25',
+  'TMPTOOLS' => '/tmp/tools'
+}
+
+cfg = cfg_mips
 
 binutils = package('binutils')
 gcc = package('gcc')
