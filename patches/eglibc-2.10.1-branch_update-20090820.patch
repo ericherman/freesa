@@ -1,7 +1,7 @@
-diff --git a/libc/.cvsignore b/libc/.cvsignore
+diff --git a/.cvsignore b/.cvsignore
 deleted file mode 100644
 index 213609f..0000000
---- a/libc/.cvsignore
+--- a/.cvsignore
 +++ /dev/null
 @@ -1,29 +0,0 @@
 -*.d *.o *.so *.po *.go *.bo stamp.* *.stamp *.ustamp *.udeps
@@ -33,11 +33,11 @@ index 213609f..0000000
 -autom4te*.cache
 -
 -rtkaio
-diff --git a/libc/.gitignore b/libc/.gitignore
+diff --git a/.gitignore b/.gitignore
 new file mode 100644
 index 0000000..d9294be
 --- /dev/null
-+++ b/libc/.gitignore
++++ b/.gitignore
 @@ -0,0 +1,46 @@
 +*~
 +*.d
@@ -85,10 +85,10 @@ index 0000000..d9294be
 +autom4te*.cache
 +
 +rtkaio
-diff --git a/libc/ChangeLog b/libc/ChangeLog
+diff --git a/ChangeLog b/ChangeLog
 index e3afa85..ec8c64a 100644
---- a/libc/ChangeLog
-+++ b/libc/ChangeLog
+--- a/ChangeLog
++++ b/ChangeLog
 @@ -1,3 +1,387 @@
 +2009-06-16  Ulrich Drepper  <drepper@redhat.com>
 +
@@ -477,10 +477,10 @@ index e3afa85..ec8c64a 100644
  2009-05-10  Ulrich Drepper  <drepper@redhat.com>
  
  	* version.h (VERSION): Bump to 2.10.1.
-diff --git a/libc/ChangeLog.eglibc b/libc/ChangeLog.eglibc
+diff --git a/ChangeLog.eglibc b/ChangeLog.eglibc
 index fe5da37..b3dff44 100644
---- a/libc/ChangeLog.eglibc
-+++ b/libc/ChangeLog.eglibc
+--- a/ChangeLog.eglibc
++++ b/ChangeLog.eglibc
 @@ -1,3 +1,70 @@
 +2009-08-20  Maxim Kuvyrkov  <maxim@codesourcery.com>
 +
@@ -552,10 +552,10 @@ index fe5da37..b3dff44 100644
  2009-05-06  Aurelien Jarno  <aurelien@aurel32.net>
  
  	* nss/nsswitch.c (lock_nsswitch, unlock_nsswitch): Remove brackets.
-diff --git a/libc/Makeconfig b/libc/Makeconfig
+diff --git a/Makeconfig b/Makeconfig
 index 6239966..4ddb087 100644
---- a/libc/Makeconfig
-+++ b/libc/Makeconfig
+--- a/Makeconfig
++++ b/Makeconfig
 @@ -434,6 +434,19 @@ ifndef +link
  			   $(common-objpfx)libc% $(+postinit),$^) \
  	      $(link-extra-libs) $(link-libc) $(+postctor) $(+postinit)
@@ -586,10 +586,10 @@ index 6239966..4ddb087 100644
  +interp = $(addprefix $(elf-objpfx),interp.os)
  endif
  csu-objpfx = $(common-objpfx)csu/
-diff --git a/libc/NEWS b/libc/NEWS
+diff --git a/NEWS b/NEWS
 index 411c2c3..89f06dd 100644
---- a/libc/NEWS
-+++ b/libc/NEWS
+--- a/NEWS
++++ b/NEWS
 @@ -47,6 +47,13 @@ Version 2.10
  * Handling for group shadow files has been added.
    Implemented by Ulrich Drepper.
@@ -604,10 +604,10 @@ index 411c2c3..89f06dd 100644
  
  Version 2.9
  
-diff --git a/libc/assert/.cvsignore b/libc/assert/.cvsignore
+diff --git a/assert/.cvsignore b/assert/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/assert/.cvsignore
+--- a/assert/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -616,10 +616,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/configure b/libc/configure
+diff --git a/configure b/configure
 index a8b25a3..5d89dca 100755
---- a/libc/configure
-+++ b/libc/configure
+--- a/configure
++++ b/configure
 @@ -313,7 +313,7 @@ ac_includes_default="\
  # include <unistd.h>
  #endif"
@@ -783,10 +783,10 @@ index a8b25a3..5d89dca 100755
  s,@subdirs@,$subdirs,;t t
  s,@add_ons@,$add_ons,;t t
  s,@add_on_subdirs@,$add_on_subdirs,;t t
-diff --git a/libc/configure.in b/libc/configure.in
+diff --git a/configure.in b/configure.in
 index b0ca65e..e2d9706 100644
---- a/libc/configure.in
-+++ b/libc/configure.in
+--- a/configure.in
++++ b/configure.in
 @@ -6,6 +6,8 @@ AC_CONFIG_SRCDIR([include/features.h])
  AC_CONFIG_HEADERS([config.h])
  AC_CONFIG_AUX_DIR([scripts])
@@ -805,10 +805,10 @@ index b0ca65e..e2d9706 100644
  # The way shlib-versions is used to generate soversions.mk uses a
  # fairly simplistic model for name recognition that can't distinguish
  # i486-pc-linux-gnu fully from i486-pc-gnu.  So we mutate a $host_os
-diff --git a/libc/csu/.cvsignore b/libc/csu/.cvsignore
+diff --git a/csu/.cvsignore b/csu/.cvsignore
 deleted file mode 100644
 index da6e41b..0000000
---- a/libc/csu/.cvsignore
+--- a/csu/.cvsignore
 +++ /dev/null
 @@ -1,7 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -818,17 +818,17 @@ index da6e41b..0000000
 -glibc-*
 -distinfo
 -specs
-diff --git a/libc/csu/.gitignore b/libc/csu/.gitignore
+diff --git a/csu/.gitignore b/csu/.gitignore
 new file mode 100644
 index 0000000..d8933cf
 --- /dev/null
-+++ b/libc/csu/.gitignore
++++ b/csu/.gitignore
 @@ -0,0 +1 @@
 +specs
-diff --git a/libc/ctype/.cvsignore b/libc/ctype/.cvsignore
+diff --git a/ctype/.cvsignore b/ctype/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/ctype/.cvsignore
+--- a/ctype/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -837,10 +837,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/dirent/.cvsignore b/libc/dirent/.cvsignore
+diff --git a/dirent/.cvsignore b/dirent/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/dirent/.cvsignore
+--- a/dirent/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -849,10 +849,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/dlfcn/dlfcn.h b/libc/dlfcn/dlfcn.h
+diff --git a/dlfcn/dlfcn.h b/dlfcn/dlfcn.h
 index 7e373ed..3e461df 100644
---- a/libc/dlfcn/dlfcn.h
-+++ b/libc/dlfcn/dlfcn.h
+--- a/dlfcn/dlfcn.h
++++ b/dlfcn/dlfcn.h
 @@ -1,6 +1,5 @@
  /* User functions for run-time dynamic loading.
 -   Copyright (C) 1995-1999,2000,2001,2003,2004,2006
@@ -870,10 +870,10 @@ index 7e373ed..3e461df 100644
    };
  
  
-diff --git a/libc/elf/.cvsignore b/libc/elf/.cvsignore
+diff --git a/elf/.cvsignore b/elf/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/elf/.cvsignore
+--- a/elf/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -882,10 +882,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/elf/Makefile b/libc/elf/Makefile
+diff --git a/elf/Makefile b/elf/Makefile
 index 317dbfc..114ad4a 100644
---- a/libc/elf/Makefile
-+++ b/libc/elf/Makefile
+--- a/elf/Makefile
++++ b/elf/Makefile
 @@ -89,7 +89,8 @@ distribute	:= rtld-Rules \
  		   unload4mod1.c unload4mod2.c unload4mod3.c unload4mod4.c \
  		   unload6mod1.c unload6mod2.c unload6mod3.c \
@@ -943,10 +943,10 @@ index 317dbfc..114ad4a 100644
  $(objpfx)tst-global1: $(libdl)
  $(objpfx)tst-global1.out: $(objpfx)testobj6.so $(objpfx)testobj2.so
  
-diff --git a/libc/elf/dl-sysdep.c b/libc/elf/dl-sysdep.c
+diff --git a/elf/dl-sysdep.c b/elf/dl-sysdep.c
 index db10012..5700272 100644
---- a/libc/elf/dl-sysdep.c
-+++ b/libc/elf/dl-sysdep.c
+--- a/elf/dl-sysdep.c
++++ b/elf/dl-sysdep.c
 @@ -335,7 +335,7 @@ _dl_show_auxv (void)
  
        /* Unknown value: print a generic line.  */
@@ -956,11 +956,11 @@ index db10012..5700272 100644
        const char *val2 = _itoa ((unsigned long int) av->a_un.a_val,
  				buf2 + sizeof buf2 - 1, 16, 0);
        const char *val =  _itoa ((unsigned long int) av->a_type,
-diff --git a/libc/elf/tst-audit3.c b/libc/elf/tst-audit3.c
+diff --git a/elf/tst-audit3.c b/elf/tst-audit3.c
 new file mode 100644
 index 0000000..d00db99
 --- /dev/null
-+++ b/libc/elf/tst-audit3.c
++++ b/elf/tst-audit3.c
 @@ -0,0 +1,20 @@
 +/* Test case for x86-64 preserved registers in dynamic linker.  */
 +
@@ -982,11 +982,11 @@ index 0000000..d00db99
 +
 +  return 0;
 +}
-diff --git a/libc/elf/tst-auditmod3a.c b/libc/elf/tst-auditmod3a.c
+diff --git a/elf/tst-auditmod3a.c b/elf/tst-auditmod3a.c
 new file mode 100644
 index 0000000..9514aba
 --- /dev/null
-+++ b/libc/elf/tst-auditmod3a.c
++++ b/elf/tst-auditmod3a.c
 @@ -0,0 +1,24 @@
 +/* Test case for x86-64 preserved registers in dynamic linker.  */
 +
@@ -1012,11 +1012,11 @@ index 0000000..9514aba
 +
 +  return xmm;
 +}
-diff --git a/libc/elf/tst-auditmod3b.c b/libc/elf/tst-auditmod3b.c
+diff --git a/elf/tst-auditmod3b.c b/elf/tst-auditmod3b.c
 new file mode 100644
 index 0000000..388ed6e
 --- /dev/null
-+++ b/libc/elf/tst-auditmod3b.c
++++ b/elf/tst-auditmod3b.c
 @@ -0,0 +1,156 @@
 +/* Verify that changing xmm registers in audit library won't affect
 +   function parameter passing/return.  */
@@ -1174,10 +1174,10 @@ index 0000000..388ed6e
 +
 +  return 0;
 +}
-diff --git a/libc/gmon/.cvsignore b/libc/gmon/.cvsignore
+diff --git a/gmon/.cvsignore b/gmon/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/gmon/.cvsignore
+--- a/gmon/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1186,10 +1186,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/gnulib/.cvsignore b/libc/gnulib/.cvsignore
+diff --git a/gnulib/.cvsignore b/gnulib/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/gnulib/.cvsignore
+--- a/gnulib/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1198,10 +1198,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/grp/.cvsignore b/libc/grp/.cvsignore
+diff --git a/grp/.cvsignore b/grp/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/grp/.cvsignore
+--- a/grp/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1210,10 +1210,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/hurd/.cvsignore b/libc/hurd/.cvsignore
+diff --git a/hurd/.cvsignore b/hurd/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/hurd/.cvsignore
+--- a/hurd/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1222,10 +1222,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/include/atomic.h b/libc/include/atomic.h
+diff --git a/include/atomic.h b/include/atomic.h
 index 7c0548b..37d0111 100644
---- a/libc/include/atomic.h
-+++ b/libc/include/atomic.h
+--- a/include/atomic.h
++++ b/include/atomic.h
 @@ -95,25 +95,31 @@
  #endif
  
@@ -1317,10 +1317,10 @@ index 7c0548b..37d0111 100644
  #endif
  
  
-diff --git a/libc/inet/.cvsignore b/libc/inet/.cvsignore
+diff --git a/inet/.cvsignore b/inet/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/inet/.cvsignore
+--- a/inet/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1329,10 +1329,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/inet/netinet/icmp6.h b/libc/inet/netinet/icmp6.h
+diff --git a/inet/netinet/icmp6.h b/inet/netinet/icmp6.h
 index 0cb1aa6..82893da 100644
---- a/libc/inet/netinet/icmp6.h
-+++ b/libc/inet/netinet/icmp6.h
+--- a/inet/netinet/icmp6.h
++++ b/inet/netinet/icmp6.h
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 1991-1997,2000,2006 Free Software Foundation, Inc.
 +/* Copyright (C) 1991-1997,2000,2006,2009 Free Software Foundation, Inc.
@@ -1348,10 +1348,10 @@ index 0cb1aa6..82893da 100644
      uint16_t  nd_opt_home_agent_info_lifetime;
    };
  
-diff --git a/libc/intl/.cvsignore b/libc/intl/.cvsignore
+diff --git a/intl/.cvsignore b/intl/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/intl/.cvsignore
+--- a/intl/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1360,10 +1360,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/io/.cvsignore b/libc/io/.cvsignore
+diff --git a/io/.cvsignore b/io/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/io/.cvsignore
+--- a/io/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1372,10 +1372,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/libio/.cvsignore b/libc/libio/.cvsignore
+diff --git a/libio/.cvsignore b/libio/.cvsignore
 deleted file mode 100644
 index 602b74c..0000000
---- a/libc/libio/.cvsignore
+--- a/libio/.cvsignore
 +++ /dev/null
 @@ -1,8 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1386,10 +1386,10 @@ index 602b74c..0000000
 -
 -mpn-copy.mk
 -distinfo
-diff --git a/libc/libio/Makefile b/libc/libio/Makefile
+diff --git a/libio/Makefile b/libio/Makefile
 index 971277f..12afd77 100644
---- a/libc/libio/Makefile
-+++ b/libc/libio/Makefile
+--- a/libio/Makefile
++++ b/libio/Makefile
 @@ -175,6 +175,7 @@ tst-ungetwc2-ENV = LOCPATH=$(common-objpfx)localedata
  bug-ungetwc2-ENV = LOCPATH=$(common-objpfx)localedata
  tst-swscanf-ENV = LOCPATH=$(common-objpfx)localedata
@@ -1398,10 +1398,10 @@ index 971277f..12afd77 100644
  
  generated = tst-fopenloc.mtrace tst-fopenloc.check
  
-diff --git a/libc/libio/fileops.c b/libc/libio/fileops.c
+diff --git a/libio/fileops.c b/libio/fileops.c
 index 2d86013..94bbf83 100644
---- a/libc/libio/fileops.c
-+++ b/libc/libio/fileops.c
+--- a/libio/fileops.c
++++ b/libio/fileops.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 1993, 1995, 1997-2005, 2006, 2007, 2008
 +/* Copyright (C) 1993, 1995, 1997-2005, 2006, 2007, 2008, 2009
@@ -1422,10 +1422,10 @@ index 2d86013..94bbf83 100644
  #endif
  	default:
  	  /* Ignore.  */
-diff --git a/libc/libio/tst-fgetwc.c b/libc/libio/tst-fgetwc.c
+diff --git a/libio/tst-fgetwc.c b/libio/tst-fgetwc.c
 index 9ccfeb1..06e4a42 100644
---- a/libc/libio/tst-fgetwc.c
-+++ b/libc/libio/tst-fgetwc.c
+--- a/libio/tst-fgetwc.c
++++ b/libio/tst-fgetwc.c
 @@ -6,7 +6,7 @@
  static int
  do_test (void)
@@ -1435,10 +1435,10 @@ index 9ccfeb1..06e4a42 100644
      {
        puts ("setlocale failed");
        return 1;
-diff --git a/libc/locale/.cvsignore b/libc/locale/.cvsignore
+diff --git a/locale/.cvsignore b/locale/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/locale/.cvsignore
+--- a/locale/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1447,10 +1447,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/localedata/ChangeLog b/libc/localedata/ChangeLog
+diff --git a/localedata/ChangeLog b/localedata/ChangeLog
 index b3db076..fbe5bc6 100644
---- a/libc/localedata/ChangeLog
-+++ b/libc/localedata/ChangeLog
+--- a/localedata/ChangeLog
++++ b/localedata/ChangeLog
 @@ -1,3 +1,9 @@
 +2009-06-16  Ulrich Drepper  <drepper@redhat.com>
 +
@@ -1461,10 +1461,10 @@ index b3db076..fbe5bc6 100644
  2009-05-04  Ulrich Drepper  <drepper@redhat.com>
  
  	* localedata/locales/bn_BD: Remove comment about missing collation
-diff --git a/libc/localedata/locales/de_AT b/libc/localedata/locales/de_AT
+diff --git a/localedata/locales/de_AT b/localedata/locales/de_AT
 index 4ec42f4..4e0b7fb 100644
---- a/libc/localedata/locales/de_AT
-+++ b/libc/localedata/locales/de_AT
+--- a/localedata/locales/de_AT
++++ b/localedata/locales/de_AT
 @@ -121,6 +121,9 @@ t_fmt_ampm ""
  date_fmt	"<U0025><U0061><U0020><U0025><U0062><U0020><U0025><U0065>/
  <U0020><U0025><U0048><U003A><U0025><U004D><U003A><U0025><U0053><U0020>/
@@ -1475,10 +1475,10 @@ index 4ec42f4..4e0b7fb 100644
  END LC_TIME
  
  LC_PAPER
-diff --git a/libc/login/Makefile b/libc/login/Makefile
+diff --git a/login/Makefile b/login/Makefile
 index 3b6140c..7877fd9 100644
---- a/libc/login/Makefile
-+++ b/libc/login/Makefile
+--- a/login/Makefile
++++ b/login/Makefile
 @@ -1,4 +1,4 @@
 -# Copyright (C) 1996-1998,2000-2002,2003,2007 Free Software Foundation, Inc.
 +# Copyright (C) 1996-1998,2000-2003,2007, 2009 Free Software Foundation, Inc.
@@ -1510,10 +1510,10 @@ index 3b6140c..7877fd9 100644
  # pt_chown needs to be setuid root.
  $(inst_libexecdir)/pt_chown: $(objpfx)pt_chown $(+force)
  	$(make-target-directory)
-diff --git a/libc/login/programs/pt_chown.c b/libc/login/programs/pt_chown.c
+diff --git a/login/programs/pt_chown.c b/login/programs/pt_chown.c
 index 6b780ae..d8259ba 100644
---- a/libc/login/programs/pt_chown.c
-+++ b/libc/login/programs/pt_chown.c
+--- a/login/programs/pt_chown.c
++++ b/login/programs/pt_chown.c
 @@ -29,6 +29,10 @@
  #include <string.h>
  #include <sys/stat.h>
@@ -1592,10 +1592,10 @@ index 6b780ae..d8259ba 100644
  
    /* Set locale via LC_ALL.  */
    setlocale (LC_ALL, "");
-diff --git a/libc/mach/.cvsignore b/libc/mach/.cvsignore
+diff --git a/mach/.cvsignore b/mach/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/mach/.cvsignore
+--- a/mach/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1604,10 +1604,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/mach/err_boot.sub b/libc/mach/err_boot.sub
+diff --git a/mach/err_boot.sub b/mach/err_boot.sub
 index 7d656f5..5393ab1 100644
---- a/libc/mach/err_boot.sub
-+++ b/libc/mach/err_boot.sub
+--- a/mach/err_boot.sub
++++ b/mach/err_boot.sub
 @@ -25,7 +25,7 @@
   */
  /*
@@ -1617,10 +1617,10 @@ index 7d656f5..5393ab1 100644
   * Revision 1.1  1992/10/06 18:29:52  roland
   * entered into RCS
   *
-diff --git a/libc/mach/err_ipc.sub b/libc/mach/err_ipc.sub
+diff --git a/mach/err_ipc.sub b/mach/err_ipc.sub
 index d0c15d0..1de186e 100644
---- a/libc/mach/err_ipc.sub
-+++ b/libc/mach/err_ipc.sub
+--- a/mach/err_ipc.sub
++++ b/mach/err_ipc.sub
 @@ -25,7 +25,7 @@
   */
  /*
@@ -1630,10 +1630,10 @@ index d0c15d0..1de186e 100644
   * Revision 1.1  1992/10/06 18:29:52  roland
   * entered into RCS
   *
-diff --git a/libc/mach/err_mach.sub b/libc/mach/err_mach.sub
+diff --git a/mach/err_mach.sub b/mach/err_mach.sub
 index 8faf9cd..b33522c 100644
---- a/libc/mach/err_mach.sub
-+++ b/libc/mach/err_mach.sub
+--- a/mach/err_mach.sub
++++ b/mach/err_mach.sub
 @@ -25,7 +25,7 @@
   */
  /*
@@ -1643,10 +1643,10 @@ index 8faf9cd..b33522c 100644
   * Revision 1.1  1992/10/06 18:29:52  roland
   * entered into RCS
   *
-diff --git a/libc/malloc/malloc.c b/libc/malloc/malloc.c
+diff --git a/malloc/malloc.c b/malloc/malloc.c
 index 0b9face..4b623e2 100644
---- a/libc/malloc/malloc.c
-+++ b/libc/malloc/malloc.c
+--- a/malloc/malloc.c
++++ b/malloc/malloc.c
 @@ -4779,8 +4779,29 @@ _int_free(mstate av, mchunkptr p)
  	|| __builtin_expect (chunksize (chunk_at_offset (p, size))
  			     >= av->system_mem, 0))
@@ -1688,10 +1688,10 @@ index 0b9face..4b623e2 100644
  #else
      /* Another simple check: make sure the top of the bin is not the
         record we are going to add (i.e., double free).  */
-diff --git a/libc/manual/.cvsignore b/libc/manual/.cvsignore
+diff --git a/manual/.cvsignore b/manual/.cvsignore
 deleted file mode 100644
 index 54abbbb..0000000
---- a/libc/manual/.cvsignore
+--- a/manual/.cvsignore
 +++ /dev/null
 @@ -1,14 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1708,11 +1708,11 @@ index 54abbbb..0000000
 -distinfo dir-add.texinfo dir-add.texi
 -
 -libm-err.texi
-diff --git a/libc/manual/.gitignore b/libc/manual/.gitignore
+diff --git a/manual/.gitignore b/manual/.gitignore
 new file mode 100644
 index 0000000..e92cef3
 --- /dev/null
-+++ b/libc/manual/.gitignore
++++ b/manual/.gitignore
 @@ -0,0 +1,29 @@
 +*.aux
 +*.c.texi
@@ -1743,10 +1743,10 @@ index 0000000..e92cef3
 +summary.texi
 +texis
 +top-menu.texi
-diff --git a/libc/manual/charset.texi b/libc/manual/charset.texi
+diff --git a/manual/charset.texi b/manual/charset.texi
 index 8b2c09c..79854e5 100644
---- a/libc/manual/charset.texi
-+++ b/libc/manual/charset.texi
+--- a/manual/charset.texi
++++ b/manual/charset.texi
 @@ -1234,7 +1234,7 @@ file_mbsrtowcs (int input, int output)
        /* @r{If any characters must be carried forward,}
           @r{put them at the beginning of @code{buffer}.} */
@@ -1756,10 +1756,10 @@ index 8b2c09c..79854e5 100644
      @}
  
    return 1;
-diff --git a/libc/math/.cvsignore b/libc/math/.cvsignore
+diff --git a/math/.cvsignore b/math/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/math/.cvsignore
+--- a/math/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1768,10 +1768,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/misc/.cvsignore b/libc/misc/.cvsignore
+diff --git a/misc/.cvsignore b/misc/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/misc/.cvsignore
+--- a/misc/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -1780,10 +1780,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/nis/nss_nis/nis-network.c b/libc/nis/nss_nis/nis-network.c
+diff --git a/nis/nss_nis/nis-network.c b/nis/nss_nis/nis-network.c
 index 9b02302..22a898b 100644
---- a/libc/nis/nss_nis/nis-network.c
-+++ b/libc/nis/nss_nis/nis-network.c
+--- a/nis/nss_nis/nis-network.c
++++ b/nis/nss_nis/nis-network.c
 @@ -241,7 +241,7 @@ _nss_nis_getnetbyaddr_r (uint32_t addr, int type, struct netent *net,
    if (__builtin_expect (yp_get_default_domain (&domain), 0))
      return NSS_STATUS_UNAVAIL;
@@ -1793,10 +1793,10 @@ index 9b02302..22a898b 100644
    char *buf = inet_ntoa (in);
    size_t blen = strlen (buf);
  
-diff --git a/libc/nis/nss_nis/nis-pwd.c b/libc/nis/nss_nis/nis-pwd.c
+diff --git a/nis/nss_nis/nis-pwd.c b/nis/nss_nis/nis-pwd.c
 index 1b5206a..fdc7dc9 100644
---- a/libc/nis/nss_nis/nis-pwd.c
-+++ b/libc/nis/nss_nis/nis-pwd.c
+--- a/nis/nss_nis/nis-pwd.c
++++ b/nis/nss_nis/nis-pwd.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 1996-1998,2001,2002,2003,2006 Free Software Foundation, Inc.
 +/* Copyright (C) 1996-1998,2001-2003,2006,2009 Free Software Foundation, Inc.
@@ -1812,10 +1812,10 @@ index 1b5206a..fdc7dc9 100644
  
    while (curr != NULL)
      {
-diff --git a/libc/nis/nss_nisplus/nisplus-network.c b/libc/nis/nss_nisplus/nisplus-network.c
+diff --git a/nis/nss_nisplus/nisplus-network.c b/nis/nss_nisplus/nisplus-network.c
 index 1cf652f..902826b 100644
---- a/libc/nis/nss_nisplus/nisplus-network.c
-+++ b/libc/nis/nss_nisplus/nisplus-network.c
+--- a/nis/nss_nisplus/nisplus-network.c
++++ b/nis/nss_nisplus/nisplus-network.c
 @@ -433,7 +433,7 @@ _nss_nisplus_getnetbyaddr_r (uint32_t addr, const int type,
      char buf2[18];
      int olderr = errno;
@@ -1825,10 +1825,10 @@ index 1cf652f..902826b 100644
      strcpy (buf2, inet_ntoa (in));
      size_t b2len = strlen (buf2);
  
-diff --git a/libc/nptl/ChangeLog b/libc/nptl/ChangeLog
+diff --git a/nptl/ChangeLog b/nptl/ChangeLog
 index b83dfd0..2caceeb 100644
---- a/libc/nptl/ChangeLog
-+++ b/libc/nptl/ChangeLog
+--- a/nptl/ChangeLog
++++ b/nptl/ChangeLog
 @@ -1,3 +1,29 @@
 +2009-07-27  Ulrich Drepper  <drepper@redhat.com>
 +
@@ -1859,10 +1859,10 @@ index b83dfd0..2caceeb 100644
  2009-04-27  Ulrich Drepper  <drepper@redhat.com>
  
  	* cancellation.c (__pthread_disable_asynccancel): Use THREAD_ATOMIC_AND
-diff --git a/libc/nptl/cancellation.c b/libc/nptl/cancellation.c
+diff --git a/nptl/cancellation.c b/nptl/cancellation.c
 index 81134a6..2a6f83d 100644
---- a/libc/nptl/cancellation.c
-+++ b/libc/nptl/cancellation.c
+--- a/nptl/cancellation.c
++++ b/nptl/cancellation.c
 @@ -70,15 +70,13 @@ __pthread_disable_asynccancel (int oldtype)
      return;
  
@@ -1898,10 +1898,10 @@ index 81134a6..2a6f83d 100644
 +      newval = THREAD_GETMEM (self, cancelhandling);
 +    }
  }
-diff --git a/libc/nptl/init.c b/libc/nptl/init.c
+diff --git a/nptl/init.c b/nptl/init.c
 index 0449ec0..851bab2 100644
---- a/libc/nptl/init.c
-+++ b/libc/nptl/init.c
+--- a/nptl/init.c
++++ b/nptl/init.c
 @@ -240,9 +240,6 @@ sighandler_setxid (int sig, siginfo_t *si, void *ctx)
    INTERNAL_SYSCALL_NCS (__xidcmd->syscall_no, err, 3, __xidcmd->id[0],
  			__xidcmd->id[1], __xidcmd->id[2]);
@@ -1912,10 +1912,10 @@ index 0449ec0..851bab2 100644
    /* Reset the SETXID flag.  */
    struct pthread *self = THREAD_SELF;
    int flags, newval;
-diff --git a/libc/nptl/libc-cancellation.c b/libc/nptl/libc-cancellation.c
+diff --git a/nptl/libc-cancellation.c b/nptl/libc-cancellation.c
 index cf24f1c..cada464 100644
---- a/libc/nptl/libc-cancellation.c
-+++ b/libc/nptl/libc-cancellation.c
+--- a/nptl/libc-cancellation.c
++++ b/nptl/libc-cancellation.c
 @@ -86,15 +86,13 @@ __libc_disable_asynccancel (int oldtype)
      return;
  
@@ -1953,10 +1953,10 @@ index cf24f1c..cada464 100644
  }
  
  
-diff --git a/libc/nptl/pthread_cancel.c b/libc/nptl/pthread_cancel.c
+diff --git a/nptl/pthread_cancel.c b/nptl/pthread_cancel.c
 index a13af56..55bb0da 100644
---- a/libc/nptl/pthread_cancel.c
-+++ b/libc/nptl/pthread_cancel.c
+--- a/nptl/pthread_cancel.c
++++ b/nptl/pthread_cancel.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
 +/* Copyright (C) 2002, 2003, 2004, 2009 Free Software Foundation, Inc.
@@ -1983,10 +1983,10 @@ index a13af56..55bb0da 100644
  
  	  /* The cancellation handler will take care of marking the
  	     thread as canceled.  */
-diff --git a/libc/nptl/pthread_mutex_unlock.c b/libc/nptl/pthread_mutex_unlock.c
+diff --git a/nptl/pthread_mutex_unlock.c b/nptl/pthread_mutex_unlock.c
 index 0028c55..fbe8274 100644
---- a/libc/nptl/pthread_mutex_unlock.c
-+++ b/libc/nptl/pthread_mutex_unlock.c
+--- a/nptl/pthread_mutex_unlock.c
++++ b/nptl/pthread_mutex_unlock.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 2002, 2003, 2005-2007, 2008 Free Software Foundation, Inc.
 +/* Copyright (C) 2002, 2003, 2005-2008, 2009 Free Software Foundation, Inc.
@@ -2011,10 +2011,10 @@ index 0028c55..fbe8274 100644
  						   newval, oldval));
  
        if ((oldval & ~PTHREAD_MUTEX_PRIO_CEILING_MASK) > 1)
-diff --git a/libc/nptl/sysdeps/pthread/unwind-forcedunwind.c b/libc/nptl/sysdeps/pthread/unwind-forcedunwind.c
+diff --git a/nptl/sysdeps/pthread/unwind-forcedunwind.c b/nptl/sysdeps/pthread/unwind-forcedunwind.c
 index 402591f..142ca74 100644
---- a/libc/nptl/sysdeps/pthread/unwind-forcedunwind.c
-+++ b/libc/nptl/sysdeps/pthread/unwind-forcedunwind.c
+--- a/nptl/sysdeps/pthread/unwind-forcedunwind.c
++++ b/nptl/sysdeps/pthread/unwind-forcedunwind.c
 @@ -22,6 +22,7 @@
  #include <unwind.h>
  #include <pthreadP.h>
@@ -2041,10 +2041,10 @@ index 402591f..142ca74 100644
  
    PTR_MANGLE (resume);
    libgcc_s_resume = resume;
-diff --git a/libc/nptl/sysdeps/pthread/unwind-resume.c b/libc/nptl/sysdeps/pthread/unwind-resume.c
+diff --git a/nptl/sysdeps/pthread/unwind-resume.c b/nptl/sysdeps/pthread/unwind-resume.c
 index 088f4c6..f06a479 100644
---- a/libc/nptl/sysdeps/pthread/unwind-resume.c
-+++ b/libc/nptl/sysdeps/pthread/unwind-resume.c
+--- a/nptl/sysdeps/pthread/unwind-resume.c
++++ b/nptl/sysdeps/pthread/unwind-resume.c
 @@ -20,6 +20,7 @@
  #include <dlfcn.h>
  #include <stdio.h>
@@ -2068,10 +2068,10 @@ index 088f4c6..f06a479 100644
  
    libgcc_s_resume = resume;
    libgcc_s_personality = personality;
-diff --git a/libc/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S b/libc/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
+diff --git a/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S b/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
 index 056b729..7578c7e 100644
---- a/libc/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
-+++ b/libc/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
+--- a/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
++++ b/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
 @@ -60,7 +60,7 @@
  # define LOAD_FUTEX_WAIT_ABS(reg) \
  	xorl	$FUTEX_PRIVATE_FLAG, reg ; \
@@ -2081,10 +2081,10 @@ index 056b729..7578c7e 100644
  # define LOAD_FUTEX_WAKE(reg) \
  	xorl	$FUTEX_PRIVATE_FLAG, reg ; \
  	andl	%gs:PRIVATE_FUTEX, reg ; \
-diff --git a/libc/nptl_db/ChangeLog b/libc/nptl_db/ChangeLog
+diff --git a/nptl_db/ChangeLog b/nptl_db/ChangeLog
 index 8c07d9f..1ade196 100644
---- a/libc/nptl_db/ChangeLog
-+++ b/libc/nptl_db/ChangeLog
+--- a/nptl_db/ChangeLog
++++ b/nptl_db/ChangeLog
 @@ -1,3 +1,9 @@
 +2009-05-25  Aurelien Jarno  <aurelien@aurel32.net>
 +
@@ -2095,10 +2095,10 @@ index 8c07d9f..1ade196 100644
  2009-03-19  Roland McGrath  <roland@redhat.com>
  
  	* td_symbol_list.c (DB_LOOKUP_NAME, DB_LOOKUP_NAME_TH_UNIQUE):
-diff --git a/libc/nptl_db/db-symbols.awk b/libc/nptl_db/db-symbols.awk
+diff --git a/nptl_db/db-symbols.awk b/nptl_db/db-symbols.awk
 index 3327213..f9a91b9 100644
---- a/libc/nptl_db/db-symbols.awk
-+++ b/libc/nptl_db/db-symbols.awk
+--- a/nptl_db/db-symbols.awk
++++ b/nptl_db/db-symbols.awk
 @@ -14,7 +14,7 @@ NF == 0 { in_symtab=0; next }
  
  !in_symtab { next }
@@ -2108,10 +2108,10 @@ index 3327213..f9a91b9 100644
  
  END {
    status = 0;
-diff --git a/libc/nscd/Makefile b/libc/nscd/Makefile
+diff --git a/nscd/Makefile b/nscd/Makefile
 index 3820366..15c3c7b 100644
---- a/libc/nscd/Makefile
-+++ b/libc/nscd/Makefile
+--- a/nscd/Makefile
++++ b/nscd/Makefile
 @@ -1,5 +1,4 @@
 -# Copyright (C) 1998,2000,2002,2003,2004,2005,2006,2007,2008
 -#	Free Software Foundation, Inc.
@@ -2134,10 +2134,10 @@ index 3820366..15c3c7b 100644
  endif
  
  # This makes sure -DNOT_IN_libc is passed for all these modules.
-diff --git a/libc/nscd/cache.c b/libc/nscd/cache.c
+diff --git a/nscd/cache.c b/nscd/cache.c
 index ab842ef..3e6793d 100644
---- a/libc/nscd/cache.c
-+++ b/libc/nscd/cache.c
+--- a/nscd/cache.c
++++ b/nscd/cache.c
 @@ -179,7 +179,7 @@ cache_add (int type, const void *key, size_t len, struct datahead *packet,
    /* Put the new entry in the first position.  */
    do
@@ -2147,10 +2147,10 @@ index ab842ef..3e6793d 100644
  					       (ref_t) ((char *) newp
  							- table->data),
  					       (ref_t) newp->next));
-diff --git a/libc/nscd/nscd-client.h b/libc/nscd/nscd-client.h
+diff --git a/nscd/nscd-client.h b/nscd/nscd-client.h
 index 3c9688f..c6c09cb 100644
---- a/libc/nscd/nscd-client.h
-+++ b/libc/nscd/nscd-client.h
+--- a/nscd/nscd-client.h
++++ b/nscd/nscd-client.h
 @@ -1,4 +1,4 @@
 -/* Copyright (c) 1998, 1999, 2000, 2003, 2004, 2005, 2006, 2007
 +/* Copyright (c) 1998, 1999, 2000, 2003, 2004, 2005, 2006, 2007, 2009
@@ -2176,10 +2176,10 @@ index 3c9688f..c6c09cb 100644
  
  /* Wrappers around read, readv and write that only read/write less than LEN
     bytes on error or EOF.  */
-diff --git a/libc/nscd/nscd.c b/libc/nscd/nscd.c
+diff --git a/nscd/nscd.c b/nscd/nscd.c
 index 31497e0..2a697a0 100644
---- a/libc/nscd/nscd.c
-+++ b/libc/nscd/nscd.c
+--- a/nscd/nscd.c
++++ b/nscd/nscd.c
 @@ -491,10 +491,6 @@ termination_handler (int signum)
  	msync (dbs[cnt].head, dbs[cnt].memsize, MS_ASYNC);
      }
@@ -2191,10 +2191,10 @@ index 31497e0..2a697a0 100644
    _exit (EXIT_SUCCESS);
  }
  
-diff --git a/libc/nscd/nscd_getai.c b/libc/nscd/nscd_getai.c
+diff --git a/nscd/nscd_getai.c b/nscd/nscd_getai.c
 index 674a5e7..d1c5cd1 100644
---- a/libc/nscd/nscd_getai.c
-+++ b/libc/nscd/nscd_getai.c
+--- a/nscd/nscd_getai.c
++++ b/nscd/nscd_getai.c
 @@ -1,4 +1,5 @@
 -/* Copyright (C) 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
 +/* Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009
@@ -2211,10 +2211,10 @@ index 674a5e7..d1c5cd1 100644
        if (found != NULL)
  	{
  	  respdata = (char *) (&found->data[0].aidata + 1);
-diff --git a/libc/nscd/nscd_getgr_r.c b/libc/nscd/nscd_getgr_r.c
+diff --git a/nscd/nscd_getgr_r.c b/nscd/nscd_getgr_r.c
 index b84b06b..c2d204c 100644
---- a/libc/nscd/nscd_getgr_r.c
-+++ b/libc/nscd/nscd_getgr_r.c
+--- a/nscd/nscd_getgr_r.c
++++ b/nscd/nscd_getgr_r.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 1998-2000, 2002-2005, 2006, 2007
 +/* Copyright (C) 1998-2000, 2002-2005, 2006, 2007, 2009
@@ -2231,10 +2231,10 @@ index b84b06b..c2d204c 100644
        if (found != NULL)
  	{
  	  len = (const uint32_t *) (&found->data[0].grdata + 1);
-diff --git a/libc/nscd/nscd_gethst_r.c b/libc/nscd/nscd_gethst_r.c
+diff --git a/nscd/nscd_gethst_r.c b/nscd/nscd_gethst_r.c
 index aea8288..70631fa 100644
---- a/libc/nscd/nscd_gethst_r.c
-+++ b/libc/nscd/nscd_gethst_r.c
+--- a/nscd/nscd_gethst_r.c
++++ b/nscd/nscd_gethst_r.c
 @@ -1,4 +1,5 @@
 -/* Copyright (C) 1998-2005, 2006, 2007, 2008 Free Software Foundation, Inc.
 +/* Copyright (C) 1998-2005, 2006, 2007, 2008, 2009
@@ -2252,10 +2252,10 @@ index aea8288..70631fa 100644
        if (found != NULL)
  	{
  	  h_name = (char *) (&found->data[0].hstdata + 1);
-diff --git a/libc/nscd/nscd_getpw_r.c b/libc/nscd/nscd_getpw_r.c
+diff --git a/nscd/nscd_getpw_r.c b/nscd/nscd_getpw_r.c
 index 21f792b..8a4449d 100644
---- a/libc/nscd/nscd_getpw_r.c
-+++ b/libc/nscd/nscd_getpw_r.c
+--- a/nscd/nscd_getpw_r.c
++++ b/nscd/nscd_getpw_r.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 1998, 1999, 2003, 2004, 2005, 2007
 +/* Copyright (C) 1998, 1999, 2003, 2004, 2005, 2007, 2009
@@ -2272,10 +2272,10 @@ index 21f792b..8a4449d 100644
        if (found != NULL)
  	{
  	  pw_name = (const char *) (&found->data[0].pwdata + 1);
-diff --git a/libc/nscd/nscd_getserv_r.c b/libc/nscd/nscd_getserv_r.c
+diff --git a/nscd/nscd_getserv_r.c b/nscd/nscd_getserv_r.c
 index b1ad7e2..dce4165 100644
---- a/libc/nscd/nscd_getserv_r.c
-+++ b/libc/nscd/nscd_getserv_r.c
+--- a/nscd/nscd_getserv_r.c
++++ b/nscd/nscd_getserv_r.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 2007 Free Software Foundation, Inc.
 +/* Copyright (C) 2007, 2009 Free Software Foundation, Inc.
@@ -2292,10 +2292,10 @@ index b1ad7e2..dce4165 100644
  
        if (found != NULL)
  	{
-diff --git a/libc/nscd/nscd_helper.c b/libc/nscd/nscd_helper.c
+diff --git a/nscd/nscd_helper.c b/nscd/nscd_helper.c
 index cd3fa24..fe63f9a 100644
---- a/libc/nscd/nscd_helper.c
-+++ b/libc/nscd/nscd_helper.c
+--- a/nscd/nscd_helper.c
++++ b/nscd/nscd_helper.c
 @@ -21,6 +21,7 @@
  #include <errno.h>
  #include <fcntl.h>
@@ -2396,10 +2396,10 @@ index cd3fa24..fe63f9a 100644
  	}
        tick = 1 - tick;
      }
-diff --git a/libc/nscd/nscd_initgroups.c b/libc/nscd/nscd_initgroups.c
+diff --git a/nscd/nscd_initgroups.c b/nscd/nscd_initgroups.c
 index 866455a..5ff60c0 100644
---- a/libc/nscd/nscd_initgroups.c
-+++ b/libc/nscd/nscd_initgroups.c
+--- a/nscd/nscd_initgroups.c
++++ b/nscd/nscd_initgroups.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
 +/* Copyright (C) 2004, 2005, 2006, 2007, 2009 Free Software Foundation, Inc.
@@ -2416,10 +2416,10 @@ index 866455a..5ff60c0 100644
        if (found != NULL)
  	{
  	  respdata = (char *) (&found->data[0].initgrdata + 1);
-diff --git a/libc/nscd/selinux.c b/libc/nscd/selinux.c
+diff --git a/nscd/selinux.c b/nscd/selinux.c
 index 9a167ec..e07a454 100644
---- a/libc/nscd/selinux.c
-+++ b/libc/nscd/selinux.c
+--- a/nscd/selinux.c
++++ b/nscd/selinux.c
 @@ -1,5 +1,5 @@
  /* SELinux access controls for nscd.
 -   Copyright (C) 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
@@ -2443,10 +2443,10 @@ index 9a167ec..e07a454 100644
 -}
 -
  #endif /* HAVE_SELINUX */
-diff --git a/libc/nscd/selinux.h b/libc/nscd/selinux.h
+diff --git a/nscd/selinux.h b/nscd/selinux.h
 index 27afcd6..67d981b 100644
---- a/libc/nscd/selinux.h
-+++ b/libc/nscd/selinux.h
+--- a/nscd/selinux.h
++++ b/nscd/selinux.h
 @@ -1,5 +1,5 @@
  /* Header for nscd SELinux access controls.
 -   Copyright (C) 2004, 2006, 2007 Free Software Foundation, Inc.
@@ -2471,10 +2471,10 @@ index 27afcd6..67d981b 100644
  # define nscd_selinux_enabled(selinux_enabled) (void) 0
  # define nscd_request_avc_has_perm(fd, req) 0
  # define nscd_avc_cache_stats(cstats) (void) 0
-diff --git a/libc/nss/getent.c b/libc/nss/getent.c
+diff --git a/nss/getent.c b/nss/getent.c
 index ea6efbc..bb83c9c 100644
---- a/libc/nss/getent.c
-+++ b/libc/nss/getent.c
+--- a/nss/getent.c
++++ b/nss/getent.c
 @@ -475,7 +475,7 @@ networks_keys (int number, char *key[])
    for (i = 0; i < number; ++i)
      {
@@ -2484,10 +2484,10 @@ index ea6efbc..bb83c9c 100644
        else
  	net = getnetbyname (key[i]);
  
-diff --git a/libc/nss/nss_files/files-network.c b/libc/nss/nss_files/files-network.c
+diff --git a/nss/nss_files/files-network.c b/nss/nss_files/files-network.c
 index 9f4a3e0..92aea75 100644
---- a/libc/nss/nss_files/files-network.c
-+++ b/libc/nss/nss_files/files-network.c
+--- a/nss/nss_files/files-network.c
++++ b/nss/nss_files/files-network.c
 @@ -1,5 +1,5 @@
  /* Networks file parser in nss_files module.
 -   Copyright (C) 1996, 1997, 1998, 2000, 2001 Free Software Foundation, Inc.
@@ -2505,26 +2505,26 @@ index 9f4a3e0..92aea75 100644
  	       /* Bingo!  */
  	       break;
  	   }, uint32_t net, int type)
-diff --git a/libc/po/.cvsignore b/libc/po/.cvsignore
+diff --git a/po/.cvsignore b/po/.cvsignore
 deleted file mode 100644
 index 37752e3..0000000
---- a/libc/po/.cvsignore
+--- a/po/.cvsignore
 +++ /dev/null
 @@ -1,2 +0,0 @@
 -*.mo
 -libc.pot.files
-diff --git a/libc/po/.gitignore b/libc/po/.gitignore
+diff --git a/po/.gitignore b/po/.gitignore
 new file mode 100644
 index 0000000..37752e3
 --- /dev/null
-+++ b/libc/po/.gitignore
++++ b/po/.gitignore
 @@ -0,0 +1,2 @@
 +*.mo
 +libc.pot.files
-diff --git a/libc/posix/.cvsignore b/libc/posix/.cvsignore
+diff --git a/posix/.cvsignore b/posix/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/posix/.cvsignore
+--- a/posix/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2533,10 +2533,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/posix/tst-cpucount.c b/libc/posix/tst-cpucount.c
+diff --git a/posix/tst-cpucount.c b/posix/tst-cpucount.c
 index fe3cded..b3691a1 100644
---- a/libc/posix/tst-cpucount.c
-+++ b/libc/posix/tst-cpucount.c
+--- a/posix/tst-cpucount.c
++++ b/posix/tst-cpucount.c
 @@ -1,5 +1,6 @@
  #include <sched.h>
  #include <stdio.h>
@@ -2553,10 +2553,10 @@ index fe3cded..b3691a1 100644
      {
        int n = CPU_COUNT (&c);
        if (n != cnt)
-diff --git a/libc/pwd/.cvsignore b/libc/pwd/.cvsignore
+diff --git a/pwd/.cvsignore b/pwd/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/pwd/.cvsignore
+--- a/pwd/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2565,10 +2565,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/resolv/.cvsignore b/libc/resolv/.cvsignore
+diff --git a/resolv/.cvsignore b/resolv/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/resolv/.cvsignore
+--- a/resolv/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2577,10 +2577,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/resolv/ns_date.c b/libc/resolv/ns_date.c
+diff --git a/resolv/ns_date.c b/resolv/ns_date.c
 index 3fee9b7..9801ac4 100644
---- a/libc/resolv/ns_date.c
-+++ b/libc/resolv/ns_date.c
+--- a/resolv/ns_date.c
++++ b/resolv/ns_date.c
 @@ -16,7 +16,7 @@
   */
  
@@ -2590,10 +2590,10 @@ index 3fee9b7..9801ac4 100644
  #endif
  
  /* Import. */
-diff --git a/libc/resolv/res_send.c b/libc/resolv/res_send.c
+diff --git a/resolv/res_send.c b/resolv/res_send.c
 index 25a854f..b7ec2ad 100644
---- a/libc/resolv/res_send.c
-+++ b/libc/resolv/res_send.c
+--- a/resolv/res_send.c
++++ b/resolv/res_send.c
 @@ -1008,7 +1008,7 @@ send_dg(res_state statp,
  		seconds /= statp->nscount;
  	if (seconds <= 0)
@@ -2627,10 +2627,10 @@ index 25a854f..b7ec2ad 100644
  			    if (hp->id == anhp->id)
  			      recvresp1 = 1;
  			    else
-diff --git a/libc/resource/.cvsignore b/libc/resource/.cvsignore
+diff --git a/resource/.cvsignore b/resource/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/resource/.cvsignore
+--- a/resource/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2639,10 +2639,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/setjmp/.cvsignore b/libc/setjmp/.cvsignore
+diff --git a/setjmp/.cvsignore b/setjmp/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/setjmp/.cvsignore
+--- a/setjmp/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2651,10 +2651,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/shlib-versions b/libc/shlib-versions
+diff --git a/shlib-versions b/shlib-versions
 index 65e772b..6873018 100644
---- a/libc/shlib-versions
-+++ b/libc/shlib-versions
+--- a/shlib-versions
++++ b/shlib-versions
 @@ -134,3 +134,8 @@ sparc64.*-.*-.*		libBrokenLocale=1	GLIBC_2.2
  
  # The asynchronous name lookup library.
@@ -2664,10 +2664,10 @@ index 65e772b..6873018 100644
 +# We don't really provide this one as the part of GLIBC,
 +# but we declare it here to produce LIBGCC_S_SO macro in gnu/lib-names.h.
 +.*-.*-.*                libgcc_s=1
-diff --git a/libc/signal/.cvsignore b/libc/signal/.cvsignore
+diff --git a/signal/.cvsignore b/signal/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/signal/.cvsignore
+--- a/signal/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2676,10 +2676,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/socket/.cvsignore b/libc/socket/.cvsignore
+diff --git a/socket/.cvsignore b/socket/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/socket/.cvsignore
+--- a/socket/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2688,10 +2688,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/stdio-common/.cvsignore b/libc/stdio-common/.cvsignore
+diff --git a/stdio-common/.cvsignore b/stdio-common/.cvsignore
 deleted file mode 100644
 index 602b74c..0000000
---- a/libc/stdio-common/.cvsignore
+--- a/stdio-common/.cvsignore
 +++ /dev/null
 @@ -1,8 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2702,10 +2702,10 @@ index 602b74c..0000000
 -
 -mpn-copy.mk
 -distinfo
-diff --git a/libc/stdlib/.cvsignore b/libc/stdlib/.cvsignore
+diff --git a/stdlib/.cvsignore b/stdlib/.cvsignore
 deleted file mode 100644
 index 602b74c..0000000
---- a/libc/stdlib/.cvsignore
+--- a/stdlib/.cvsignore
 +++ /dev/null
 @@ -1,8 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2716,10 +2716,10 @@ index 602b74c..0000000
 -
 -mpn-copy.mk
 -distinfo
-diff --git a/libc/stdlib/stdlib.h b/libc/stdlib/stdlib.h
+diff --git a/stdlib/stdlib.h b/stdlib/stdlib.h
 index 77bb860..5b084ef 100644
---- a/libc/stdlib/stdlib.h
-+++ b/libc/stdlib/stdlib.h
+--- a/stdlib/stdlib.h
++++ b/stdlib/stdlib.h
 @@ -48,9 +48,9 @@ __BEGIN_DECLS
     as well as POSIX.1 use of `int' for the status word.  */
  
@@ -2733,10 +2733,10 @@ index 77bb860..5b084ef 100644
  #  else
  #   define __WAIT_INT(status)	(*(int *) &(status))
  #  endif
-diff --git a/libc/string/.cvsignore b/libc/string/.cvsignore
+diff --git a/string/.cvsignore b/string/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/string/.cvsignore
+--- a/string/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2745,10 +2745,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/string/test-memchr.c b/libc/string/test-memchr.c
+diff --git a/string/test-memchr.c b/string/test-memchr.c
 index c233ead..cd9a01e 100644
---- a/libc/string/test-memchr.c
-+++ b/libc/string/test-memchr.c
+--- a/string/test-memchr.c
++++ b/string/test-memchr.c
 @@ -1,5 +1,5 @@
  /* Test and measure memchr functions.
 -   Copyright (C) 1999, 2002, 2003, 2005 Free Software Foundation, Inc.
@@ -2770,10 +2770,10 @@ index c233ead..cd9a01e 100644
        else
  	result = NULL;
  
-diff --git a/libc/sunrpc/.cvsignore b/libc/sunrpc/.cvsignore
+diff --git a/sunrpc/.cvsignore b/sunrpc/.cvsignore
 deleted file mode 100644
 index b2e79b5..0000000
---- a/libc/sunrpc/.cvsignore
+--- a/sunrpc/.cvsignore
 +++ /dev/null
 @@ -1,8 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -2784,17 +2784,17 @@ index b2e79b5..0000000
 -
 -rpcsrc-4.0
 -distinfo
-diff --git a/libc/sunrpc/.gitignore b/libc/sunrpc/.gitignore
+diff --git a/sunrpc/.gitignore b/sunrpc/.gitignore
 new file mode 100644
 index 0000000..fd6ab6b
 --- /dev/null
-+++ b/libc/sunrpc/.gitignore
++++ b/sunrpc/.gitignore
 @@ -0,0 +1 @@
 +rpcsrc-4.0
-diff --git a/libc/sunrpc/auth_des.c b/libc/sunrpc/auth_des.c
+diff --git a/sunrpc/auth_des.c b/sunrpc/auth_des.c
 index a76f027..acd8eb4 100644
---- a/libc/sunrpc/auth_des.c
-+++ b/libc/sunrpc/auth_des.c
+--- a/sunrpc/auth_des.c
++++ b/sunrpc/auth_des.c
 @@ -1,33 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -2854,10 +2854,10 @@ index a76f027..acd8eb4 100644
   */
  /*
   * auth_des.c, client-side implementation of DES authentication
-diff --git a/libc/sunrpc/auth_none.c b/libc/sunrpc/auth_none.c
+diff --git a/sunrpc/auth_none.c b/sunrpc/auth_none.c
 index f459520..b78f1e1 100644
---- a/libc/sunrpc/auth_none.c
-+++ b/libc/sunrpc/auth_none.c
+--- a/sunrpc/auth_none.c
++++ b/sunrpc/auth_none.c
 @@ -1,33 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -2917,10 +2917,10 @@ index f459520..b78f1e1 100644
   */
  /*
   * auth_none.c
-diff --git a/libc/sunrpc/auth_unix.c b/libc/sunrpc/auth_unix.c
+diff --git a/sunrpc/auth_unix.c b/sunrpc/auth_unix.c
 index 734eb08..3a371c7 100644
---- a/libc/sunrpc/auth_unix.c
-+++ b/libc/sunrpc/auth_unix.c
+--- a/sunrpc/auth_unix.c
++++ b/sunrpc/auth_unix.c
 @@ -1,33 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -2980,10 +2980,10 @@ index 734eb08..3a371c7 100644
   */
  /*
   * auth_unix.c, Implements UNIX style authentication parameters.
-diff --git a/libc/sunrpc/authdes_prot.c b/libc/sunrpc/authdes_prot.c
+diff --git a/sunrpc/authdes_prot.c b/sunrpc/authdes_prot.c
 index a889108..392e0ff 100644
---- a/libc/sunrpc/authdes_prot.c
-+++ b/libc/sunrpc/authdes_prot.c
+--- a/sunrpc/authdes_prot.c
++++ b/sunrpc/authdes_prot.c
 @@ -1,33 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -3043,10 +3043,10 @@ index a889108..392e0ff 100644
   */
  /*
   * authdes_prot.c, XDR routines for DES authentication
-diff --git a/libc/sunrpc/authuxprot.c b/libc/sunrpc/authuxprot.c
+diff --git a/sunrpc/authuxprot.c b/sunrpc/authuxprot.c
 index 60d3ddb..979cd68 100644
---- a/libc/sunrpc/authuxprot.c
-+++ b/libc/sunrpc/authuxprot.c
+--- a/sunrpc/authuxprot.c
++++ b/sunrpc/authuxprot.c
 @@ -1,33 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -3106,10 +3106,10 @@ index 60d3ddb..979cd68 100644
   */
  /*
   * authunix_prot.c
-diff --git a/libc/sunrpc/bindrsvprt.c b/libc/sunrpc/bindrsvprt.c
+diff --git a/sunrpc/bindrsvprt.c b/sunrpc/bindrsvprt.c
 index 003c3df..22aaecd 100644
---- a/libc/sunrpc/bindrsvprt.c
-+++ b/libc/sunrpc/bindrsvprt.c
+--- a/sunrpc/bindrsvprt.c
++++ b/sunrpc/bindrsvprt.c
 @@ -1,33 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -3169,10 +3169,10 @@ index 003c3df..22aaecd 100644
   */
  
  #include <errno.h>
-diff --git a/libc/sunrpc/clnt_gen.c b/libc/sunrpc/clnt_gen.c
+diff --git a/sunrpc/clnt_gen.c b/sunrpc/clnt_gen.c
 index c7468f4..cbb4dd7 100644
---- a/libc/sunrpc/clnt_gen.c
-+++ b/libc/sunrpc/clnt_gen.c
+--- a/sunrpc/clnt_gen.c
++++ b/sunrpc/clnt_gen.c
 @@ -1,33 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -3232,10 +3232,10 @@ index c7468f4..cbb4dd7 100644
   */
  
  #include <alloca.h>
-diff --git a/libc/sunrpc/clnt_perr.c b/libc/sunrpc/clnt_perr.c
+diff --git a/sunrpc/clnt_perr.c b/sunrpc/clnt_perr.c
 index c15796f..7c860a3 100644
---- a/libc/sunrpc/clnt_perr.c
-+++ b/libc/sunrpc/clnt_perr.c
+--- a/sunrpc/clnt_perr.c
++++ b/sunrpc/clnt_perr.c
 @@ -1,41 +1,34 @@
 -/* @(#)clnt_perror.c	2.1 88/07/29 4.0 RPCSRC */
 -/*
@@ -3304,10 +3304,10 @@ index c15796f..7c860a3 100644
   */
  #include <stdio.h>
  #include <string.h>
-diff --git a/libc/sunrpc/clnt_raw.c b/libc/sunrpc/clnt_raw.c
+diff --git a/sunrpc/clnt_raw.c b/sunrpc/clnt_raw.c
 index 74d90c8..d94032d 100644
---- a/libc/sunrpc/clnt_raw.c
-+++ b/libc/sunrpc/clnt_raw.c
+--- a/sunrpc/clnt_raw.c
++++ b/sunrpc/clnt_raw.c
 @@ -1,40 +1,34 @@
 -/* @(#)clnt_raw.c	2.2 88/08/01 4.0 RPCSRC */
  /*
@@ -3375,10 +3375,10 @@ index 74d90c8..d94032d 100644
   *
   * Memory based rpc for simple testing and timing.
   * Interface to create an rpc client and server in the same process.
-diff --git a/libc/sunrpc/clnt_simp.c b/libc/sunrpc/clnt_simp.c
+diff --git a/sunrpc/clnt_simp.c b/sunrpc/clnt_simp.c
 index 631ec8a..11cdf8d 100644
---- a/libc/sunrpc/clnt_simp.c
-+++ b/libc/sunrpc/clnt_simp.c
+--- a/sunrpc/clnt_simp.c
++++ b/sunrpc/clnt_simp.c
 @@ -1,41 +1,35 @@
 -/* @(#)clnt_simple.c	2.2 88/08/01 4.0 RPCSRC */
 -/*
@@ -3448,10 +3448,10 @@ index 631ec8a..11cdf8d 100644
   */
  
  #include <alloca.h>
-diff --git a/libc/sunrpc/clnt_tcp.c b/libc/sunrpc/clnt_tcp.c
+diff --git a/sunrpc/clnt_tcp.c b/sunrpc/clnt_tcp.c
 index 6825ca5..1552be8 100644
---- a/libc/sunrpc/clnt_tcp.c
-+++ b/libc/sunrpc/clnt_tcp.c
+--- a/sunrpc/clnt_tcp.c
++++ b/sunrpc/clnt_tcp.c
 @@ -1,40 +1,34 @@
 -/* @(#)clnt_tcp.c	2.2 88/08/01 4.0 RPCSRC */
  /*
@@ -3519,10 +3519,10 @@ index 6825ca5..1552be8 100644
   *
   * TCP based RPC supports 'batched calls'.
   * A sequence of calls may be batched-up in a send buffer.  The rpc call
-diff --git a/libc/sunrpc/clnt_udp.c b/libc/sunrpc/clnt_udp.c
+diff --git a/sunrpc/clnt_udp.c b/sunrpc/clnt_udp.c
 index 548c987..62ee3a1 100644
---- a/libc/sunrpc/clnt_udp.c
-+++ b/libc/sunrpc/clnt_udp.c
+--- a/sunrpc/clnt_udp.c
++++ b/sunrpc/clnt_udp.c
 @@ -1,40 +1,34 @@
 -/* @(#)clnt_udp.c	2.2 88/08/01 4.0 RPCSRC */
  /*
@@ -3590,10 +3590,10 @@ index 548c987..62ee3a1 100644
   */
  
  #include <stdio.h>
-diff --git a/libc/sunrpc/clnt_unix.c b/libc/sunrpc/clnt_unix.c
+diff --git a/sunrpc/clnt_unix.c b/sunrpc/clnt_unix.c
 index 4107c62..db3ea31 100644
---- a/libc/sunrpc/clnt_unix.c
-+++ b/libc/sunrpc/clnt_unix.c
+--- a/sunrpc/clnt_unix.c
++++ b/sunrpc/clnt_unix.c
 @@ -1,36 +1,34 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -3657,10 +3657,10 @@ index 4107c62..db3ea31 100644
   *
   * TCP based RPC supports 'batched calls'.
   * A sequence of calls may be batched-up in a send buffer.  The rpc call
-diff --git a/libc/sunrpc/des_crypt.c b/libc/sunrpc/des_crypt.c
+diff --git a/sunrpc/des_crypt.c b/sunrpc/des_crypt.c
 index 87389b4..b66589b 100644
---- a/libc/sunrpc/des_crypt.c
-+++ b/libc/sunrpc/des_crypt.c
+--- a/sunrpc/des_crypt.c
++++ b/sunrpc/des_crypt.c
 @@ -1,37 +1,33 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -3735,10 +3735,10 @@ index 87389b4..b66589b 100644
     * software
     */
    if (!_des_crypt (buf, len, desp))
-diff --git a/libc/sunrpc/des_soft.c b/libc/sunrpc/des_soft.c
+diff --git a/sunrpc/des_soft.c b/sunrpc/des_soft.c
 index 521d97c..4573d9d 100644
---- a/libc/sunrpc/des_soft.c
-+++ b/libc/sunrpc/des_soft.c
+--- a/sunrpc/des_soft.c
++++ b/sunrpc/des_soft.c
 @@ -2,32 +2,32 @@
  static char sccsid[] = "@(#)des_soft.c	2.2 88/08/10 4.0 RPCSRC; from 1.13 88/02/08 SMI";
  #endif
@@ -3796,10 +3796,10 @@ index 521d97c..4573d9d 100644
   */
  
  #include <rpc/des_crypt.h>
-diff --git a/libc/sunrpc/get_myaddr.c b/libc/sunrpc/get_myaddr.c
+diff --git a/sunrpc/get_myaddr.c b/sunrpc/get_myaddr.c
 index 4449c53..7f20005 100644
---- a/libc/sunrpc/get_myaddr.c
-+++ b/libc/sunrpc/get_myaddr.c
+--- a/sunrpc/get_myaddr.c
++++ b/sunrpc/get_myaddr.c
 @@ -1,41 +1,35 @@
 -/* @(#)get_myaddress.c 2.1 88/07/29 4.0 RPCSRC */
 -/*
@@ -3869,10 +3869,10 @@ index 4449c53..7f20005 100644
   */
  
  #include <rpc/types.h>
-diff --git a/libc/sunrpc/getrpcport.c b/libc/sunrpc/getrpcport.c
+diff --git a/sunrpc/getrpcport.c b/sunrpc/getrpcport.c
 index a8f1326..7786701 100644
---- a/libc/sunrpc/getrpcport.c
-+++ b/libc/sunrpc/getrpcport.c
+--- a/sunrpc/getrpcport.c
++++ b/sunrpc/getrpcport.c
 @@ -1,38 +1,32 @@
 -/* @(#)getrpcport.c	2.1 88/07/29 4.0 RPCSRC */
 -#if !defined(lint) && defined(SCCSIDS)
@@ -3937,10 +3937,10 @@ index a8f1326..7786701 100644
   */
  
  #include <alloca.h>
-diff --git a/libc/sunrpc/key_call.c b/libc/sunrpc/key_call.c
+diff --git a/sunrpc/key_call.c b/sunrpc/key_call.c
 index 319d801..3ad066a 100644
---- a/libc/sunrpc/key_call.c
-+++ b/libc/sunrpc/key_call.c
+--- a/sunrpc/key_call.c
++++ b/sunrpc/key_call.c
 @@ -1,33 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -4000,10 +4000,10 @@ index 319d801..3ad066a 100644
   */
  /*
   * The original source is from the RPCSRC 4.0 package from Sun Microsystems.
-diff --git a/libc/sunrpc/key_prot.c b/libc/sunrpc/key_prot.c
+diff --git a/sunrpc/key_prot.c b/sunrpc/key_prot.c
 index 63d2538..b2eb233 100644
---- a/libc/sunrpc/key_prot.c
-+++ b/libc/sunrpc/key_prot.c
+--- a/sunrpc/key_prot.c
++++ b/sunrpc/key_prot.c
 @@ -1,36 +1,32 @@
 -/*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -4066,10 +4066,10 @@ index 63d2538..b2eb233 100644
  
  #include "rpc/key_prot.h"
  
-diff --git a/libc/sunrpc/openchild.c b/libc/sunrpc/openchild.c
+diff --git a/sunrpc/openchild.c b/sunrpc/openchild.c
 index 29ddfa6..defd93a 100644
---- a/libc/sunrpc/openchild.c
-+++ b/libc/sunrpc/openchild.c
+--- a/sunrpc/openchild.c
++++ b/sunrpc/openchild.c
 @@ -1,34 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -4130,10 +4130,10 @@ index 29ddfa6..defd93a 100644
   */
  
  /*
-diff --git a/libc/sunrpc/pm_getmaps.c b/libc/sunrpc/pm_getmaps.c
+diff --git a/sunrpc/pm_getmaps.c b/sunrpc/pm_getmaps.c
 index b21e7ea..983b2ba 100644
---- a/libc/sunrpc/pm_getmaps.c
-+++ b/libc/sunrpc/pm_getmaps.c
+--- a/sunrpc/pm_getmaps.c
++++ b/sunrpc/pm_getmaps.c
 @@ -1,42 +1,36 @@
 -/* @(#)pmap_getmaps.c	2.2 88/08/01 4.0 RPCSRC */
 -/*
@@ -4204,10 +4204,10 @@ index b21e7ea..983b2ba 100644
   */
  
  #include <rpc/rpc.h>
-diff --git a/libc/sunrpc/pm_getport.c b/libc/sunrpc/pm_getport.c
+diff --git a/sunrpc/pm_getport.c b/sunrpc/pm_getport.c
 index 2d30984..e37f6e7 100644
---- a/libc/sunrpc/pm_getport.c
-+++ b/libc/sunrpc/pm_getport.c
+--- a/sunrpc/pm_getport.c
++++ b/sunrpc/pm_getport.c
 @@ -1,41 +1,35 @@
 -/* @(#)pmap_getport.c	2.2 88/08/01 4.0 RPCSRC */
 -/*
@@ -4277,10 +4277,10 @@ index 2d30984..e37f6e7 100644
   */
  
  #include <stdbool.h>
-diff --git a/libc/sunrpc/pmap_clnt.c b/libc/sunrpc/pmap_clnt.c
+diff --git a/sunrpc/pmap_clnt.c b/sunrpc/pmap_clnt.c
 index 3e42960..64a53b6 100644
---- a/libc/sunrpc/pmap_clnt.c
-+++ b/libc/sunrpc/pmap_clnt.c
+--- a/sunrpc/pmap_clnt.c
++++ b/sunrpc/pmap_clnt.c
 @@ -1,33 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -4340,10 +4340,10 @@ index 3e42960..64a53b6 100644
   */
  /*
   * pmap_clnt.c
-diff --git a/libc/sunrpc/pmap_prot.c b/libc/sunrpc/pmap_prot.c
+diff --git a/sunrpc/pmap_prot.c b/sunrpc/pmap_prot.c
 index 3db27a9..cc57456 100644
---- a/libc/sunrpc/pmap_prot.c
-+++ b/libc/sunrpc/pmap_prot.c
+--- a/sunrpc/pmap_prot.c
++++ b/sunrpc/pmap_prot.c
 @@ -1,41 +1,35 @@
 -/* @(#)pmap_prot.c	2.1 88/07/29 4.0 RPCSRC */
 -/*
@@ -4413,10 +4413,10 @@ index 3db27a9..cc57456 100644
   */
  
  #include <rpc/types.h>
-diff --git a/libc/sunrpc/pmap_prot2.c b/libc/sunrpc/pmap_prot2.c
+diff --git a/sunrpc/pmap_prot2.c b/sunrpc/pmap_prot2.c
 index 9dd4925..43e62e3 100644
---- a/libc/sunrpc/pmap_prot2.c
-+++ b/libc/sunrpc/pmap_prot2.c
+--- a/sunrpc/pmap_prot2.c
++++ b/sunrpc/pmap_prot2.c
 @@ -1,41 +1,35 @@
 -/* @(#)pmap_prot2.c	2.1 88/07/29 4.0 RPCSRC */
 -/*
@@ -4486,10 +4486,10 @@ index 9dd4925..43e62e3 100644
   */
  
  #include <rpc/types.h>
-diff --git a/libc/sunrpc/pmap_rmt.c b/libc/sunrpc/pmap_rmt.c
+diff --git a/sunrpc/pmap_rmt.c b/sunrpc/pmap_rmt.c
 index e068848..15a9591 100644
---- a/libc/sunrpc/pmap_rmt.c
-+++ b/libc/sunrpc/pmap_rmt.c
+--- a/sunrpc/pmap_rmt.c
++++ b/sunrpc/pmap_rmt.c
 @@ -1,42 +1,36 @@
 -/* @(#)pmap_rmt.c	2.2 88/08/01 4.0 RPCSRC */
 -/*
@@ -4560,10 +4560,10 @@ index e068848..15a9591 100644
   */
  
  #include <unistd.h>
-diff --git a/libc/sunrpc/rpc/auth.h b/libc/sunrpc/rpc/auth.h
+diff --git a/sunrpc/rpc/auth.h b/sunrpc/rpc/auth.h
 index 7c931d8..0c26639 100644
---- a/libc/sunrpc/rpc/auth.h
-+++ b/libc/sunrpc/rpc/auth.h
+--- a/sunrpc/rpc/auth.h
++++ b/sunrpc/rpc/auth.h
 @@ -1,37 +1,34 @@
 -/* @(#)auth.h	2.3 88/08/07 4.0 RPCSRC; from 1.17 88/02/08 SMI */
  /*
@@ -4628,10 +4628,10 @@ index 7c931d8..0c26639 100644
   *
   * The data structures are completely opaque to the client.  The client
   * is required to pass a AUTH * to routines that create rpc
-diff --git a/libc/sunrpc/rpc/auth_unix.h b/libc/sunrpc/rpc/auth_unix.h
+diff --git a/sunrpc/rpc/auth_unix.h b/sunrpc/rpc/auth_unix.h
 index 424661d..268c2b5 100644
---- a/libc/sunrpc/rpc/auth_unix.h
-+++ b/libc/sunrpc/rpc/auth_unix.h
+--- a/sunrpc/rpc/auth_unix.h
++++ b/sunrpc/rpc/auth_unix.h
 @@ -1,38 +1,34 @@
 -/* @(#)auth_unix.h	2.2 88/07/29 4.0 RPCSRC; from 1.8 88/02/08 SMI */
  /*
@@ -4697,10 +4697,10 @@ index 424661d..268c2b5 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpc/clnt.h b/libc/sunrpc/rpc/clnt.h
+diff --git a/sunrpc/rpc/clnt.h b/sunrpc/rpc/clnt.h
 index 265bbe2..5b03b86 100644
---- a/libc/sunrpc/rpc/clnt.h
-+++ b/libc/sunrpc/rpc/clnt.h
+--- a/sunrpc/rpc/clnt.h
++++ b/sunrpc/rpc/clnt.h
 @@ -1,37 +1,34 @@
 -/* @(#)clnt.h	2.1 88/07/29 4.0 RPCSRC; from 1.31 88/02/08 SMI*/
  /*
@@ -4765,10 +4765,10 @@ index 265bbe2..5b03b86 100644
   */
  
  #ifndef _RPC_CLNT_H
-diff --git a/libc/sunrpc/rpc/des_crypt.h b/libc/sunrpc/rpc/des_crypt.h
+diff --git a/sunrpc/rpc/des_crypt.h b/sunrpc/rpc/des_crypt.h
 index 6a65887..6e84398 100644
---- a/libc/sunrpc/rpc/des_crypt.h
-+++ b/libc/sunrpc/rpc/des_crypt.h
+--- a/sunrpc/rpc/des_crypt.h
++++ b/sunrpc/rpc/des_crypt.h
 @@ -3,34 +3,33 @@
   *
   * des_crypt.h, des library routine interface
@@ -4828,10 +4828,10 @@ index 6a65887..6e84398 100644
   */
  
  #ifndef __DES_CRYPT_H__
-diff --git a/libc/sunrpc/rpc/key_prot.h b/libc/sunrpc/rpc/key_prot.h
+diff --git a/sunrpc/rpc/key_prot.h b/sunrpc/rpc/key_prot.h
 index 3e2eb72..16f03ff 100644
---- a/libc/sunrpc/rpc/key_prot.h
-+++ b/libc/sunrpc/rpc/key_prot.h
+--- a/sunrpc/rpc/key_prot.h
++++ b/sunrpc/rpc/key_prot.h
 @@ -8,40 +8,37 @@
  
  #include <rpc/rpc.h>
@@ -5106,10 +5106,10 @@ index 3e2eb72..16f03ff 100644
 +#endif /* Old Style C */
  
  #endif /* !_KEY_PROT_H_RPCGEN */
-diff --git a/libc/sunrpc/rpc/netdb.h b/libc/sunrpc/rpc/netdb.h
+diff --git a/sunrpc/rpc/netdb.h b/sunrpc/rpc/netdb.h
 index 539d8c3..bcb0de2 100644
---- a/libc/sunrpc/rpc/netdb.h
-+++ b/libc/sunrpc/rpc/netdb.h
+--- a/sunrpc/rpc/netdb.h
++++ b/sunrpc/rpc/netdb.h
 @@ -1,31 +1,31 @@
  /* @(#)netdb.h	2.1 88/07/29 3.9 RPCSRC */
  /*
@@ -5166,10 +5166,10 @@ index 539d8c3..bcb0de2 100644
   */
  /*	@(#)rpc.h 1.8 87/07/24 SMI	*/
  
-diff --git a/libc/sunrpc/rpc/pmap_clnt.h b/libc/sunrpc/rpc/pmap_clnt.h
+diff --git a/sunrpc/rpc/pmap_clnt.h b/sunrpc/rpc/pmap_clnt.h
 index 997dddb..7564f99 100644
---- a/libc/sunrpc/rpc/pmap_clnt.h
-+++ b/libc/sunrpc/rpc/pmap_clnt.h
+--- a/sunrpc/rpc/pmap_clnt.h
++++ b/sunrpc/rpc/pmap_clnt.h
 @@ -1,38 +1,35 @@
 -/* @(#)pmap_clnt.h	2.1 88/07/29 4.0 RPCSRC; from 1.11 88/02/08 SMI */
 -/*
@@ -5236,10 +5236,10 @@ index 997dddb..7564f99 100644
   */
  
  #ifndef _RPC_PMAP_CLNT_H
-diff --git a/libc/sunrpc/rpc/pmap_prot.h b/libc/sunrpc/rpc/pmap_prot.h
+diff --git a/sunrpc/rpc/pmap_prot.h b/sunrpc/rpc/pmap_prot.h
 index cd64e36..39d6176 100644
---- a/libc/sunrpc/rpc/pmap_prot.h
-+++ b/libc/sunrpc/rpc/pmap_prot.h
+--- a/sunrpc/rpc/pmap_prot.h
++++ b/sunrpc/rpc/pmap_prot.h
 @@ -1,38 +1,35 @@
 -/* @(#)pmap_prot.h	2.1 88/07/29 4.0 RPCSRC; from 1.14 88/02/08 SMI */
 -/*
@@ -5306,10 +5306,10 @@ index cd64e36..39d6176 100644
   */
  
  #ifndef _RPC_PMAP_PROT_H
-diff --git a/libc/sunrpc/rpc/pmap_rmt.h b/libc/sunrpc/rpc/pmap_rmt.h
+diff --git a/sunrpc/rpc/pmap_rmt.h b/sunrpc/rpc/pmap_rmt.h
 index 7a38b5f..4ecb206 100644
---- a/libc/sunrpc/rpc/pmap_rmt.h
-+++ b/libc/sunrpc/rpc/pmap_rmt.h
+--- a/sunrpc/rpc/pmap_rmt.h
++++ b/sunrpc/rpc/pmap_rmt.h
 @@ -1,38 +1,35 @@
 -/* @(#)pmap_rmt.h	2.1 88/07/29 4.0 RPCSRC; from 1.2 88/02/08 SMI */
 -/*
@@ -5376,10 +5376,10 @@ index 7a38b5f..4ecb206 100644
   */
  
  #ifndef _RPC_PMAP_RMT_H
-diff --git a/libc/sunrpc/rpc/rpc.h b/libc/sunrpc/rpc/rpc.h
+diff --git a/sunrpc/rpc/rpc.h b/sunrpc/rpc/rpc.h
 index 38e4385..4c16c39 100644
---- a/libc/sunrpc/rpc/rpc.h
-+++ b/libc/sunrpc/rpc/rpc.h
+--- a/sunrpc/rpc/rpc.h
++++ b/sunrpc/rpc/rpc.h
 @@ -1,38 +1,35 @@
 -/* @(#)rpc.h	2.3 88/08/10 4.0 RPCSRC; from 1.9 88/02/08 SMI */
 -/*
@@ -5446,10 +5446,10 @@ index 38e4385..4c16c39 100644
   */
  
  #ifndef _RPC_RPC_H
-diff --git a/libc/sunrpc/rpc/rpc_des.h b/libc/sunrpc/rpc/rpc_des.h
+diff --git a/sunrpc/rpc/rpc_des.h b/sunrpc/rpc/rpc_des.h
 index 0f36d16..f70db03 100644
---- a/libc/sunrpc/rpc/rpc_des.h
-+++ b/libc/sunrpc/rpc/rpc_des.h
+--- a/sunrpc/rpc/rpc_des.h
++++ b/sunrpc/rpc/rpc_des.h
 @@ -1,35 +1,34 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -5513,10 +5513,10 @@ index 0f36d16..f70db03 100644
   */
  
  #ifndef _DES_H
-diff --git a/libc/sunrpc/rpc/rpc_msg.h b/libc/sunrpc/rpc/rpc_msg.h
+diff --git a/sunrpc/rpc/rpc_msg.h b/sunrpc/rpc/rpc_msg.h
 index 636d60e..292cf90 100644
---- a/libc/sunrpc/rpc/rpc_msg.h
-+++ b/libc/sunrpc/rpc/rpc_msg.h
+--- a/sunrpc/rpc/rpc_msg.h
++++ b/sunrpc/rpc/rpc_msg.h
 @@ -1,33 +1,36 @@
 -/* @(#)rpc_msg.h	2.1 88/07/29 4.0 RPCSRC */
  /*
@@ -5592,10 +5592,10 @@ index 636d60e..292cf90 100644
  #define RPC_MSG_VERSION		((u_long) 2)
  #define RPC_SERVICE_PORT	((u_short) 2048)
  
-diff --git a/libc/sunrpc/rpc/svc.h b/libc/sunrpc/rpc/svc.h
+diff --git a/sunrpc/rpc/svc.h b/sunrpc/rpc/svc.h
 index f29615d..e7b126c 100644
---- a/libc/sunrpc/rpc/svc.h
-+++ b/libc/sunrpc/rpc/svc.h
+--- a/sunrpc/rpc/svc.h
++++ b/sunrpc/rpc/svc.h
 @@ -1,36 +1,34 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -5659,10 +5659,10 @@ index f29615d..e7b126c 100644
   */
  
  #ifndef _RPC_SVC_H
-diff --git a/libc/sunrpc/rpc/svc_auth.h b/libc/sunrpc/rpc/svc_auth.h
+diff --git a/sunrpc/rpc/svc_auth.h b/sunrpc/rpc/svc_auth.h
 index 1c1a715..f72f4f1 100644
---- a/libc/sunrpc/rpc/svc_auth.h
-+++ b/libc/sunrpc/rpc/svc_auth.h
+--- a/sunrpc/rpc/svc_auth.h
++++ b/sunrpc/rpc/svc_auth.h
 @@ -1,38 +1,34 @@
 -/* @(#)svc_auth.h	2.1 88/07/29 4.0 RPCSRC */
  /*
@@ -5728,10 +5728,10 @@ index 1c1a715..f72f4f1 100644
   */
  
  #ifndef _RPC_SVC_AUTH_H
-diff --git a/libc/sunrpc/rpc/types.h b/libc/sunrpc/rpc/types.h
+diff --git a/sunrpc/rpc/types.h b/sunrpc/rpc/types.h
 index 871f3fd..5744e5a 100644
---- a/libc/sunrpc/rpc/types.h
-+++ b/libc/sunrpc/rpc/types.h
+--- a/sunrpc/rpc/types.h
++++ b/sunrpc/rpc/types.h
 @@ -1,30 +1,30 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -5787,10 +5787,10 @@ index 871f3fd..5744e5a 100644
   */
  /* fixincludes should not add extern "C" to this file */
  /*
-diff --git a/libc/sunrpc/rpc/xdr.h b/libc/sunrpc/rpc/xdr.h
+diff --git a/sunrpc/rpc/xdr.h b/sunrpc/rpc/xdr.h
 index 75bc302..f5ba7b3 100644
---- a/libc/sunrpc/rpc/xdr.h
-+++ b/libc/sunrpc/rpc/xdr.h
+--- a/sunrpc/rpc/xdr.h
++++ b/sunrpc/rpc/xdr.h
 @@ -1,36 +1,34 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -5854,10 +5854,10 @@ index 75bc302..f5ba7b3 100644
   */
  
  #ifndef _RPC_XDR_H
-diff --git a/libc/sunrpc/rpc_clntout.c b/libc/sunrpc/rpc_clntout.c
+diff --git a/sunrpc/rpc_clntout.c b/sunrpc/rpc_clntout.c
 index 08d9601..8c0f9cc 100644
---- a/libc/sunrpc/rpc_clntout.c
-+++ b/libc/sunrpc/rpc_clntout.c
+--- a/sunrpc/rpc_clntout.c
++++ b/sunrpc/rpc_clntout.c
 @@ -1,40 +1,33 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -5925,10 +5925,10 @@ index 08d9601..8c0f9cc 100644
   */
  #include <stdio.h>
  #include <string.h>
-diff --git a/libc/sunrpc/rpc_cmsg.c b/libc/sunrpc/rpc_cmsg.c
+diff --git a/sunrpc/rpc_cmsg.c b/sunrpc/rpc_cmsg.c
 index 9a7568b..0974903 100644
---- a/libc/sunrpc/rpc_cmsg.c
-+++ b/libc/sunrpc/rpc_cmsg.c
+--- a/sunrpc/rpc_cmsg.c
++++ b/sunrpc/rpc_cmsg.c
 @@ -1,41 +1,34 @@
 -/* @(#)rpc_callmsg.c	2.1 88/07/29 4.0 RPCSRC */
 -/*
@@ -5997,10 +5997,10 @@ index 9a7568b..0974903 100644
   */
  
  #include <string.h>
-diff --git a/libc/sunrpc/rpc_common.c b/libc/sunrpc/rpc_common.c
+diff --git a/sunrpc/rpc_common.c b/sunrpc/rpc_common.c
 index 3fb0bda..ba89953 100644
---- a/libc/sunrpc/rpc_common.c
-+++ b/libc/sunrpc/rpc_common.c
+--- a/sunrpc/rpc_common.c
++++ b/sunrpc/rpc_common.c
 @@ -1,30 +1,30 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -6056,10 +6056,10 @@ index 3fb0bda..ba89953 100644
   */
  #include <rpc/rpc.h>
  
-diff --git a/libc/sunrpc/rpc_cout.c b/libc/sunrpc/rpc_cout.c
+diff --git a/sunrpc/rpc_cout.c b/sunrpc/rpc_cout.c
 index 21056e8..e0e6535 100644
---- a/libc/sunrpc/rpc_cout.c
-+++ b/libc/sunrpc/rpc_cout.c
+--- a/sunrpc/rpc_cout.c
++++ b/sunrpc/rpc_cout.c
 @@ -1,35 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -6121,10 +6121,10 @@ index 21056e8..e0e6535 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpc_dtable.c b/libc/sunrpc/rpc_dtable.c
+diff --git a/sunrpc/rpc_dtable.c b/sunrpc/rpc_dtable.c
 index fbbb3c1..9aff675 100644
---- a/libc/sunrpc/rpc_dtable.c
-+++ b/libc/sunrpc/rpc_dtable.c
+--- a/sunrpc/rpc_dtable.c
++++ b/sunrpc/rpc_dtable.c
 @@ -1,35 +1,32 @@
  /* @(#)rpc_dtablesize.c	2.1 88/07/29 4.0 RPCSRC */
  /*
@@ -6185,10 +6185,10 @@ index fbbb3c1..9aff675 100644
  
  #include <unistd.h>
  #include <rpc/clnt.h>
-diff --git a/libc/sunrpc/rpc_hout.c b/libc/sunrpc/rpc_hout.c
+diff --git a/sunrpc/rpc_hout.c b/sunrpc/rpc_hout.c
 index 270d149..346e154 100644
---- a/libc/sunrpc/rpc_hout.c
-+++ b/libc/sunrpc/rpc_hout.c
+--- a/sunrpc/rpc_hout.c
++++ b/sunrpc/rpc_hout.c
 @@ -1,35 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -6250,10 +6250,10 @@ index 270d149..346e154 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpc_main.c b/libc/sunrpc/rpc_main.c
+diff --git a/sunrpc/rpc_main.c b/sunrpc/rpc_main.c
 index 08369bb..141fa8a 100644
---- a/libc/sunrpc/rpc_main.c
-+++ b/libc/sunrpc/rpc_main.c
+--- a/sunrpc/rpc_main.c
++++ b/sunrpc/rpc_main.c
 @@ -1,35 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -6315,10 +6315,10 @@ index 08369bb..141fa8a 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpc_parse.c b/libc/sunrpc/rpc_parse.c
+diff --git a/sunrpc/rpc_parse.c b/sunrpc/rpc_parse.c
 index f665387..56ec1a4 100644
---- a/libc/sunrpc/rpc_parse.c
-+++ b/libc/sunrpc/rpc_parse.c
+--- a/sunrpc/rpc_parse.c
++++ b/sunrpc/rpc_parse.c
 @@ -1,35 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -6380,10 +6380,10 @@ index f665387..56ec1a4 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpc_parse.h b/libc/sunrpc/rpc_parse.h
+diff --git a/sunrpc/rpc_parse.h b/sunrpc/rpc_parse.h
 index 8d48c85..815c780 100644
---- a/libc/sunrpc/rpc_parse.h
-+++ b/libc/sunrpc/rpc_parse.h
+--- a/sunrpc/rpc_parse.h
++++ b/sunrpc/rpc_parse.h
 @@ -1,36 +1,33 @@
 +/*      @(#)rpc_parse.h  1.3  90/08/29  (C) 1987 SMI   */
 +
@@ -6447,10 +6447,10 @@ index 8d48c85..815c780 100644
   * rpc_parse.h, Definitions for the RPCL parser
   */
  
-diff --git a/libc/sunrpc/rpc_prot.c b/libc/sunrpc/rpc_prot.c
+diff --git a/sunrpc/rpc_prot.c b/sunrpc/rpc_prot.c
 index 69b0b6c..d926083 100644
---- a/libc/sunrpc/rpc_prot.c
-+++ b/libc/sunrpc/rpc_prot.c
+--- a/sunrpc/rpc_prot.c
++++ b/sunrpc/rpc_prot.c
 @@ -1,40 +1,34 @@
 -/* @(#)rpc_prot.c	2.3 88/08/07 4.0 RPCSRC */
  /*
@@ -6518,10 +6518,10 @@ index 69b0b6c..d926083 100644
   *
   * This set of routines implements the rpc message definition,
   * its serializer and some common rpc utility routines.
-diff --git a/libc/sunrpc/rpc_sample.c b/libc/sunrpc/rpc_sample.c
+diff --git a/sunrpc/rpc_sample.c b/sunrpc/rpc_sample.c
 index 00b58d5..1f3bfd0 100644
---- a/libc/sunrpc/rpc_sample.c
-+++ b/libc/sunrpc/rpc_sample.c
+--- a/sunrpc/rpc_sample.c
++++ b/sunrpc/rpc_sample.c
 @@ -1,35 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -6583,10 +6583,10 @@ index 00b58d5..1f3bfd0 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpc_scan.c b/libc/sunrpc/rpc_scan.c
+diff --git a/sunrpc/rpc_scan.c b/sunrpc/rpc_scan.c
 index af90ef6..d4f518f 100644
---- a/libc/sunrpc/rpc_scan.c
-+++ b/libc/sunrpc/rpc_scan.c
+--- a/sunrpc/rpc_scan.c
++++ b/sunrpc/rpc_scan.c
 @@ -1,35 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -6648,10 +6648,10 @@ index af90ef6..d4f518f 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpc_scan.h b/libc/sunrpc/rpc_scan.h
+diff --git a/sunrpc/rpc_scan.h b/sunrpc/rpc_scan.h
 index 74d77b0..384f807 100644
---- a/libc/sunrpc/rpc_scan.h
-+++ b/libc/sunrpc/rpc_scan.h
+--- a/sunrpc/rpc_scan.h
++++ b/sunrpc/rpc_scan.h
 @@ -1,41 +1,38 @@
 +/*      @(#)rpc_scan.h  1.3  90/08/29  (C) 1987 SMI   */
 +
@@ -6745,10 +6745,10 @@ index 74d77b0..384f807 100644
  void expected3(tok_kind exp1, tok_kind exp2, tok_kind exp3)
       __attribute__ ((noreturn));
 -
-diff --git a/libc/sunrpc/rpc_svcout.c b/libc/sunrpc/rpc_svcout.c
+diff --git a/sunrpc/rpc_svcout.c b/sunrpc/rpc_svcout.c
 index 6774cc8..1887b75 100644
---- a/libc/sunrpc/rpc_svcout.c
-+++ b/libc/sunrpc/rpc_svcout.c
+--- a/sunrpc/rpc_svcout.c
++++ b/sunrpc/rpc_svcout.c
 @@ -1,35 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -6810,10 +6810,10 @@ index 6774cc8..1887b75 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpc_tblout.c b/libc/sunrpc/rpc_tblout.c
+diff --git a/sunrpc/rpc_tblout.c b/sunrpc/rpc_tblout.c
 index 8fd2b12..2d77c60 100644
---- a/libc/sunrpc/rpc_tblout.c
-+++ b/libc/sunrpc/rpc_tblout.c
+--- a/sunrpc/rpc_tblout.c
++++ b/sunrpc/rpc_tblout.c
 @@ -1,35 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -6875,10 +6875,10 @@ index 8fd2b12..2d77c60 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpc_util.c b/libc/sunrpc/rpc_util.c
+diff --git a/sunrpc/rpc_util.c b/sunrpc/rpc_util.c
 index b910401..6a6c0e4 100644
---- a/libc/sunrpc/rpc_util.c
-+++ b/libc/sunrpc/rpc_util.c
+--- a/sunrpc/rpc_util.c
++++ b/sunrpc/rpc_util.c
 @@ -1,35 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -6940,10 +6940,10 @@ index b910401..6a6c0e4 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpc_util.h b/libc/sunrpc/rpc_util.h
+diff --git a/sunrpc/rpc_util.h b/sunrpc/rpc_util.h
 index cb1ceb9..72f08eb 100644
---- a/libc/sunrpc/rpc_util.h
-+++ b/libc/sunrpc/rpc_util.h
+--- a/sunrpc/rpc_util.h
++++ b/sunrpc/rpc_util.h
 @@ -1,36 +1,33 @@
 +/*      @(#)rpc_util.h  1.5  90/08/29  (C) 1987 SMI   */
 +
@@ -7007,10 +7007,10 @@ index cb1ceb9..72f08eb 100644
   * rpc_util.h, Useful definitions for the RPC protocol compiler
   */
  
-diff --git a/libc/sunrpc/rpcinfo.c b/libc/sunrpc/rpcinfo.c
+diff --git a/sunrpc/rpcinfo.c b/sunrpc/rpcinfo.c
 index ca91489..aa315bf 100644
---- a/libc/sunrpc/rpcinfo.c
-+++ b/libc/sunrpc/rpcinfo.c
+--- a/sunrpc/rpcinfo.c
++++ b/sunrpc/rpcinfo.c
 @@ -1,11 +1,32 @@
 -
 -/* @(#)rpcinfo.c        2.2 88/08/11 4.0 RPCSRC */
@@ -7086,10 +7086,10 @@ index ca91489..aa315bf 100644
  #include <getopt.h>
  #include <string.h>
  #include <unistd.h>
-diff --git a/libc/sunrpc/rpcsvc/bootparam_prot.x b/libc/sunrpc/rpcsvc/bootparam_prot.x
+diff --git a/sunrpc/rpcsvc/bootparam_prot.x b/sunrpc/rpcsvc/bootparam_prot.x
 index 65bc0dc..f272d52 100644
---- a/libc/sunrpc/rpcsvc/bootparam_prot.x
-+++ b/libc/sunrpc/rpcsvc/bootparam_prot.x
+--- a/sunrpc/rpcsvc/bootparam_prot.x
++++ b/sunrpc/rpcsvc/bootparam_prot.x
 @@ -2,32 +2,32 @@
  /* @(#)bootparam_prot.x 1.2 87/06/24 Copyr 1987 Sun Micro */
  
@@ -7158,10 +7158,10 @@ index 65bc0dc..f272d52 100644
  struct bp_getfile_res {
  	bp_machine_name_t	server_name;
  	bp_address		server_address;
-diff --git a/libc/sunrpc/rpcsvc/key_prot.x b/libc/sunrpc/rpcsvc/key_prot.x
+diff --git a/sunrpc/rpcsvc/key_prot.x b/sunrpc/rpcsvc/key_prot.x
 index d9272cb..0350250 100644
---- a/libc/sunrpc/rpcsvc/key_prot.x
-+++ b/libc/sunrpc/rpcsvc/key_prot.x
+--- a/sunrpc/rpcsvc/key_prot.x
++++ b/sunrpc/rpcsvc/key_prot.x
 @@ -1,35 +1,34 @@
 -%/*
 -% * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -7383,10 +7383,10 @@ index d9272cb..0350250 100644
  } = 100029;
 -
 -
-diff --git a/libc/sunrpc/rpcsvc/klm_prot.x b/libc/sunrpc/rpcsvc/klm_prot.x
+diff --git a/sunrpc/rpcsvc/klm_prot.x b/sunrpc/rpcsvc/klm_prot.x
 index 5f3e12e..7b4c152 100644
---- a/libc/sunrpc/rpcsvc/klm_prot.x
-+++ b/libc/sunrpc/rpcsvc/klm_prot.x
+--- a/sunrpc/rpcsvc/klm_prot.x
++++ b/sunrpc/rpcsvc/klm_prot.x
 @@ -2,38 +2,36 @@
  /* @(#)klm_prot.x 1.7 87/07/08 Copyr 1987 Sun Micro */
  
@@ -7458,10 +7458,10 @@ index 5f3e12e..7b4c152 100644
  	} = 1;
  } = 100020;
 -
-diff --git a/libc/sunrpc/rpcsvc/mount.x b/libc/sunrpc/rpcsvc/mount.x
+diff --git a/sunrpc/rpcsvc/mount.x b/sunrpc/rpcsvc/mount.x
 index 310b4ca..da61c4e 100644
---- a/libc/sunrpc/rpcsvc/mount.x
-+++ b/libc/sunrpc/rpcsvc/mount.x
+--- a/sunrpc/rpcsvc/mount.x
++++ b/sunrpc/rpcsvc/mount.x
 @@ -2,32 +2,32 @@
  /* @(#)mount.x 1.2 87/09/18 Copyr 1987 Sun Micro */
  
@@ -7519,10 +7519,10 @@ index 310b4ca..da61c4e 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpcsvc/nfs_prot.x b/libc/sunrpc/rpcsvc/nfs_prot.x
+diff --git a/sunrpc/rpcsvc/nfs_prot.x b/sunrpc/rpcsvc/nfs_prot.x
 index 630dab2..2a68540 100644
---- a/libc/sunrpc/rpcsvc/nfs_prot.x
-+++ b/libc/sunrpc/rpcsvc/nfs_prot.x
+--- a/sunrpc/rpcsvc/nfs_prot.x
++++ b/sunrpc/rpcsvc/nfs_prot.x
 @@ -1,37 +1,35 @@
  /* @(#)nfs_prot.x	2.1 88/08/01 4.0 RPCSRC */
  
@@ -7587,10 +7587,10 @@ index 630dab2..2a68540 100644
   */
  const NFS_PORT          = 2049;
  const NFS_MAXDATA       = 8192;
-diff --git a/libc/sunrpc/rpcsvc/rex.x b/libc/sunrpc/rpcsvc/rex.x
+diff --git a/sunrpc/rpcsvc/rex.x b/sunrpc/rpcsvc/rex.x
 index 949d9f0..253b8a7 100644
---- a/libc/sunrpc/rpcsvc/rex.x
-+++ b/libc/sunrpc/rpcsvc/rex.x
+--- a/sunrpc/rpcsvc/rex.x
++++ b/sunrpc/rpcsvc/rex.x
 @@ -2,32 +2,32 @@
  /* @(#)rex.x 1.3 87/09/18 Copyr 1987 Sun Micro */
  
@@ -7648,10 +7648,10 @@ index 949d9f0..253b8a7 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpcsvc/rstat.x b/libc/sunrpc/rpcsvc/rstat.x
+diff --git a/sunrpc/rpcsvc/rstat.x b/sunrpc/rpcsvc/rstat.x
 index 6367c43..b2c6b6e 100644
---- a/libc/sunrpc/rpcsvc/rstat.x
-+++ b/libc/sunrpc/rpcsvc/rstat.x
+--- a/sunrpc/rpcsvc/rstat.x
++++ b/sunrpc/rpcsvc/rstat.x
 @@ -2,32 +2,32 @@
  /* @(#)rstat.x 1.2 87/09/18 Copyr 1987 Sun Micro */
  
@@ -7711,10 +7711,10 @@ index 6367c43..b2c6b6e 100644
   */
  
  /*
-diff --git a/libc/sunrpc/rpcsvc/rusers.x b/libc/sunrpc/rpcsvc/rusers.x
+diff --git a/sunrpc/rpcsvc/rusers.x b/sunrpc/rpcsvc/rusers.x
 index b72c293..bcf5fd2 100644
---- a/libc/sunrpc/rpcsvc/rusers.x
-+++ b/libc/sunrpc/rpcsvc/rusers.x
+--- a/sunrpc/rpcsvc/rusers.x
++++ b/sunrpc/rpcsvc/rusers.x
 @@ -1,32 +1,31 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -7772,10 +7772,10 @@ index b72c293..bcf5fd2 100644
  %/*
  % * Find out about remote users
  % */
-diff --git a/libc/sunrpc/rpcsvc/sm_inter.x b/libc/sunrpc/rpcsvc/sm_inter.x
+diff --git a/sunrpc/rpcsvc/sm_inter.x b/sunrpc/rpcsvc/sm_inter.x
 index 9cbb701..9c20383 100644
---- a/libc/sunrpc/rpcsvc/sm_inter.x
-+++ b/libc/sunrpc/rpcsvc/sm_inter.x
+--- a/sunrpc/rpcsvc/sm_inter.x
++++ b/sunrpc/rpcsvc/sm_inter.x
 @@ -1,39 +1,33 @@
 -/* @(#)sm_inter.x	2.2 88/08/01 4.0 RPCSRC */
 -/* @(#)sm_inter.x 1.7 87/06/24 Copyr 1987 Sun Micro */
@@ -7842,10 +7842,10 @@ index 9cbb701..9c20383 100644
   */
  
  
-diff --git a/libc/sunrpc/rpcsvc/spray.x b/libc/sunrpc/rpcsvc/spray.x
+diff --git a/sunrpc/rpcsvc/spray.x b/sunrpc/rpcsvc/spray.x
 index b242f0a..2830722 100644
---- a/libc/sunrpc/rpcsvc/spray.x
-+++ b/libc/sunrpc/rpcsvc/spray.x
+--- a/sunrpc/rpcsvc/spray.x
++++ b/sunrpc/rpcsvc/spray.x
 @@ -2,32 +2,32 @@
  /* @(#)spray.x 1.2 87/09/18 Copyr 1987 Sun Micro */
  
@@ -7923,10 +7923,10 @@ index b242f0a..2830722 100644
  		SPRAYPROC_GET(void) = 2;
  
  		/*
-diff --git a/libc/sunrpc/rpcsvc/yppasswd.x b/libc/sunrpc/rpcsvc/yppasswd.x
+diff --git a/sunrpc/rpcsvc/yppasswd.x b/sunrpc/rpcsvc/yppasswd.x
 index ad349ad..b8ff7c2 100644
---- a/libc/sunrpc/rpcsvc/yppasswd.x
-+++ b/libc/sunrpc/rpcsvc/yppasswd.x
+--- a/sunrpc/rpcsvc/yppasswd.x
++++ b/sunrpc/rpcsvc/yppasswd.x
 @@ -2,32 +2,32 @@
  /* @(#)yppasswd.x 1.1 87/04/13 Copyr 1987 Sun Micro */
  
@@ -8001,10 +8001,10 @@ index ad349ad..b8ff7c2 100644
  };
 -
 -
-diff --git a/libc/sunrpc/rtime.c b/libc/sunrpc/rtime.c
+diff --git a/sunrpc/rtime.c b/sunrpc/rtime.c
 index ff71a55..790bf4b 100644
---- a/libc/sunrpc/rtime.c
-+++ b/libc/sunrpc/rtime.c
+--- a/sunrpc/rtime.c
++++ b/sunrpc/rtime.c
 @@ -1,37 +1,32 @@
 -#if defined(LIBC_SCCS) && !defined(lint)
 -static char sccsid[] = "@(#)rtime.c	2.2 88/08/10 4.0 RPCSRC; from 1.8 88/02/08 SMI";
@@ -8068,10 +8068,10 @@ index ff71a55..790bf4b 100644
   */
  /*
   * rtime - get time from remote machine
-diff --git a/libc/sunrpc/svc.c b/libc/sunrpc/svc.c
+diff --git a/sunrpc/svc.c b/sunrpc/svc.c
 index 60f6fcd..d389a52 100644
---- a/libc/sunrpc/svc.c
-+++ b/libc/sunrpc/svc.c
+--- a/sunrpc/svc.c
++++ b/sunrpc/svc.c
 @@ -1,32 +1,4 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -8139,10 +8139,10 @@ index 60f6fcd..d389a52 100644
   */
  
  #include <errno.h>
-diff --git a/libc/sunrpc/svc_auth.c b/libc/sunrpc/svc_auth.c
+diff --git a/sunrpc/svc_auth.c b/sunrpc/svc_auth.c
 index 68ed4f1..11555c5 100644
---- a/libc/sunrpc/svc_auth.c
-+++ b/libc/sunrpc/svc_auth.c
+--- a/sunrpc/svc_auth.c
++++ b/sunrpc/svc_auth.c
 @@ -1,40 +1,34 @@
 -/* @(#)svc_auth.c       2.4 88/08/15 4.0 RPCSRC */
  /*
@@ -8210,10 +8210,10 @@ index 68ed4f1..11555c5 100644
   */
  
  #include <rpc/rpc.h>
-diff --git a/libc/sunrpc/svc_authux.c b/libc/sunrpc/svc_authux.c
+diff --git a/sunrpc/svc_authux.c b/sunrpc/svc_authux.c
 index 5b64c3d..477ff25 100644
---- a/libc/sunrpc/svc_authux.c
-+++ b/libc/sunrpc/svc_authux.c
+--- a/sunrpc/svc_authux.c
++++ b/sunrpc/svc_authux.c
 @@ -1,33 +1,4 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -8282,10 +8282,10 @@ index 5b64c3d..477ff25 100644
   */
  
  #include <stdio.h>
-diff --git a/libc/sunrpc/svc_raw.c b/libc/sunrpc/svc_raw.c
+diff --git a/sunrpc/svc_raw.c b/sunrpc/svc_raw.c
 index ff8fa7c..924135b 100644
---- a/libc/sunrpc/svc_raw.c
-+++ b/libc/sunrpc/svc_raw.c
+--- a/sunrpc/svc_raw.c
++++ b/sunrpc/svc_raw.c
 @@ -1,36 +1,3 @@
 -/* @(#)svc_raw.c	2.1 88/07/29 4.0 RPCSRC */
 -/*
@@ -8357,10 +8357,10 @@ index ff8fa7c..924135b 100644
   */
  
  #include <rpc/rpc.h>
-diff --git a/libc/sunrpc/svc_run.c b/libc/sunrpc/svc_run.c
+diff --git a/sunrpc/svc_run.c b/sunrpc/svc_run.c
 index f1f47fb..1bb8c87 100644
---- a/libc/sunrpc/svc_run.c
-+++ b/libc/sunrpc/svc_run.c
+--- a/sunrpc/svc_run.c
++++ b/sunrpc/svc_run.c
 @@ -1,32 +1,31 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -8418,10 +8418,10 @@ index f1f47fb..1bb8c87 100644
   * This is the rpc server side idle loop
   * Wait for input, call server program.
   */
-diff --git a/libc/sunrpc/svc_simple.c b/libc/sunrpc/svc_simple.c
+diff --git a/sunrpc/svc_simple.c b/sunrpc/svc_simple.c
 index 6c1c9c9..1d6f515 100644
---- a/libc/sunrpc/svc_simple.c
-+++ b/libc/sunrpc/svc_simple.c
+--- a/sunrpc/svc_simple.c
++++ b/sunrpc/svc_simple.c
 @@ -1,41 +1,35 @@
 -/* @(#)svc_simple.c	2.2 88/08/01 4.0 RPCSRC */
 -/*
@@ -8491,10 +8491,10 @@ index 6c1c9c9..1d6f515 100644
   */
  
  #include <stdio.h>
-diff --git a/libc/sunrpc/svc_tcp.c b/libc/sunrpc/svc_tcp.c
+diff --git a/sunrpc/svc_tcp.c b/sunrpc/svc_tcp.c
 index beeb106..2048fdf 100644
---- a/libc/sunrpc/svc_tcp.c
-+++ b/libc/sunrpc/svc_tcp.c
+--- a/sunrpc/svc_tcp.c
++++ b/sunrpc/svc_tcp.c
 @@ -1,40 +1,34 @@
 -/* @(#)svc_tcp.c	2.2 88/08/01 4.0 RPCSRC */
  /*
@@ -8562,10 +8562,10 @@ index beeb106..2048fdf 100644
   *
   * Actually implements two flavors of transporter -
   * a tcp rendezvouser (a listener and connection establisher)
-diff --git a/libc/sunrpc/svc_udp.c b/libc/sunrpc/svc_udp.c
+diff --git a/sunrpc/svc_udp.c b/sunrpc/svc_udp.c
 index 496d6d9..b9fccab 100644
---- a/libc/sunrpc/svc_udp.c
-+++ b/libc/sunrpc/svc_udp.c
+--- a/sunrpc/svc_udp.c
++++ b/sunrpc/svc_udp.c
 @@ -1,42 +1,36 @@
 -/* @(#)svc_udp.c	2.2 88/07/29 4.0 RPCSRC */
 -/*
@@ -8636,10 +8636,10 @@ index 496d6d9..b9fccab 100644
   */
  
  #include <stdio.h>
-diff --git a/libc/sunrpc/svc_unix.c b/libc/sunrpc/svc_unix.c
+diff --git a/sunrpc/svc_unix.c b/sunrpc/svc_unix.c
 index f103ed9..f22a23a 100644
---- a/libc/sunrpc/svc_unix.c
-+++ b/libc/sunrpc/svc_unix.c
+--- a/sunrpc/svc_unix.c
++++ b/sunrpc/svc_unix.c
 @@ -1,36 +1,34 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -8703,10 +8703,10 @@ index f103ed9..f22a23a 100644
   *
   * Actually implements two flavors of transporter -
   * a unix rendezvouser (a listener and connection establisher)
-diff --git a/libc/sunrpc/svcauth_des.c b/libc/sunrpc/svcauth_des.c
+diff --git a/sunrpc/svcauth_des.c b/sunrpc/svcauth_des.c
 index 933d001..573891e 100644
---- a/libc/sunrpc/svcauth_des.c
-+++ b/libc/sunrpc/svcauth_des.c
+--- a/sunrpc/svcauth_des.c
++++ b/sunrpc/svcauth_des.c
 @@ -1,35 +1,33 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -8768,10 +8768,10 @@ index 933d001..573891e 100644
   * svcauth_des.c, server-side des authentication
   *
   * We insure for the service the following:
-diff --git a/libc/sunrpc/xcrypt.c b/libc/sunrpc/xcrypt.c
+diff --git a/sunrpc/xcrypt.c b/sunrpc/xcrypt.c
 index ea8ff45..f430a1d 100644
---- a/libc/sunrpc/xcrypt.c
-+++ b/libc/sunrpc/xcrypt.c
+--- a/sunrpc/xcrypt.c
++++ b/sunrpc/xcrypt.c
 @@ -1,34 +1,32 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -8832,10 +8832,10 @@ index ea8ff45..f430a1d 100644
   */
  
  #if 0
-diff --git a/libc/sunrpc/xdr.c b/libc/sunrpc/xdr.c
+diff --git a/sunrpc/xdr.c b/sunrpc/xdr.c
 index 8a70d2e..c5e961f 100644
---- a/libc/sunrpc/xdr.c
-+++ b/libc/sunrpc/xdr.c
+--- a/sunrpc/xdr.c
++++ b/sunrpc/xdr.c
 @@ -1,40 +1,34 @@
 -/* @(#)xdr.c	2.1 88/07/29 4.0 RPCSRC */
  /*
@@ -8903,10 +8903,10 @@ index 8a70d2e..c5e961f 100644
   *
   * These are the "generic" xdr routines used to serialize and de-serialize
   * most common data items.  See xdr.h for more info on the interface to
-diff --git a/libc/sunrpc/xdr_array.c b/libc/sunrpc/xdr_array.c
+diff --git a/sunrpc/xdr_array.c b/sunrpc/xdr_array.c
 index e7c8925..02728b0 100644
---- a/libc/sunrpc/xdr_array.c
-+++ b/libc/sunrpc/xdr_array.c
+--- a/sunrpc/xdr_array.c
++++ b/sunrpc/xdr_array.c
 @@ -1,43 +1,37 @@
 -/* @(#)xdr_array.c	2.1 88/07/29 4.0 RPCSRC */
  /*
@@ -8979,10 +8979,10 @@ index e7c8925..02728b0 100644
   */
  
  #include <stdio.h>
-diff --git a/libc/sunrpc/xdr_float.c b/libc/sunrpc/xdr_float.c
+diff --git a/sunrpc/xdr_float.c b/sunrpc/xdr_float.c
 index 0a7d970..75dc70c 100644
---- a/libc/sunrpc/xdr_float.c
-+++ b/libc/sunrpc/xdr_float.c
+--- a/sunrpc/xdr_float.c
++++ b/sunrpc/xdr_float.c
 @@ -1,40 +1,34 @@
 -/* @(#)xdr_float.c	2.1 88/07/29 4.0 RPCSRC */
  /*
@@ -9050,10 +9050,10 @@ index 0a7d970..75dc70c 100644
   *
   * These are the "floating point" xdr routines used to (de)serialize
   * most common data items.  See xdr.h for more info on the interface to
-diff --git a/libc/sunrpc/xdr_mem.c b/libc/sunrpc/xdr_mem.c
+diff --git a/sunrpc/xdr_mem.c b/sunrpc/xdr_mem.c
 index 7b1261b..f9a0b14 100644
---- a/libc/sunrpc/xdr_mem.c
-+++ b/libc/sunrpc/xdr_mem.c
+--- a/sunrpc/xdr_mem.c
++++ b/sunrpc/xdr_mem.c
 @@ -1,41 +1,38 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -9122,10 +9122,10 @@ index 7b1261b..f9a0b14 100644
   */
  
  #include <string.h>
-diff --git a/libc/sunrpc/xdr_rec.c b/libc/sunrpc/xdr_rec.c
+diff --git a/sunrpc/xdr_rec.c b/sunrpc/xdr_rec.c
 index 6854034..a66462c 100644
---- a/libc/sunrpc/xdr_rec.c
-+++ b/libc/sunrpc/xdr_rec.c
+--- a/sunrpc/xdr_rec.c
++++ b/sunrpc/xdr_rec.c
 @@ -1,38 +1,36 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -9192,10 +9192,10 @@ index 6854034..a66462c 100644
   * These routines interface XDRSTREAMS to a tcp/ip connection.
   * There is a record marking layer between the xdr stream
   * and the tcp transport level.  A record is composed on one or more
-diff --git a/libc/sunrpc/xdr_ref.c b/libc/sunrpc/xdr_ref.c
+diff --git a/sunrpc/xdr_ref.c b/sunrpc/xdr_ref.c
 index 532804f..e2acb84 100644
---- a/libc/sunrpc/xdr_ref.c
-+++ b/libc/sunrpc/xdr_ref.c
+--- a/sunrpc/xdr_ref.c
++++ b/sunrpc/xdr_ref.c
 @@ -1,43 +1,37 @@
 -/* @(#)xdr_reference.c	2.1 88/07/29 4.0 RPCSRC */
  /*
@@ -9268,10 +9268,10 @@ index 532804f..e2acb84 100644
   */
  
  #include <stdio.h>
-diff --git a/libc/sunrpc/xdr_sizeof.c b/libc/sunrpc/xdr_sizeof.c
+diff --git a/sunrpc/xdr_sizeof.c b/sunrpc/xdr_sizeof.c
 index dc3e19e..d4bada3 100644
---- a/libc/sunrpc/xdr_sizeof.c
-+++ b/libc/sunrpc/xdr_sizeof.c
+--- a/sunrpc/xdr_sizeof.c
++++ b/sunrpc/xdr_sizeof.c
 @@ -1,35 +1,34 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -9334,10 +9334,10 @@ index dc3e19e..d4bada3 100644
   *
   * General purpose routine to see how much space something will use
   * when serialized using XDR.
-diff --git a/libc/sunrpc/xdr_stdio.c b/libc/sunrpc/xdr_stdio.c
+diff --git a/sunrpc/xdr_stdio.c b/sunrpc/xdr_stdio.c
 index e73c5a5..f58465a 100644
---- a/libc/sunrpc/xdr_stdio.c
-+++ b/libc/sunrpc/xdr_stdio.c
+--- a/sunrpc/xdr_stdio.c
++++ b/sunrpc/xdr_stdio.c
 @@ -1,36 +1,34 @@
  /*
 - * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -9401,10 +9401,10 @@ index e73c5a5..f58465a 100644
   *
   * This set of routines implements a XDR on a stdio stream.
   * XDR_ENCODE serializes onto the stream, XDR_DECODE de-serializes
-diff --git a/libc/sysdeps/generic/framestate.c b/libc/sysdeps/generic/framestate.c
+diff --git a/sysdeps/generic/framestate.c b/sysdeps/generic/framestate.c
 index a912a8c..15f31a1 100644
---- a/libc/sysdeps/generic/framestate.c
-+++ b/libc/sysdeps/generic/framestate.c
+--- a/sysdeps/generic/framestate.c
++++ b/sysdeps/generic/framestate.c
 @@ -20,6 +20,7 @@
  
  #include <dlfcn.h>
@@ -9422,10 +9422,10 @@ index a912a8c..15f31a1 100644
  
        if (handle == NULL
  	  || (frame_state_for
-diff --git a/libc/sysdeps/generic/pty-private.h b/libc/sysdeps/generic/pty-private.h
+diff --git a/sysdeps/generic/pty-private.h b/sysdeps/generic/pty-private.h
 index d6ec2ce..493f405 100644
---- a/libc/sysdeps/generic/pty-private.h
-+++ b/libc/sysdeps/generic/pty-private.h
+--- a/sysdeps/generic/pty-private.h
++++ b/sysdeps/generic/pty-private.h
 @@ -1,5 +1,5 @@
  /* Internal defenitions and declarations for pseudo terminal functions.
 -   Copyright (C) 1998, 1999 Free Software Foundation, Inc.
@@ -9443,10 +9443,10 @@ index d6ec2ce..493f405 100644
  };
  
  #endif /* pty-private.h  */
-diff --git a/libc/sysdeps/ia64/memchr.S b/libc/sysdeps/ia64/memchr.S
+diff --git a/sysdeps/ia64/memchr.S b/sysdeps/ia64/memchr.S
 index e9a7ba8..cd062b2 100644
---- a/libc/sysdeps/ia64/memchr.S
-+++ b/libc/sysdeps/ia64/memchr.S
+--- a/sysdeps/ia64/memchr.S
++++ b/sysdeps/ia64/memchr.S
 @@ -96,7 +96,8 @@ ENTRY(__memchr)
  	mov	pr.rot = 1 << 16 ;;
  .l2:
@@ -9478,10 +9478,10 @@ index e9a7ba8..cd062b2 100644
  END(__memchr)
  
  weak_alias (__memchr, memchr)
-diff --git a/libc/sysdeps/ieee754/ldbl-128/s_cosl.c b/libc/sysdeps/ieee754/ldbl-128/s_cosl.c
+diff --git a/sysdeps/ieee754/ldbl-128/s_cosl.c b/sysdeps/ieee754/ldbl-128/s_cosl.c
 index d1258b2..ef61c3a 100644
---- a/libc/sysdeps/ieee754/ldbl-128/s_cosl.c
-+++ b/libc/sysdeps/ieee754/ldbl-128/s_cosl.c
+--- a/sysdeps/ieee754/ldbl-128/s_cosl.c
++++ b/sysdeps/ieee754/ldbl-128/s_cosl.c
 @@ -44,6 +44,7 @@
   *	TRIG(x) returns trig(x) nearly rounded
   */
@@ -9506,10 +9506,10 @@ index d1258b2..ef61c3a 100644
  
      /* argument reduction needed */
  	else {
-diff --git a/libc/sysdeps/ieee754/ldbl-128/s_expm1l.c b/libc/sysdeps/ieee754/ldbl-128/s_expm1l.c
+diff --git a/sysdeps/ieee754/ldbl-128/s_expm1l.c b/sysdeps/ieee754/ldbl-128/s_expm1l.c
 index 78bbe65..a82489b 100644
---- a/libc/sysdeps/ieee754/ldbl-128/s_expm1l.c
-+++ b/libc/sysdeps/ieee754/ldbl-128/s_expm1l.c
+--- a/sysdeps/ieee754/ldbl-128/s_expm1l.c
++++ b/sysdeps/ieee754/ldbl-128/s_expm1l.c
 @@ -53,6 +53,7 @@
  
  
@@ -9530,10 +9530,10 @@ index 78bbe65..a82489b 100644
  
    /* Minimum value.  */
    if (x < minarg)
-diff --git a/libc/sysdeps/ieee754/ldbl-128/s_sinl.c b/libc/sysdeps/ieee754/ldbl-128/s_sinl.c
+diff --git a/sysdeps/ieee754/ldbl-128/s_sinl.c b/sysdeps/ieee754/ldbl-128/s_sinl.c
 index 446a75f..dc509e7 100644
---- a/libc/sysdeps/ieee754/ldbl-128/s_sinl.c
-+++ b/libc/sysdeps/ieee754/ldbl-128/s_sinl.c
+--- a/sysdeps/ieee754/ldbl-128/s_sinl.c
++++ b/sysdeps/ieee754/ldbl-128/s_sinl.c
 @@ -44,6 +44,7 @@
   *	TRIG(x) returns trig(x) nearly rounded
   */
@@ -9558,10 +9558,10 @@ index 446a75f..dc509e7 100644
  
      /* argument reduction needed */
  	else {
-diff --git a/libc/sysdeps/ieee754/ldbl-128/s_tanl.c b/libc/sysdeps/ieee754/ldbl-128/s_tanl.c
+diff --git a/sysdeps/ieee754/ldbl-128/s_tanl.c b/sysdeps/ieee754/ldbl-128/s_tanl.c
 index ea9d053..2349da6 100644
---- a/libc/sysdeps/ieee754/ldbl-128/s_tanl.c
-+++ b/libc/sysdeps/ieee754/ldbl-128/s_tanl.c
+--- a/sysdeps/ieee754/ldbl-128/s_tanl.c
++++ b/sysdeps/ieee754/ldbl-128/s_tanl.c
 @@ -44,6 +44,7 @@
   *	TRIG(x) returns trig(x) nearly rounded
   */
@@ -9586,10 +9586,10 @@ index ea9d053..2349da6 100644
  
      /* argument reduction needed */
  	else {
-diff --git a/libc/sysdeps/ieee754/ldbl-128ibm/s_cosl.c b/libc/sysdeps/ieee754/ldbl-128ibm/s_cosl.c
+diff --git a/sysdeps/ieee754/ldbl-128ibm/s_cosl.c b/sysdeps/ieee754/ldbl-128ibm/s_cosl.c
 index 59a8196..8470850 100644
---- a/libc/sysdeps/ieee754/ldbl-128ibm/s_cosl.c
-+++ b/libc/sysdeps/ieee754/ldbl-128ibm/s_cosl.c
+--- a/sysdeps/ieee754/ldbl-128ibm/s_cosl.c
++++ b/sysdeps/ieee754/ldbl-128ibm/s_cosl.c
 @@ -44,6 +44,7 @@
   *	TRIG(x) returns trig(x) nearly rounded
   */
@@ -9612,10 +9612,10 @@ index 59a8196..8470850 100644
      /* argument reduction needed */
  	else {
  	    n = __ieee754_rem_pio2l(x,y);
-diff --git a/libc/sysdeps/ieee754/ldbl-128ibm/s_expm1l.c b/libc/sysdeps/ieee754/ldbl-128ibm/s_expm1l.c
+diff --git a/sysdeps/ieee754/ldbl-128ibm/s_expm1l.c b/sysdeps/ieee754/ldbl-128ibm/s_expm1l.c
 index 7350065..f631edd 100644
---- a/libc/sysdeps/ieee754/ldbl-128ibm/s_expm1l.c
-+++ b/libc/sysdeps/ieee754/ldbl-128ibm/s_expm1l.c
+--- a/sysdeps/ieee754/ldbl-128ibm/s_expm1l.c
++++ b/sysdeps/ieee754/ldbl-128ibm/s_expm1l.c
 @@ -51,6 +51,7 @@
      License along with this library; if not, write to the Free Software
      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA */
@@ -9636,10 +9636,10 @@ index 7350065..f631edd 100644
  
    /* Minimum value.  */
    if (x < minarg)
-diff --git a/libc/sysdeps/ieee754/ldbl-128ibm/s_sinl.c b/libc/sysdeps/ieee754/ldbl-128ibm/s_sinl.c
+diff --git a/sysdeps/ieee754/ldbl-128ibm/s_sinl.c b/sysdeps/ieee754/ldbl-128ibm/s_sinl.c
 index 8cc592c..bd72225 100644
---- a/libc/sysdeps/ieee754/ldbl-128ibm/s_sinl.c
-+++ b/libc/sysdeps/ieee754/ldbl-128ibm/s_sinl.c
+--- a/sysdeps/ieee754/ldbl-128ibm/s_sinl.c
++++ b/sysdeps/ieee754/ldbl-128ibm/s_sinl.c
 @@ -44,6 +44,7 @@
   *	TRIG(x) returns trig(x) nearly rounded
   */
@@ -9662,10 +9662,10 @@ index 8cc592c..bd72225 100644
      /* argument reduction needed */
  	else {
  	    n = __ieee754_rem_pio2l(x,y);
-diff --git a/libc/sysdeps/ieee754/ldbl-128ibm/s_tanl.c b/libc/sysdeps/ieee754/ldbl-128ibm/s_tanl.c
+diff --git a/sysdeps/ieee754/ldbl-128ibm/s_tanl.c b/sysdeps/ieee754/ldbl-128ibm/s_tanl.c
 index ea5a7f0..913f38f 100644
---- a/libc/sysdeps/ieee754/ldbl-128ibm/s_tanl.c
-+++ b/libc/sysdeps/ieee754/ldbl-128ibm/s_tanl.c
+--- a/sysdeps/ieee754/ldbl-128ibm/s_tanl.c
++++ b/sysdeps/ieee754/ldbl-128ibm/s_tanl.c
 @@ -44,6 +44,7 @@
   *	TRIG(x) returns trig(x) nearly rounded
   */
@@ -9688,20 +9688,20 @@ index ea5a7f0..913f38f 100644
      /* argument reduction needed */
  	else {
  	    n = __ieee754_rem_pio2l(x,y);
-diff --git a/libc/sysdeps/mach/hurd/.cvsignore b/libc/sysdeps/mach/hurd/.cvsignore
+diff --git a/sysdeps/mach/hurd/.cvsignore b/sysdeps/mach/hurd/.cvsignore
 deleted file mode 100644
 index 1f69fd9..0000000
---- a/libc/sysdeps/mach/hurd/.cvsignore
+--- a/sysdeps/mach/hurd/.cvsignore
 +++ /dev/null
 @@ -1,4 +0,0 @@
 -*.gz *.Z *.tar *.tgz
 -=*
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
-diff --git a/libc/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrt.S b/libc/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrt.S
+diff --git a/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrt.S b/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrt.S
 index 6aef4e3..95a0b39 100644
---- a/libc/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrt.S
-+++ b/libc/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrt.S
+--- a/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrt.S
++++ b/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrt.S
 @@ -60,8 +60,8 @@ EALIGN (__sqrt, 5, 0)
  	fmr	fp12,fp2
  	stw	r0,20(r1)
@@ -9713,10 +9713,10 @@ index 6aef4e3..95a0b39 100644
  #ifdef SHARED
  # ifdef HAVE_ASM_PPC_REL16
  	bcl	20,31,.LCF1
-diff --git a/libc/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrtf.S b/libc/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrtf.S
+diff --git a/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrtf.S b/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrtf.S
 index e5b8b9d..c315551 100644
---- a/libc/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrtf.S
-+++ b/libc/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrtf.S
+--- a/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrtf.S
++++ b/sysdeps/powerpc/powerpc32/power4/fpu/w_sqrtf.S
 @@ -60,8 +60,8 @@ EALIGN (__sqrtf, 5, 0)
  	fmr	fp12,fp2
  	stw	r0,20(r1)
@@ -9728,10 +9728,10 @@ index e5b8b9d..c315551 100644
  #ifdef SHARED
  # ifdef HAVE_ASM_PPC_REL16
  	bcl	20,31,.LCF1
-diff --git a/libc/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrt.S b/libc/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrt.S
+diff --git a/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrt.S b/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrt.S
 index 925930b..105b591 100644
---- a/libc/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrt.S
-+++ b/libc/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrt.S
+--- a/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrt.S
++++ b/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrt.S
 @@ -60,8 +60,8 @@ EALIGN (__sqrt, 5, 0)
  	fmr	fp12,fp2
  	stw	r0,20(r1)
@@ -9743,10 +9743,10 @@ index 925930b..105b591 100644
  #ifdef SHARED
  # ifdef HAVE_ASM_PPC_REL16
  	bcl	20,31,.LCF1
-diff --git a/libc/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrtf.S b/libc/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrtf.S
+diff --git a/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrtf.S b/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrtf.S
 index 891e69c..14bc0a2 100644
---- a/libc/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrtf.S
-+++ b/libc/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrtf.S
+--- a/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrtf.S
++++ b/sysdeps/powerpc/powerpc32/power5/fpu/w_sqrtf.S
 @@ -60,8 +60,8 @@ EALIGN (__sqrtf, 5, 0)
  	fmr	fp12,fp2
  	stw	r0,20(r1)
@@ -9758,10 +9758,10 @@ index 891e69c..14bc0a2 100644
  #ifdef SHARED
  # ifdef HAVE_ASM_PPC_REL16
  	bcl	20,31,.LCF1
-diff --git a/libc/sysdeps/powerpc/powerpc32/power6/memcpy.S b/libc/sysdeps/powerpc/powerpc32/power6/memcpy.S
+diff --git a/sysdeps/powerpc/powerpc32/power6/memcpy.S b/sysdeps/powerpc/powerpc32/power6/memcpy.S
 index ba45fd2..156b0bd 100644
---- a/libc/sysdeps/powerpc/powerpc32/power6/memcpy.S
-+++ b/libc/sysdeps/powerpc/powerpc32/power6/memcpy.S
+--- a/sysdeps/powerpc/powerpc32/power6/memcpy.S
++++ b/sysdeps/powerpc/powerpc32/power6/memcpy.S
 @@ -1,5 +1,5 @@
  /* Optimized memcpy implementation for PowerPC32 on POWER6.
 -   Copyright (C) 2003, 2006 Free Software Foundation, Inc.
@@ -9977,10 +9977,10 @@ index ba45fd2..156b0bd 100644
      bf    31,L(wdus_0)
      lbz   8,2(4)
      stb   8,2(3)
-diff --git a/libc/sysdeps/powerpc/powerpc32/power6/memset.S b/libc/sysdeps/powerpc/powerpc32/power6/memset.S
+diff --git a/sysdeps/powerpc/powerpc32/power6/memset.S b/sysdeps/powerpc/powerpc32/power6/memset.S
 index 10fb7b9..cc65b7b 100644
---- a/libc/sysdeps/powerpc/powerpc32/power6/memset.S
-+++ b/libc/sysdeps/powerpc/powerpc32/power6/memset.S
+--- a/sysdeps/powerpc/powerpc32/power6/memset.S
++++ b/sysdeps/powerpc/powerpc32/power6/memset.S
 @@ -1,5 +1,5 @@
  /* Optimized 32-bit memset implementation for POWER6.
 -   Copyright (C) 1997,99, 2000,02,03,06,2007 Free Software Foundation, Inc.
@@ -10006,10 +10006,10 @@ index 10fb7b9..cc65b7b 100644
  	blt	cr6,L(cacheAligned128)
  	bgt	cr5,L(cacheAligned512)
  	cmplwi	cr6,rLEN,512
-diff --git a/libc/sysdeps/powerpc/sysdep.h b/libc/sysdeps/powerpc/sysdep.h
+diff --git a/sysdeps/powerpc/sysdep.h b/sysdeps/powerpc/sysdep.h
 index 43edeb7..f5c79c5 100644
---- a/libc/sysdeps/powerpc/sysdep.h
-+++ b/libc/sysdeps/powerpc/sysdep.h
+--- a/sysdeps/powerpc/sysdep.h
++++ b/sysdeps/powerpc/sysdep.h
 @@ -44,8 +44,8 @@
  #define PPC_FEATURE_PA6T		0x00000800 /* PA Semi 6T Core */
  #define PPC_FEATURE_HAS_DFP		0x00000400 /* Decimal FP Unit */
@@ -10021,20 +10021,20 @@ index 43edeb7..f5c79c5 100644
  #define PPC_FEATURE_970 (PPC_FEATURE_POWER4 + PPC_FEATURE_HAS_ALTIVEC)
  
  #ifdef __ASSEMBLER__
-diff --git a/libc/sysdeps/unix/common/.cvsignore b/libc/sysdeps/unix/common/.cvsignore
+diff --git a/sysdeps/unix/common/.cvsignore b/sysdeps/unix/common/.cvsignore
 deleted file mode 100644
 index 1f69fd9..0000000
---- a/libc/sysdeps/unix/common/.cvsignore
+--- a/sysdeps/unix/common/.cvsignore
 +++ /dev/null
 @@ -1,4 +0,0 @@
 -*.gz *.Z *.tar *.tgz
 -=*
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
-diff --git a/libc/sysdeps/unix/grantpt.c b/libc/sysdeps/unix/grantpt.c
+diff --git a/sysdeps/unix/grantpt.c b/sysdeps/unix/grantpt.c
 index bdedbac..3979784 100644
---- a/libc/sysdeps/unix/grantpt.c
-+++ b/libc/sysdeps/unix/grantpt.c
+--- a/sysdeps/unix/grantpt.c
++++ b/sysdeps/unix/grantpt.c
 @@ -185,7 +185,7 @@ grantpt (int fd)
        if (!WIFEXITED (w))
  	__set_errno (ENOEXEC);
@@ -10054,10 +10054,10 @@ index bdedbac..3979784 100644
  
  	  default:
  	    assert(! "getpt: internal error: invalid exit code from pt_chown");
-diff --git a/libc/sysdeps/unix/sysv/linux/Makefile b/libc/sysdeps/unix/sysv/linux/Makefile
+diff --git a/sysdeps/unix/sysv/linux/Makefile b/sysdeps/unix/sysv/linux/Makefile
 index 0c1dcee..a41624e 100644
---- a/libc/sysdeps/unix/sysv/linux/Makefile
-+++ b/libc/sysdeps/unix/sysv/linux/Makefile
+--- a/sysdeps/unix/sysv/linux/Makefile
++++ b/sysdeps/unix/sysv/linux/Makefile
 @@ -11,6 +11,10 @@ ifeq ($(subdir),malloc)
  CFLAGS-malloc.c += -DMORECORE_CLEARS=2
  endif
@@ -10069,10 +10069,10 @@ index 0c1dcee..a41624e 100644
  ifeq ($(subdir),misc)
  sysdep_routines += sysctl clone llseek umount umount2 readahead \
  		   setfsuid setfsgid makedev epoll_pwait signalfd \
-diff --git a/libc/sysdeps/unix/sysv/linux/accept4.c b/libc/sysdeps/unix/sysv/linux/accept4.c
+diff --git a/sysdeps/unix/sysv/linux/accept4.c b/sysdeps/unix/sysv/linux/accept4.c
 index 97f7b8c..9ef9f47 100644
---- a/libc/sysdeps/unix/sysv/linux/accept4.c
-+++ b/libc/sysdeps/unix/sysv/linux/accept4.c
+--- a/sysdeps/unix/sysv/linux/accept4.c
++++ b/sysdeps/unix/sysv/linux/accept4.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 2008 Free Software Foundation, Inc.
 +/* Copyright (C) 2008, 2009 Free Software Foundation, Inc.
@@ -10140,10 +10140,10 @@ index 97f7b8c..9ef9f47 100644
  #else
  int
  accept4 (int fd, __SOCKADDR_ARG addr, socklen_t *addr_len, int flags)
-diff --git a/libc/sysdeps/unix/sysv/linux/bits/socket.h b/libc/sysdeps/unix/sysv/linux/bits/socket.h
+diff --git a/sysdeps/unix/sysv/linux/bits/socket.h b/sysdeps/unix/sysv/linux/bits/socket.h
 index 88062e5..f23b338 100644
---- a/libc/sysdeps/unix/sysv/linux/bits/socket.h
-+++ b/libc/sysdeps/unix/sysv/linux/bits/socket.h
+--- a/sysdeps/unix/sysv/linux/bits/socket.h
++++ b/sysdeps/unix/sysv/linux/bits/socket.h
 @@ -1,5 +1,5 @@
  /* System-specific socket constants and types.  Linux version.
 -   Copyright (C) 1991, 1992, 1994-2001, 2004, 2006, 2007, 2008
@@ -10169,10 +10169,10 @@ index 88062e5..f23b338 100644
  #define	AF_MAX		PF_MAX
  
  /* Socket level values.  Others are defined in the appropriate headers.
-diff --git a/libc/sysdeps/unix/sysv/linux/eventfd.c b/libc/sysdeps/unix/sysv/linux/eventfd.c
+diff --git a/sysdeps/unix/sysv/linux/eventfd.c b/sysdeps/unix/sysv/linux/eventfd.c
 index 4cd5579..7f69ecd 100644
---- a/libc/sysdeps/unix/sysv/linux/eventfd.c
-+++ b/libc/sysdeps/unix/sysv/linux/eventfd.c
+--- a/sysdeps/unix/sysv/linux/eventfd.c
++++ b/sysdeps/unix/sysv/linux/eventfd.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 2007, 2008 Free Software Foundation, Inc.
 +/* Copyright (C) 2007, 2008, 2009 Free Software Foundation, Inc.
@@ -10211,10 +10211,10 @@ index 4cd5579..7f69ecd 100644
 +# error "__ASSUME_EVENTFD2 defined but not __NR_eventfd2"
  #endif
  }
-diff --git a/libc/sysdeps/unix/sysv/linux/grantpt.c b/libc/sysdeps/unix/sysv/linux/grantpt.c
+diff --git a/sysdeps/unix/sysv/linux/grantpt.c b/sysdeps/unix/sysv/linux/grantpt.c
 index b894b8b..c858f89 100644
---- a/libc/sysdeps/unix/sysv/linux/grantpt.c
-+++ b/libc/sysdeps/unix/sysv/linux/grantpt.c
+--- a/sysdeps/unix/sysv/linux/grantpt.c
++++ b/sysdeps/unix/sysv/linux/grantpt.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 1998, 1999, 2001, 2002 Free Software Foundation, Inc.
 +/* Copyright (C) 1998, 1999, 2001, 2002, 2009 Free Software Foundation, Inc.
@@ -10240,10 +10240,10 @@ index b894b8b..c858f89 100644
  
    return __unix_grantpt (fd);
  }
-diff --git a/libc/sysdeps/unix/sysv/linux/i386/accept4.S b/libc/sysdeps/unix/sysv/linux/i386/accept4.S
+diff --git a/sysdeps/unix/sysv/linux/i386/accept4.S b/sysdeps/unix/sysv/linux/i386/accept4.S
 index 087ccc4..1d05eff 100644
---- a/libc/sysdeps/unix/sysv/linux/i386/accept4.S
-+++ b/libc/sysdeps/unix/sysv/linux/i386/accept4.S
+--- a/sysdeps/unix/sysv/linux/i386/accept4.S
++++ b/sysdeps/unix/sysv/linux/i386/accept4.S
 @@ -24,10 +24,6 @@
  #define EINVAL	22
  #define ENOSYS	38
@@ -10255,18 +10255,18 @@ index 087ccc4..1d05eff 100644
  #ifdef __ASSUME_ACCEPT4
  # define errlabel SYSCALL_ERROR_LABEL
  #else
-diff --git a/libc/sysdeps/unix/sysv/linux/i386/internal_accept4.S b/libc/sysdeps/unix/sysv/linux/i386/internal_accept4.S
+diff --git a/sysdeps/unix/sysv/linux/i386/internal_accept4.S b/sysdeps/unix/sysv/linux/i386/internal_accept4.S
 new file mode 100644
 index 0000000..c3f1630
 --- /dev/null
-+++ b/libc/sysdeps/unix/sysv/linux/i386/internal_accept4.S
++++ b/sysdeps/unix/sysv/linux/i386/internal_accept4.S
 @@ -0,0 +1 @@
 +/* Not needed, accept4.S has everything.  */
-diff --git a/libc/sysdeps/unix/sysv/linux/internal_accept4.S b/libc/sysdeps/unix/sysv/linux/internal_accept4.S
+diff --git a/sysdeps/unix/sysv/linux/internal_accept4.S b/sysdeps/unix/sysv/linux/internal_accept4.S
 new file mode 100644
 index 0000000..ffc5536
 --- /dev/null
-+++ b/libc/sysdeps/unix/sysv/linux/internal_accept4.S
++++ b/sysdeps/unix/sysv/linux/internal_accept4.S
 @@ -0,0 +1,14 @@
 +#include <kernel-features.h>
 +#include <sys/syscall.h>
@@ -10282,10 +10282,10 @@ index 0000000..ffc5536
 +# define NO_WEAK_ALIAS
 +# include <socket.S>
 +#endif
-diff --git a/libc/sysdeps/unix/sysv/linux/kernel-features.h b/libc/sysdeps/unix/sysv/linux/kernel-features.h
+diff --git a/sysdeps/unix/sysv/linux/kernel-features.h b/sysdeps/unix/sysv/linux/kernel-features.h
 index 473360a..ff065ef 100644
---- a/libc/sysdeps/unix/sysv/linux/kernel-features.h
-+++ b/libc/sysdeps/unix/sysv/linux/kernel-features.h
+--- a/sysdeps/unix/sysv/linux/kernel-features.h
++++ b/sysdeps/unix/sysv/linux/kernel-features.h
 @@ -516,12 +516,14 @@
  # define __ASSUME_SOCK_CLOEXEC	1
  # define __ASSUME_IN_NONBLOCK	1
@@ -10302,10 +10302,10 @@ index 473360a..ff065ef 100644
  # define __ASSUME_ACCEPT4	1
  #endif
  
-diff --git a/libc/sysdeps/unix/sysv/linux/net/if_arp.h b/libc/sysdeps/unix/sysv/linux/net/if_arp.h
+diff --git a/sysdeps/unix/sysv/linux/net/if_arp.h b/sysdeps/unix/sysv/linux/net/if_arp.h
 index 9608652..97cb61f 100644
---- a/libc/sysdeps/unix/sysv/linux/net/if_arp.h
-+++ b/libc/sysdeps/unix/sysv/linux/net/if_arp.h
+--- a/sysdeps/unix/sysv/linux/net/if_arp.h
++++ b/sysdeps/unix/sysv/linux/net/if_arp.h
 @@ -1,5 +1,5 @@
  /* Definitions for Address Resolution Protocol.
 -   Copyright (C) 1997,1999,2001,2006 Free Software Foundation, Inc.
@@ -10322,10 +10322,10 @@ index 9608652..97cb61f 100644
  
  #define ARPHRD_VOID	  0xFFFF	/* Void type, nothing is known.  */
  #define ARPHRD_NONE	  0xFFFE	/* Zero header length.  */
-diff --git a/libc/sysdeps/unix/sysv/linux/signalfd.c b/libc/sysdeps/unix/sysv/linux/signalfd.c
+diff --git a/sysdeps/unix/sysv/linux/signalfd.c b/sysdeps/unix/sysv/linux/signalfd.c
 index 9898f29..c2d974a 100644
---- a/libc/sysdeps/unix/sysv/linux/signalfd.c
-+++ b/libc/sysdeps/unix/sysv/linux/signalfd.c
+--- a/sysdeps/unix/sysv/linux/signalfd.c
++++ b/sysdeps/unix/sysv/linux/signalfd.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 2007, 2008 Free Software Foundation, Inc.
 +/* Copyright (C) 2007, 2008, 2009 Free Software Foundation, Inc.
@@ -10364,10 +10364,10 @@ index 9898f29..c2d974a 100644
 +# error "__ASSUME_SIGNALFD4 defined but not __NR_signalfd4"
  #endif
  }
-diff --git a/libc/sysdeps/unix/sysv/linux/socketcall.h b/libc/sysdeps/unix/sysv/linux/socketcall.h
+diff --git a/sysdeps/unix/sysv/linux/socketcall.h b/sysdeps/unix/sysv/linux/socketcall.h
 index 24ec9ee..adf01b6 100644
---- a/libc/sysdeps/unix/sysv/linux/socketcall.h
-+++ b/libc/sysdeps/unix/sysv/linux/socketcall.h
+--- a/sysdeps/unix/sysv/linux/socketcall.h
++++ b/sysdeps/unix/sysv/linux/socketcall.h
 @@ -1,5 +1,5 @@
  /* ID for functions called via socketcall system call.
 -   Copyright (C) 1995, 1996, 2008 Free Software Foundation, Inc.
@@ -10383,10 +10383,10 @@ index 24ec9ee..adf01b6 100644
 +#define SOCKOP_accept4		18
  
  #endif /* sys/socketcall.h */
-diff --git a/libc/sysdeps/unix/sysv/linux/sparc/bits/socket.h b/libc/sysdeps/unix/sysv/linux/sparc/bits/socket.h
+diff --git a/sysdeps/unix/sysv/linux/sparc/bits/socket.h b/sysdeps/unix/sysv/linux/sparc/bits/socket.h
 index d43a3cd..a148072 100644
---- a/libc/sysdeps/unix/sysv/linux/sparc/bits/socket.h
-+++ b/libc/sysdeps/unix/sysv/linux/sparc/bits/socket.h
+--- a/sysdeps/unix/sysv/linux/sparc/bits/socket.h
++++ b/sysdeps/unix/sysv/linux/sparc/bits/socket.h
 @@ -1,5 +1,5 @@
  /* System-specific socket constants and types.  Linux/SPARC version.
 -   Copyright (C) 1991, 1992, 1994-2001, 2004, 2006, 2007, 2008
@@ -10438,10 +10438,10 @@ index d43a3cd..a148072 100644
  #define	AF_MAX		PF_MAX
  
  /* Socket level values.  Others are defined in the appropriate headers.
-diff --git a/libc/sysdeps/unix/sysv/linux/sys/epoll.h b/libc/sysdeps/unix/sysv/linux/sys/epoll.h
+diff --git a/sysdeps/unix/sysv/linux/sys/epoll.h b/sysdeps/unix/sysv/linux/sys/epoll.h
 index 12de0bc..ca1d3d0 100644
---- a/libc/sysdeps/unix/sysv/linux/sys/epoll.h
-+++ b/libc/sysdeps/unix/sysv/linux/sys/epoll.h
+--- a/sysdeps/unix/sysv/linux/sys/epoll.h
++++ b/sysdeps/unix/sysv/linux/sys/epoll.h
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 2002-2006, 2007, 2008 Free Software Foundation, Inc.
 +/* Copyright (C) 2002-2006, 2007, 2008, 2009 Free Software Foundation, Inc.
@@ -10457,10 +10457,10 @@ index 12de0bc..ca1d3d0 100644
  enum
    {
      EPOLL_CLOEXEC = 02000000,
-diff --git a/libc/sysdeps/x86_64/dl-trampoline.S b/libc/sysdeps/x86_64/dl-trampoline.S
+diff --git a/sysdeps/x86_64/dl-trampoline.S b/sysdeps/x86_64/dl-trampoline.S
 index d8d9bc1..33e6115 100644
---- a/libc/sysdeps/x86_64/dl-trampoline.S
-+++ b/libc/sysdeps/x86_64/dl-trampoline.S
+--- a/sysdeps/x86_64/dl-trampoline.S
++++ b/sysdeps/x86_64/dl-trampoline.S
 @@ -107,7 +107,8 @@ _dl_runtime_profile:
  	movaps %xmm3, 112(%rsp)
  	movaps %xmm4, 128(%rsp)
@@ -10481,10 +10481,10 @@ index d8d9bc1..33e6115 100644
  
  	movq 16(%rbx), %r10	# Anything in framesize?
  	testq %r10, %r10
-diff --git a/libc/sysdeps/x86_64/memchr.S b/libc/sysdeps/x86_64/memchr.S
+diff --git a/sysdeps/x86_64/memchr.S b/sysdeps/x86_64/memchr.S
 index 54b7af5..6082aa7 100644
---- a/libc/sysdeps/x86_64/memchr.S
-+++ b/libc/sysdeps/x86_64/memchr.S
+--- a/sysdeps/x86_64/memchr.S
++++ b/sysdeps/x86_64/memchr.S
 @@ -41,7 +41,7 @@ ENTRY (memchr)
  	movl	$16, %esi
  	jnz	1f
@@ -10512,10 +10512,10 @@ index 54b7af5..6082aa7 100644
  	ret
  END (memchr)
  
-diff --git a/libc/sysvipc/.cvsignore b/libc/sysvipc/.cvsignore
+diff --git a/sysvipc/.cvsignore b/sysvipc/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/sysvipc/.cvsignore
+--- a/sysvipc/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -10524,10 +10524,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/termios/.cvsignore b/libc/termios/.cvsignore
+diff --git a/termios/.cvsignore b/termios/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/termios/.cvsignore
+--- a/termios/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -10536,10 +10536,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/time/.cvsignore b/libc/time/.cvsignore
+diff --git a/time/.cvsignore b/time/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/time/.cvsignore
+--- a/time/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -10548,10 +10548,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/time/tzfile.c b/libc/time/tzfile.c
+diff --git a/time/tzfile.c b/time/tzfile.c
 index 9700223..f4cba46 100644
---- a/libc/time/tzfile.c
-+++ b/libc/time/tzfile.c
+--- a/time/tzfile.c
++++ b/time/tzfile.c
 @@ -1,4 +1,4 @@
 -/* Copyright (C) 1991-1993,1995-2001,2003,2004,2006, 2007
 +/* Copyright (C) 1991-1993,1995-2001,2003,2004,2006,2007,2009
@@ -10597,10 +10597,10 @@ index 9700223..f4cba46 100644
    *leap_correct = 0L;
    *leap_hit = 0;
  
-diff --git a/libc/wcsmbs/.cvsignore b/libc/wcsmbs/.cvsignore
+diff --git a/wcsmbs/.cvsignore b/wcsmbs/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/wcsmbs/.cvsignore
+--- a/wcsmbs/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -10609,10 +10609,10 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/wctype/.cvsignore b/libc/wctype/.cvsignore
+diff --git a/wctype/.cvsignore b/wctype/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
---- a/libc/wctype/.cvsignore
+--- a/wctype/.cvsignore
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -*.d *.o *.so *.po *.go stamp.* *.stamp *.ustamp *.udeps
@@ -10621,14 +10621,14 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/ports/.cvsignore b/libc/ports/.cvsignore
+diff --git a/ports/.cvsignore b/ports/.cvsignore
 deleted file mode 100644
 index 613f66d..0000000
 --- a/ports/.cvsignore
 +++ /dev/null
 @@ -1 +0,0 @@
 -glibc-ports-*.tar* glibc-port-*.tar*
-diff --git a/libc/ports/ChangeLog.arm b/libc/ports/ChangeLog.arm
+diff --git a/ports/ChangeLog.arm b/ports/ChangeLog.arm
 index c9f44f4..9d4306b 100644
 --- a/ports/ChangeLog.arm
 +++ b/ports/ChangeLog.arm
@@ -10646,7 +10646,7 @@ index c9f44f4..9d4306b 100644
  2009-04-25  Aurelien Jarno  <aurelien@aurel32.net>
  
  	* sysdeps/arm/eabi/fpu_control.h: If soft-float, don't use
-diff --git a/libc/ports/ChangeLog.eglibc b/libc/ports/ChangeLog.eglibc
+diff --git a/ports/ChangeLog.eglibc b/ports/ChangeLog.eglibc
 index 1567517..fdee839 100644
 --- a/ports/ChangeLog.eglibc
 +++ b/ports/ChangeLog.eglibc
@@ -10663,7 +10663,7 @@ index 1567517..fdee839 100644
  2009-05-16  Joseph Myers  <joseph@codesourcery.com>
  
  	Backport:
-diff --git a/libc/ports/ChangeLog.mips b/libc/ports/ChangeLog.mips
+diff --git a/ports/ChangeLog.mips b/ports/ChangeLog.mips
 index 5887530..4c4c373 100644
 --- a/ports/ChangeLog.mips
 +++ b/ports/ChangeLog.mips
@@ -10691,7 +10691,7 @@ index 5887530..4c4c373 100644
  2009-04-18  Maciej W. Rozycki  <macro@codesourcery.com>
  
  	* sysdeps/unix/sysv/linux/mips/getcontext.S: New file.
-diff --git a/libc/ports/bare/.cvsignore b/libc/ports/bare/.cvsignore
+diff --git a/ports/bare/.cvsignore b/ports/bare/.cvsignore
 deleted file mode 100644
 index 3fc9f4c..0000000
 --- a/ports/bare/.cvsignore
@@ -10703,7 +10703,7 @@ index 3fc9f4c..0000000
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
 -distinfo
-diff --git a/libc/ports/sysdeps/hppa/shlib-versions b/libc/ports/sysdeps/hppa/shlib-versions
+diff --git a/ports/sysdeps/hppa/shlib-versions b/ports/sysdeps/hppa/shlib-versions
 index 5a1a865..210b0ab 100644
 --- a/ports/sysdeps/hppa/shlib-versions
 +++ b/ports/sysdeps/hppa/shlib-versions
@@ -10713,14 +10713,14 @@ index 5a1a865..210b0ab 100644
  hppa-.*-.*		libBrokenLocale=1	GLIBC_2.2
 +
 +hppa-.*-.*              libgcc_s=4
-diff --git a/libc/ports/sysdeps/m68k/shlib-versions b/libc/ports/sysdeps/m68k/shlib-versions
+diff --git a/ports/sysdeps/m68k/shlib-versions b/ports/sysdeps/m68k/shlib-versions
 new file mode 100644
 index 0000000..2bb80d8
 --- /dev/null
 +++ b/ports/sysdeps/m68k/shlib-versions
 @@ -0,0 +1 @@
 +m68k-.*-.*              libgcc_s=2
-diff --git a/libc/ports/sysdeps/mips/.cvsignore b/libc/ports/sysdeps/mips/.cvsignore
+diff --git a/ports/sysdeps/mips/.cvsignore b/ports/sysdeps/mips/.cvsignore
 deleted file mode 100644
 index 1f69fd9..0000000
 --- a/ports/sysdeps/mips/.cvsignore
@@ -10730,7 +10730,7 @@ index 1f69fd9..0000000
 -=*
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
-diff --git a/libc/ports/sysdeps/unix/bsd/sun/sunos4/.cvsignore b/libc/ports/sysdeps/unix/bsd/sun/sunos4/.cvsignore
+diff --git a/ports/sysdeps/unix/bsd/sun/sunos4/.cvsignore b/ports/sysdeps/unix/bsd/sun/sunos4/.cvsignore
 deleted file mode 100644
 index 1f69fd9..0000000
 --- a/ports/sysdeps/unix/bsd/sun/sunos4/.cvsignore
@@ -10740,7 +10740,7 @@ index 1f69fd9..0000000
 -=*
 -TODO COPYING* AUTHORS copyr-* copying.*
 -glibc-*
-diff --git a/libc/ports/sysdeps/unix/sysv/linux/arm/kernel-features.h b/libc/ports/sysdeps/unix/sysv/linux/arm/kernel-features.h
+diff --git a/ports/sysdeps/unix/sysv/linux/arm/kernel-features.h b/ports/sysdeps/unix/sysv/linux/arm/kernel-features.h
 index ea439d5..1b0ab63 100644
 --- a/ports/sysdeps/unix/sysv/linux/arm/kernel-features.h
 +++ b/ports/sysdeps/unix/sysv/linux/arm/kernel-features.h
@@ -10757,7 +10757,7 @@ index ea439d5..1b0ab63 100644
  #include_next <kernel-features.h>
  
  /* These syscalls are not implemented yet for ARM.  */
-diff --git a/libc/ports/sysdeps/unix/sysv/linux/mips/bits/socket.h b/libc/ports/sysdeps/unix/sysv/linux/mips/bits/socket.h
+diff --git a/ports/sysdeps/unix/sysv/linux/mips/bits/socket.h b/ports/sysdeps/unix/sysv/linux/mips/bits/socket.h
 index 60db515..58a0409 100644
 --- a/ports/sysdeps/unix/sysv/linux/mips/bits/socket.h
 +++ b/ports/sysdeps/unix/sysv/linux/mips/bits/socket.h
@@ -10788,7 +10788,7 @@ index 60db515..58a0409 100644
  #define	AF_MAX		PF_MAX
  
  /* Socket level values.  Others are defined in the appropriate headers.
-diff --git a/libc/ports/sysdeps/unix/sysv/linux/mips/kernel-features.h b/libc/ports/sysdeps/unix/sysv/linux/mips/kernel-features.h
+diff --git a/ports/sysdeps/unix/sysv/linux/mips/kernel-features.h b/ports/sysdeps/unix/sysv/linux/mips/kernel-features.h
 index f479b60..6fe9b08 100644
 --- a/ports/sysdeps/unix/sysv/linux/mips/kernel-features.h
 +++ b/ports/sysdeps/unix/sysv/linux/mips/kernel-features.h
@@ -10803,7 +10803,7 @@ index f479b60..6fe9b08 100644
 +#endif
 +
  #include_next <kernel-features.h>
-diff --git a/libc/ports/sysdeps/unix/sysv/linux/mips/mips32/accept4.c b/libc/ports/sysdeps/unix/sysv/linux/mips/mips32/accept4.c
+diff --git a/ports/sysdeps/unix/sysv/linux/mips/mips32/accept4.c b/ports/sysdeps/unix/sysv/linux/mips/mips32/accept4.c
 new file mode 100644
 index 0000000..98a41f9
 --- /dev/null
@@ -10841,7 +10841,7 @@ index 0000000..98a41f9
 +#undef __NR_socketcall
 +
 +#include <sysdeps/unix/sysv/linux/accept4.c>
-diff --git a/libc/ports/sysdeps/unix/sysv/linux/mips/mips32/internal_accept4.S b/libc/ports/sysdeps/unix/sysv/linux/mips/mips32/internal_accept4.S
+diff --git a/ports/sysdeps/unix/sysv/linux/mips/mips32/internal_accept4.S b/ports/sysdeps/unix/sysv/linux/mips/mips32/internal_accept4.S
 new file mode 100644
 index 0000000..30434d7
 --- /dev/null

@@ -53,6 +53,12 @@ The makefile target "headers_check" presumably makes sure that
 the public header files are OK.  We haven't really looked at it,
 though.  If you know what it really does, please tell us.
 
+Because the install_headers target deletes the entire target
+directory before it does the installation, and we will sometimes
+have header files there that we want to retain (such as from the
+binutils build), we install the headers to a temporary location
+and copy them to the real target location from there.
+
 configure-commands:
  - make mrproper
 
@@ -62,14 +68,17 @@ make-commands:
 test-commands:
 
 install-commands:
- - make PARAM[KERNEL_ARCH] INSTALL_HDR_PATH=PARAM[SYSROOT]/usr headers_install
+ - make PARAM[KERNEL_ARCH] INSTALL_HDR_PATH=_dest headers_install
+ - install -dv PARAM[SYSROOT]/usr/include 
+ - cp -rv _dest/include/* PARAM[SYSROOT]/usr/include
+ - rm -rf _dest
 
 
 phase: temporary tool headers
 
 The kernel headers are needed in the temporary tools area just as
 they are needed for the cross-toolchain build:  they will be used
-by the glibc as it is built in the tools directory.
+by the libc as it is built in the tools directory.
 
 configure-commands:
  - make mrproper
@@ -80,4 +89,7 @@ make-commands:
 test-commands:
 
 install-commands:
- - make PARAM[KERNEL_ARCH] headers_install INSTALL_HDR_PATH=PARAM[TMPTOOLS]
+ - make PARAM[KERNEL_ARCH] INSTALL_HDR_PATH=_dest headers_install
+ - install -dv PARAM[TMPTOOLS]/include 
+ - cp -rv _dest/include/* PARAM[TMPTOOLS]/include
+ - rm -rf _dest

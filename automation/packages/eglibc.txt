@@ -27,6 +27,7 @@ won't hurt anything and is good practice in general.
 
 patches:
  - branch_update-20090820
+ - missing-texinfo-workaround-1
 
 phase: sysroot eglibc
 
