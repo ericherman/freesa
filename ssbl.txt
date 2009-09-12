@@ -116,6 +116,7 @@ course)
 make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- oldconfig
 make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- prepare scripts
 make ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc- modules
+mkdir -p ${SSBL}/modules
 cp drivers/ide/{aec62xx,ide-core,ide-gd_mod}.ko ${SSBL}/modules
 
 # Then, for external modules:
