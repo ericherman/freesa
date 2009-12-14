@@ -33,7 +33,7 @@ cfg_x86 = {
   'TARGET' => 'i686-pc-linux-gnu',
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'GLIBCFLAG' => '-march=i686 -g -O2',
-  'KERNEL_VERSION' => '2.6.29',
+  'KERNEL_VERSION' => '2.6.32',
   'TMPTOOLS' => '/tmp/tools'
 }
 
@@ -44,11 +44,11 @@ cfg_mips = {
   'TARGET' => 'mipsel-unknown-linux-gnu',
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'GLIBCFLAG' => '-g -O2',
-  'KERNEL_VERSION' => '2.6.25',
+  'KERNEL_VERSION' => '2.6.32',
   'TMPTOOLS' => '/tmp/tools'
 }
 
-cfg = cfg_mips
+cfg = cfg_x86
 
 binutils = package('binutils')
 gcc = package('gcc')

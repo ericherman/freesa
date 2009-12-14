@@ -1,6 +1,6 @@
 full-name: eglibc
 name: eglibc
-version: "2.10.1"
+version: "2.11"
 
 eglibc is a kind of branch of GNU libc, primarily intended to
 adapt glibc to embedded systems.  For our purposes, the only

@@ -8,12 +8,13 @@ Description: Checks to see if libgcc_eh has been provided by gcc. If it has
 
              Rediffed for 2.9 by Brett Neumeier
              Rediffed for 2.10.1 by Brett Neumeier
+             Rediffed for 2.11 by Brett Neumeier
 
 diff --git a/Makeconfig b/Makeconfig
-index 875fb67..d273cce 100644
+index 9f134cc..1cbed8a 100644
 --- a/Makeconfig
 +++ b/Makeconfig
-@@ -525,12 +525,20 @@ else
+@@ -538,12 +538,20 @@ else
    libunwind = -lunwind
  endif
  ifneq ($(have-as-needed),yes)
@@ -36,10 +37,10 @@ index 875fb67..d273cce 100644
  endif
  ifeq ($(elf),yes)
 diff --git a/config.make.in b/config.make.in
-index e48ea26..85ebc71 100644
+index d65706c..807285e 100644
 --- a/config.make.in
 +++ b/config.make.in
-@@ -61,6 +61,7 @@ have-selinux = @have_selinux@
+@@ -64,6 +64,7 @@ have-selinux = @have_selinux@
  have-libaudit = @have_libaudit@
  have-libcap = @have_libcap@
  have-cc-with-libunwind = @libc_cv_cc_with_libunwind@
@@ -48,10 +49,10 @@ index e48ea26..85ebc71 100644
  bind-now = @bindnow@
  have-hash-style = @libc_cv_hashstyle@
 diff --git a/configure b/configure
-index 7555891..0194013 100755
+index ce76653..fe0c1b1 100755
 --- a/configure
 +++ b/configure
-@@ -690,6 +690,7 @@ ASFLAGS_config
+@@ -692,6 +692,7 @@ ASFLAGS_config
  libc_cv_as_needed
  libc_cv_libgcc_s_suffix
  libc_cv_Bgroup
@@ -59,7 +60,7 @@ index 7555891..0194013 100755
  libc_cv_cc_with_libunwind
  VERSIONING
  BISON
-@@ -6392,6 +6393,33 @@ _ACEOF
+@@ -6443,6 +6444,33 @@ _ACEOF
  
    fi
  
@@ -94,10 +95,10 @@ index 7555891..0194013 100755
  $as_echo_n "checking for -z nodelete option... " >&6; }
  if test "${libc_cv_z_nodelete+set}" = set; then
 diff --git a/configure.in b/configure.in
-index d54e952..daaa30d 100644
+index 182c683..7038f8b 100644
 --- a/configure.in
 +++ b/configure.in
-@@ -1470,6 +1470,23 @@ EOF
+@@ -1505,6 +1505,23 @@ EOF
      AC_DEFINE(HAVE_CC_WITH_LIBUNWIND)
    fi
  
@@ -121,3 +122,6 @@ index d54e952..daaa30d 100644
    AC_CACHE_CHECK(for -z nodelete option,
  		 libc_cv_z_nodelete, [dnl
    cat > conftest.c <<EOF
+-- 
+1.6.3.3
+

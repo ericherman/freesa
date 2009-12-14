@@ -32,11 +32,11 @@ actually distributed within the gcc distribution.)
 
 Since glibc is a rather large library -- 115 megabytes of source
 code, producing shared library files that are in the megabytes --
-it is not very well-suited when building programs that need to
-fit in a compact space such as the 2 MB flash chip in the
-WL-700gE.  For those programs, an alternative C library,
-"uClibc," is more appropriate.  An uClibc-based toolchain can be
-produced using a slight variant of the normal glibc instructions.
+it is not very well-suited to building programs that must fit in
+a compact space such as the 2 MB flash chip in the WL-700gE.  For
+those programs, an alternative C library, "uClibc," is more
+appropriate.  An uClibc-based toolchain can be produced using a
+slight variant of the normal glibc instructions.
 
 A "cross-toolchain" is much like a normal, or "native,"
 toolchain.  The difference is that a cross-toolchain runs on a
@@ -44,10 +44,11 @@ computer of one type (the "host" system) but builds programs that
 will run on a different type (the "target" system).  For the
 Freesa project, for example, we use common Intel Core or Pentium
 computers to build software that will run on the Asus WL-700gE,
-which uses a MIPS-architecture CPU.  (Of course, once you have a
-working MIPS native toolchain, which is one of the components of
-the final Freesa system, you can build new versions of the Freesa
-software using that toolchain instead of the cross-toolchain.)
+which uses a MIPS-architecture CPU.  (Once you have a working
+MIPS native toolchain, which is one of the components of the
+final Freesa system, you can build new versions of the Freesa
+software using that toolchain instead of the cross-toolchain, if
+you wish.)
 
 This same process can be used to build a "faux" cross-toolchain:
 a set of tools that runs on Intel computers and builds programs

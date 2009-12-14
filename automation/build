@@ -6,5 +6,5 @@ unset CXXFLAGS
 mkdir -p /tmp/Build/logs
 
 #time ruby -I $HOME/gits/litbuild/lib build-toolchain-uclibc.rb
-#time ruby -I $HOME/gits/litbuild/lib build-toolchain-glibc.rb
-time ruby -I $HOME/gits/litbuild/lib build-toolchain-eglibc.rb
+time ruby -I $HOME/gits/litbuild/lib build-toolchain-glibc.rb
+#time ruby -I $HOME/gits/litbuild/lib build-toolchain-eglibc.rb
