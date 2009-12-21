@@ -1,3 +1,5 @@
+#!/bin/bash
+
 export PATH=/tmp/cross-tools/bin:/opt/gcc440/bin:$PATH
 export LC_ALL=POSIX
 unset CFLAGS
@@ -5,6 +7,9 @@ unset CXXFLAGS
 
 mkdir -p /tmp/Build/logs
 
-#time ruby -I $HOME/gits/litbuild/lib build-toolchain-uclibc.rb
-time ruby -I $HOME/gits/litbuild/lib build-toolchain-glibc.rb
-#time ruby -I $HOME/gits/litbuild/lib build-toolchain-eglibc.rb
+if [ -f "build-toolchain-$1.rb" ]
+then
+    time ruby -I $HOME/gits/litbuild/lib build-toolchain-$1.rb x86
+else
+    echo "run as: $0 {eglibc,glibc,uclibc} {mips,x86}"
+fi

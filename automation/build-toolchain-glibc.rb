@@ -48,7 +48,13 @@ cfg_mips = {
   'TMPTOOLS' => '/tmp/tools'
 }
 
-cfg = cfg_x86
+if ARGV[0] == 'mips'
+  puts "Building glibc/mips toolchain"
+  cfg = cfg_mips
+else
+  puts "Building glibc/x86 toolchain"
+  cfg = cfg_x86
+end
 
 binutils = package('binutils')
 gcc = package('gcc')

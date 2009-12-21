@@ -54,7 +54,13 @@ cfg_x86 = {
   'NOT_ENDIANNESS' => 'big'
 }
 
-cfg = cfg_x86
+if ARGV[0] == 'mips'
+  puts "Building uClibc/mips toolchain"
+  cfg = cfg_mips
+else
+  puts "Building uClibc/x86 toolchain"
+  cfg = cfg_x86
+end
 
 # UCLIBC_CROSS_PARAM is CROSS=PARAM[TARGET]- when cross-compiling
 # This can probably be moved to .config CROSS_COMPILER_PREFIX!!
