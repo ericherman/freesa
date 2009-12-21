@@ -1,0 +1,29 @@
+From 31a2a33ca061e6b2188165ba2ae02752e3c8fb16 Mon Sep 17 00:00:00 2001
+From: Brett Neumeier <brett@neumeier.us>
+Date: Sun, 20 Dec 2009 19:23:31 -0600
+Subject: [PATCH] Workaround undefined __stack_chk_guard references
+
+When building the sysroot eglibc, the nscd Makefile tries to link
+with -fstack-protector, which doesn't work.  Remove the call from
+nscd-cflags.
+---
+ libc/nscd/Makefile |    3 ---
+ 1 files changed, 0 insertions(+), 3 deletions(-)
+
+diff --git a/libc/nscd/Makefile b/libc/nscd/Makefile
+index 15c3c7b..600856c 100644
+--- a/libc/nscd/Makefile
++++ b/libc/nscd/Makefile
+@@ -99,9 +99,6 @@ nscd-cflags = -DIS_IN_nscd=1 -D_FORTIFY_SOURCE=2
+ ifeq (yesyes,$(have-fpie)$(build-shared))
+ nscd-cflags += $(pie-ccflag)
+ endif
+-ifeq (yes,$(have-ssp))
+-nscd-cflags += -fstack-protector
+-endif
+ 
+ CFLAGS-nscd.c += $(nscd-cflags)
+ CFLAGS-connections.c += $(nscd-cflags)
+-- 
+1.6.3.3
+
