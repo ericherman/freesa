@@ -9,7 +9,7 @@ mkdir -p /tmp/Build/logs
 
 if [ -f "build-toolchain-$1.rb" ]
 then
-    time ruby -I $HOME/gits/litbuild/lib build-toolchain-$1.rb x86
+    time ruby -I $HOME/gits/litbuild/lib build-toolchain-$1.rb $2
 else
     echo "run as: $0 {eglibc,glibc,uclibc} {mips,x86}"
 fi
