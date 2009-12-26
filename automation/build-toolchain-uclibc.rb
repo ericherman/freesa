@@ -56,7 +56,7 @@ cfg_x86 = {
 
 if ARGV[0] == 'mips'
   puts "Building uClibc/mips toolchain"
-  cfg = cfg_mips
+  cfg = cfg_mipsel
 else
   puts "Building uClibc/x86 toolchain"
   cfg = cfg_x86
