@@ -1,0 +1,163 @@
+From: Brett Neumeier <brett@neumeier.us>
+
+This modifies make so that the '-s' (silent) flag and '@'
+silent-command directives are ignored entirely.  That way, all
+commands executed by make are echoed to standard output.
+
+diff -r -N -u make-3.81-orig/commands.c make-3.81/commands.c
+--- make-3.81-orig/commands.c	2010-01-23 15:57:54.000000000 -0600
++++ make-3.81/commands.c	2010-01-23 16:20:48.000000000 -0600
+@@ -343,7 +343,6 @@
+             flags |= COMMANDS_RECURSE;
+             break;
+           case '@':
+-            flags |= COMMANDS_SILENT;
+             break;
+           case '-':
+             flags |= COMMANDS_NOERROR;
+diff -r -N -u make-3.81-orig/file.c make-3.81/file.c
+--- make-3.81-orig/file.c	2010-01-23 15:57:54.000000000 -0600
++++ make-3.81/file.c	2010-01-23 16:20:37.000000000 -0600
+@@ -383,18 +383,15 @@
+ 		  {
+ 		    if (! doneany)
+ 		      DB (DB_BASIC, (_("Removing intermediate files...\n")));
+-		    if (!silent_flag)
+-		      {
+-			if (! doneany)
+-			  {
+-			    fputs ("rm ", stdout);
+-			    doneany = 1;
+-			  }
+-			else
+-			  putchar (' ');
+-			fputs (f->name, stdout);
+-			fflush (stdout);
+-		      }
++		      if (! doneany)
++		        {
++		          fputs ("rm ", stdout);
++		          doneany = 1;
++		        }
++		      else
++		        putchar (' ');
++		      fputs (f->name, stdout);
++		      fflush (stdout);
+ 		  }
+ 		if (status < 0)
+ 		  perror_with_name ("unlink: ", f->name);
+@@ -723,17 +720,6 @@
+ 	    f2->command_flags |= COMMANDS_NOERROR;
+     }
+ 
+-  f = lookup_file (".SILENT");
+-  if (f != 0 && f->is_target)
+-    {
+-      if (f->deps == 0)
+-	silent_flag = 1;
+-      else
+-	for (d = f->deps; d != 0; d = d->next)
+-	  for (f2 = d->file; f2 != 0; f2 = f2->prev)
+-	    f2->command_flags |= COMMANDS_SILENT;
+-    }
+-
+   f = lookup_file (".NOTPARALLEL");
+   if (f != 0 && f->is_target)
+     not_parallel = 1;
+diff -r -N -u make-3.81-orig/job.c make-3.81/job.c
+--- make-3.81-orig/job.c	2010-01-23 15:57:54.000000000 -0600
++++ make-3.81/job.c	2010-01-23 16:20:37.000000000 -0600
+@@ -379,8 +379,6 @@
+ child_error (char *target_name, int exit_code, int exit_sig, int coredump,
+              int ignored)
+ {
+-  if (ignored && silent_flag)
+-    return;
+ 
+ #ifdef VMS
+   if (!(exit_code & 1))
+@@ -1078,12 +1074,9 @@
+       return;
+     }
+ 
+-  /* Print out the command.  If silent, we call `message' with null so it
+-     can log the working directory before the command's own error messages
+-     appear.  */
++  /* Print out the command.  */
+ 
+-  message (0, (just_print_flag || (!(flags & COMMANDS_SILENT) && !silent_flag))
+-	   ? "%s" : (char *) 0, p);
++  message (0, "%s", p);
+ 
+   /* Tell update_goal_chain that a command has been started on behalf of
+      this target.  It is important that this happens here and not in
+diff -r -N -u make-3.81-orig/main.c make-3.81/main.c
+--- make-3.81-orig/main.c	2010-01-23 15:57:54.000000000 -0600
++++ make-3.81/main.c	2010-01-23 16:20:37.000000000 -0600
+@@ -136,10 +136,6 @@
+ 
+ /* The recognized command switches.  */
+ 
+-/* Nonzero means do not print commands to be executed (-s).  */
+-
+-int silent_flag;
+-
+ /* Nonzero means just touch the files
+    that would appear to need remaking (-t)  */
+ 
+@@ -404,7 +400,7 @@
+       "no-builtin-rules" },
+     { 'R', flag, (char *) &no_builtin_variables_flag, 1, 1, 0, 0, 0,
+       "no-builtin-variables" },
+-    { 's', flag, (char *) &silent_flag, 1, 1, 0, 0, 0, "silent" },
++    { 's', ignore, 0, 0, 0, 0, 0, 0, 0 },
+     { 'S', flag_off, (char *) &keep_going_flag, 1, 1, 0, 0,
+       (char *) &default_keep_going_flag, "no-keep-going" },
+     { 't', flag, (char *) &touch_flag, 1, 1, 1, 0, 0, "touch" },
+@@ -1406,8 +1402,8 @@
+       makelevel = 0;
+   }
+ 
+-  /* Except under -s, always do -w in sub-makes and under -C.  */
+-  if (!silent_flag && (directories != 0 || makelevel > 0))
++  /* Always do -w in sub-makes and under -C.  */
++  if (directories != 0 || makelevel > 0)
+     print_directory_flag = 1;
+ 
+   /* Let the user disable that with --no-print-directory.  */
+diff -r -N -u make-3.81-orig/make.h make-3.81/make.h
+--- make-3.81-orig/make.h	2010-01-23 15:57:54.000000000 -0600
++++ make-3.81/make.h	2010-01-23 16:20:37.000000000 -0600
+@@ -501,7 +501,7 @@
+ 
+ extern char **environ;
+ 
+-extern int just_print_flag, silent_flag, ignore_errors_flag, keep_going_flag;
++extern int just_print_flag, ignore_errors_flag, keep_going_flag;
+ extern int print_data_base_flag, question_flag, touch_flag, always_make_flag;
+ extern int env_overrides, no_builtin_rules_flag, no_builtin_variables_flag;
+ extern int print_version_flag, print_directory_flag, check_symlink_flag;
+diff -r -N -u make-3.81-orig/remake.c make-3.81/remake.c
+--- make-3.81-orig/remake.c	2010-01-23 15:57:54.000000000 -0600
++++ make-3.81/remake.c	2010-01-23 16:20:37.000000000 -0600
+@@ -223,8 +223,8 @@
+ 		     or not at all.  G->changed will have been set above if
+ 		     any commands were actually started for this goal.  */
+ 		  && file->update_status == 0 && !g->changed
+-		  /* Never give a message under -s or -q.  */
+-		  && !silent_flag && !question_flag)
++		  /* Never give a message under -q.  */
++		  && !question_flag)
+ 		message (1, ((file->phony || file->cmds == 0)
+ 			     ? _("Nothing to be done for `%s'.")
+ 			     : _("`%s' is up to date.")),
+@@ -1044,8 +1044,7 @@
+ static int
+ touch_file (struct file *file)
+ {
+-  if (!silent_flag)
+-    message (0, "touch %s", file->name);
++  message (0, "touch %s", file->name);
+ 
+ #ifndef	NO_ARCHIVES
+   if (ar_name (file->name))
