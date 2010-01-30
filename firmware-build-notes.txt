@@ -27,7 +27,7 @@ build process, we will construct two separate firmware images:
    system build, and will contain just the Linux kernel produced
    during that build.  This kernel will mount its root filesystem
    over NFS from the build machine, so it doesn't need to access
-   the hard disk at all.
+   the hard disk at all (at boot time).
 
  * Then, after completing the operating system installation on
    the internal hard drive, we'll build a minimal GNU/Linux
@@ -63,7 +63,18 @@ all the hard work of assembling and building these things has
 been done by the wonderful people on the OpenWRT project, so all
 we need to do is follow in their footsteps.
 
-BUILD OVERVIEW -- initial (nfs-booting) firmware
+The construction of the second-stage boot loader image is
+described in ssbl.txt.  This file only explains how to build the
+initial nfs-booting firmware.
+
+Note!  You can hack a WL-700gE so that its serial port can be
+accessed through a cell phone USB adapter, or something.  Look,
+there are even pictures! http://static.freesa.org/WL-700gE/
+If you do that, you don't have to build a firmware image for the
+initial nfs-booted kernel -- you just have to use the serial
+console to tell CFE to load the kernel image via TFTP from your
+host machine.  (The NFS server is the most convenient one to
+use.)  See section 3b, below, for instructions on how to do that.
 
 1. build the tools we need to construct the firmware image
 
@@ -81,10 +92,9 @@ make -f makefile.gcc -C C/LzmaUtil
 make -f makefile.gcc -C CPP/7zip/Compress/LZMA_Alone
 
 The result is CPP/7zip/Compress/LZMA_Alone/lzma_alone.  Put it
-somewhere convenient, and name it lzma.  Keep in mind that you
-shouldn't install it anywhere on your $PATH ... except that when
-building the kernel image, it must be found on the PATH instead
-of the one from lzma-utils.  Feh.
+somewhere convenient.  Since the lzma compression program from
+xz-utils (previously lzma-utils) is also called lzma, keep it as
+lzma_alone so there isn't a naming conflict.
 
 b. trx
 
@@ -102,6 +112,9 @@ c. loader.gz
 This is a program by Oleg I. Vdovikin; like trx, we pulled it
 from OpenWRT.  It loads an LZMA-compressed Linux kernel from a
 flash device, decompresses it, and then transfers control to it.
+
+If you're building with a cross-compiler, add the kernel include
+directory to the CFLAGS in the Makefile.
 
 Build with:
 
@@ -132,7 +145,8 @@ mipsel-unknown-linux-gnu-objcopy -O binary -R .reginfo \
 
 Now compress it with lzma:
 
-cat fixed-vmlinux | lzma e -si -so -eos -lc1 -lp2 -pb2 > vmlinux.lzma
+cat fixed-vmlinux |
+    lzma_alone e -si -so -eos -lc1 -lp2 -pb2 > vmlinux.lzma
 
 b. invoke trx
 
@@ -165,3 +179,8 @@ If you can't ping 192.168.1.1 then you need to get your network going.
     ping -c1 192.168.1.1
 
 Now you should be able to tftp to the WL-700gE.
+
+3b. Net-booting using TFTP
+
+Okay, we fibbed.  The instructions on how to do this are
+somewhere on the wiki.  (http://www.freesa.org/)

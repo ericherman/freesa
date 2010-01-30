@@ -36,7 +36,7 @@
 # 2.6.28.  Change the appropriate commands below if that is not
 # the case.
 
-OPENWRT=/usr/local/rnd/checkouts/openwrt.sgit/target/linux
+OPENWRT=/usr/local/rnd/checkouts/openwrt/target/linux
 
 cp -a $OPENWRT/generic-2.6/files/* .
 git add .
@@ -56,7 +56,7 @@ These are files from target/linux/generic-2.6/files-2.6.28, which
 are added to the kernel sources as the second change from the
 Linus version."
 
-cp -a $OPENWRT/brcm47xx/files/* .
+cp -a $OPENWRT/brcm47xx/files-2.6.28/* .
 git add .
 git commit -a -m \
 "Flat files from openwrt (brcm47xx)

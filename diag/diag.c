@@ -19,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
+ * $Id$
  */
 #include <linux/module.h>
 #include <linux/pci.h>
@@ -54,7 +55,6 @@ module_param(gpiomask, int, 0644);
 enum {
 	/* Linksys */
 	WAP54GV1,
-	WAP54GV2,
 	WAP54GV3,
 	WRT54GV1,
 	WRT54G,
@@ -68,7 +68,6 @@ enum {
 	WLHDD,
 	WL300G,
 	WL320GE,
-	WL330GE,
 	WL500G,
 	WL500GD,
 	WL500GP,
@@ -123,7 +122,6 @@ enum {
 
 	/* D-Link */
 	DIR130,
-	DIR320,
 	DIR330,
 	DWL3150,
 
@@ -166,16 +164,6 @@ static struct platform_t __initdata platforms[] = {
 		.leds		= {
 			{ .name = "diag",	.gpio = 1 << 3 },
 			{ .name = "wlan",	.gpio = 1 << 4 },
-		},
-	},
-	[WAP54GV2] = {
-		.name		= "Linksys WAP54G V2",
-		.buttons	= {
-			{ .name = "reset",	.gpio = 1 << 0 },
-		},
-		.leds		= {
-			{ .name = "wlan",	.gpio = 1 << 5, .polarity = REVERSE },
-			/* GPIO 6 is b44 (eth0, LAN) PHY power */
 		},
 	},
 	[WAP54GV3] = {
@@ -317,15 +305,6 @@ static struct platform_t __initdata platforms[] = {
 			{ .name = "wlan",	.gpio = 1 << 0, .polarity = REVERSE },
 			{ .name = "power",	.gpio = 1 << 2, .polarity = REVERSE },
 			{ .name = "link",	.gpio = 1 << 11, .polarity = REVERSE },
-		},
-	},
-	[WL330GE] = {
-		.name		= "ASUS WL-330gE",
-		.buttons	= {
-			{ .name = "reset",	.gpio = 1 << 2 },
-		},
-		.leds		= {
-			{ .name = "power",	.gpio = 1 << 0, .polarity = REVERSE },
 		},
 	},
 	[WL500G] = {
@@ -719,20 +698,6 @@ static struct platform_t __initdata platforms[] = {
 			{ .name = "blue",	.gpio = 1 << 6},
 		},
 	},
-	[DIR320] = {
-		.name	  = "D-Link DIR-320",
-		.buttons	= {
-			{ .name = "reserved",	.gpio = 1 << 6},
-			{ .name = "reset",	.gpio = 1 << 7},
-		},
-		.leds	   = {
-			{ .name = "wlan",	.gpio = 1 << 0, .polarity = NORMAL },
-			{ .name = "diag",	.gpio = 1 << 1, .polarity = NORMAL }, /* "status led */
-			{ .name = "red",	.gpio = 1 << 3, .polarity = REVERSE },
-			{ .name = "blue",	.gpio = 1 << 4, .polarity = REVERSE },
-			{ .name = "usb",	.gpio = 1 << 5, .polarity = NORMAL },
-		},
-	},
 	[DIR330] = {
 		.name	  = "D-Link DIR-330",
 		.buttons	= {
@@ -799,16 +764,12 @@ static struct platform_t __init *platform_detect(void)
 			return &platforms[WL520GC];
 		if (startswith(buf,"WL520GU-")) /* WL520GU-* */
 			return &platforms[WL520GU];
-		if (startswith(buf,"WL330GE-")) /* WL330GE-* */
-			return &platforms[WL330GE];
 	}
 
 	/* Based on "ModelId" */
 	if ((buf = nvram_get("ModelId"))) {
 		if (!strcmp(buf, "WR850GP"))
 			return &platforms[WR850GP];
-		if (!strcmp(buf, "WR850G"))
-			return &platforms[WR850GV2V3];
 		if (!strcmp(buf, "WX-5565") && !strcmp(getvar("boardtype"),"bcm94710ap"))
 			return &platforms[TM2300]; /* Dell TrueMobile 2300 */
 		if (startswith(buf,"WE800G")) /* WE800G* */
@@ -865,8 +826,6 @@ static struct platform_t __init *platform_detect(void)
 			/* default to WRT54G */
 			return &platforms[WRT54G];
 		}
-		if (!strcmp(boardnum, "1024") && !strcmp(boardtype, "0x0446"))
-			return &platforms[WAP54GV2];
 
 		if (!strcmp(boardnum, "44") || !strcmp(boardnum, "44\r")) {
 			if (!strcmp(boardtype,"0x0101") || !strcmp(boardtype, "0x0101\r"))
@@ -889,10 +848,6 @@ static struct platform_t __init *platform_detect(void)
 
 		if (!strcmp(getvar("boardtype"), "0x0101") && !strcmp(getvar("boardrev"), "0x10")) /* SE505V2 With Modified CFE */
 			return &platforms[SE505V2];
-
-		if (!strcmp(boardtype, "0x048e") && !strcmp(getvar("boardrev"),"0x35") &&
-				!strcmp(getvar("boardflags"), "0x750")) /* D-Link DIR-320 */
-			return &platforms[DIR320];
 
 	} else { /* PMON based - old stuff */
 		if ((simple_strtoul(getvar("GemtekPmonVer"), NULL, 0) == 9) &&
@@ -964,14 +919,14 @@ static void register_buttons(struct button_t *b)
 	gpio_control(platform.button_mask, 0);
 	platform.button_polarity = gpio_in() & platform.button_mask;
 	gpio_intpolarity(platform.button_mask, platform.button_polarity);
-	gpio_setintmask(platform.button_mask, platform.button_mask);
+	gpio_intmask(platform.button_mask, platform.button_mask);
 
 	gpio_set_irqenable(1, button_handler);
 }
 
 static void unregister_buttons(struct button_t *b)
 {
-	gpio_setintmask(platform.button_mask, 0);
+	gpio_intmask(platform.button_mask, 0);
 
 	gpio_set_irqenable(0, button_handler);
 }
@@ -1146,7 +1101,7 @@ static void register_leds(struct led_t *l)
 	gpio_outen(mask, oe_mask);
 	gpio_control(mask, 0);
 	gpio_out(mask, val);
-	gpio_setintmask(mask, 0);
+	gpio_intmask(mask, 0);
 }
 
 static void unregister_leds(struct led_t *l)

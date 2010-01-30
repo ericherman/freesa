@@ -60,5 +60,11 @@ insmod aec62xx.ko
 echo "mount $ROOT /mnt"
 mount $ROOT /mnt
 
+echo "cd /mnt"
+cd /mnt
+
+echo "pivot_root . old_root"
+pivot_root . old_root 
+
 echo "chrooting"
-exec switch_root -c /dev/console /mnt /sbin/init
+exec /sbin/chroot . /sbin/init </dev/console >/dev/console 2>&1
