@@ -1,0 +1,20 @@
+name: Multiple Precision Complex library
+version: "0.8.2"
+project-url: http://www.multiprecision.org/
+
+configuration-defaults:
+ - INSTALL_MPFR: true
+ - MPC_PREFIX: /usr/local
+
+MPC is a C library for arbitrary-precision arithmetic on complex
+numbers providing correct rounding.  It builds on the GMP and
+MPFR libraries.
+
+Like GMP and MPFR, MPC is a new component in, or dependency of,
+the GNU toolchain.  I haven't been able to find any description
+of what features of MPC are actually needed by the GNU toolchain,
+but MPC is a hard build-time dependency of GCC.
+
+If your system already has MPC installed, this step can be
+skipped.
+
