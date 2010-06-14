@@ -1,5 +1,5 @@
 name: GNU MP Library
-version: "4.3.1"
+version: "5.0.1"
 project-url: http://gmplib.org/
 
 configuration-defaults:

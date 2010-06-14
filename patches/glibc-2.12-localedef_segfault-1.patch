@@ -10,6 +10,11 @@ Description: Fixes Segfault when using localdef.
 
              Respun for 2.9 by Brett Neumeier
              Respun for 2.11 by Brett Neumeier
+             Respun for 2.12 by Brett Neumeier
+
+---
+ locale/programs/3level.h |   36 ++++++++++++++++++++++++++++++++++++
+ 1 files changed, 36 insertions(+), 0 deletions(-)
 
 diff --git a/locale/programs/3level.h b/locale/programs/3level.h
 index cce925e..6bf8b84 100644
