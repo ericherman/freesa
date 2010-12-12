@@ -1,6 +1,6 @@
 full-name: eglibc
 name: eglibc
-version: "2.12"
+version: "2.12-20101206"
 
 eglibc is a kind of branch of GNU libc, primarily intended to
 adapt glibc to embedded systems.  For our purposes, the only
@@ -24,6 +24,12 @@ unnecessary compatibility code is built into the C library.  It's
 kind of unnecessary to worry about optimizing the eglibc here
 that way, since it won't wind up on the final system, but it
 won't hurt anything and is good practice in general.
+
+The eglibc team never releases versions.  Instead, their guidance
+is that the latest commit on the desired release branch should
+always be used.  Accordingly, the "version" number used here is
+the version number from the release branch, along with the date
+stamp of the latest commit from that branch.
 
 The patches correct minor problems -- the installation fails
 because an expected texinfo file isn't present, and when building
