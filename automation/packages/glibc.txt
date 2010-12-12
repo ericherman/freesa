@@ -1,6 +1,6 @@
 full-name: GNU libc
 name: glibc
-version: "2.12"
+version: "2.12.1"
 
 glibc is the standard C library produced as part of the GNU
 project.  It contains the implementation for all of the functions
@@ -51,7 +51,7 @@ It's probably not particularly important for our purposes, but it
 doesn't hurt anything to apply it.
 
 patches:
- - branch-update-20100613
+ - branch-update-20101212
  - libgcc_eh-1
  - localedef_segfault-1
  - cflag-march-fix-1

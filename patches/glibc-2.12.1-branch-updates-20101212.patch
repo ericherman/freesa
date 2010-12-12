@@ -1,0 +1,4333 @@
+diff --git a/ChangeLog b/ChangeLog
+index b9dd2f0..7635848 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -1,3 +1,339 @@
++2010-11-24  Andreas Schwab  <schwab@redhat.com>
++
++	* resolv/nss_dns/dns-host.c (getanswer_r): Don't handle ttl == 0
++	specially.
++	(gaih_getanswer_slice): Likewise.
++
++2010-05-31  Petr Baudis  <pasky@suse.cz>
++
++	[BZ #11149]
++	* elf/ldconfig.c (main): Allow aux_cache_file open()ing to fail
++	silently even in the chroot mode.
++
++2010-05-31  Petr Baudis <pasky@suse.cz>
++
++	[BZ #10085]
++	* nis/nss_compat/compat-initgroups.c (internal_getgrent_r): Fix
++	initialization of skip_initgroups_dyn.
++
++2010-09-27  Andreas Schwab  <schwab@redhat.com>
++
++	[BZ #11611]
++	* sysdeps/unix/sysv/linux/internal_statvfs.c (INTERNAL_STATVFS):
++	Mask out sign-bit copies when constructing f_fsid.
++
++2010-11-19  Ulrich Drepper  <drepper@gmail.com>
++
++	* sysdeps/unix/sysv/linux/i386/bits/mman.h: Define MAP_HUGETLB.
++	* sysdeps/unix/sysv/linux/x86_64/bits/mman.h: Likewise.
++
++2010-11-16  Ulrich Drepper  <drepper@gmail.com>
++
++	* sysdeps/unix/sysv/linux/sys/swap.h (SWAP_FLAG_DISCARD): Define.
++
++2010-11-11  Andreas Schwab  <schwab@redhat.com>
++
++	* posix/fnmatch_loop.c (NEW_PATTERN): Fix use of alloca.
++	* posix/Makefile (tests): Add $(objpfx)tst-fnmatch-mem.
++	(tst-fnmatch-ENV): Set MALLOC_TRACE.
++	($(objpfx)tst-fnmatch-mem): New rule.
++	(generated): Add tst-fnmatch-mem and tst-fnmatch.mtrace.
++	* posix/tst-fnmatch.c (main): Call mtrace.
++
++2010-08-09  Ulrich Drepper  <drepper@redhat.com>
++
++	[BZ #11883]
++	* posix/fnmatch.c: Keep track of alloca use and fall back on malloc.
++	* posix/fnmatch_loop.c: Likewise.
++
++2010-11-10  Luis Machado  <luisgpm@br.ibm.com>
++
++	* sysdeps/ieee754/ldbl-128ibm/e_sqrtl.c (__ieee754_sqrtl): Force
++	  signed comparison.
++
++2010-11-08  Ulrich Drepper  <drepper@gmail.com>
++
++	[BZ #12194]
++	* sysdeps/i386/bits/byteswap.h: Avoid warning in __bswap_16.
++	* sysdeps/x86_64/bits/byteswap.h: Likewise.
++
++2010-08-31  Mike Frysinger  <vapier@gentoo.org>
++
++	* sysdeps/unix/sysv/linux/sparc/sys/epoll.h (epoll_create2): Delete.
++	(epoll_create1): Declare.
++
++2010-09-06  Andreas Schwab  <schwab@redhat.com>
++
++	* manual/Makefile: Don't mix pattern rules with normal rules.
++
++2010-08-12  Andreas Schwab  <schwab@redhat.com>
++
++	[BZ #11904]
++	* locale/programs/locale.c (print_assignment): New function.
++	(show_locale_vars): Use it.
++
++2010-10-26  Ulrich Drepper  <drepper@gmail.com>
++
++	* elf/rtld.c (dl_main): Move assertion after the point where rtld map
++	is added to the list.
++
++2010-10-24  Ulrich Drepper  <drepper@redhat.com>
++
++	[BZ #12140]
++	* malloc/malloc.c (_int_free): Fill correct number of bytes when
++	perturbing.
++
++2010-09-09  Andreas Schwab  <schwab@redhat.com>
++
++	* Makeconfig (sysd-rules-patterns): Add rtld-%:rtld-%.
++	(sysd-rules-targets): Remove duplicates.
++	* elf/rtld-Rules ($(objpfx)rtld-%.os): Add pattern rules with
++	rtld-%.$o dependency.
++
++2010-10-18  Andreas Schwab  <schwab@redhat.com>
++
++	* elf/dl-open.c (dl_open_worker): Don't expand DST here, let
++	_dl_map_object do it.
++
++2010-10-15  Andreas Schwab  <schwab@redhat.com>
++
++	* scripts/data/localplt-s390-linux-gnu.data: New file.
++	* scripts/data/localplt-s390x-linux-gnu.data: New file.
++
++2010-10-12  Ulrich Drepper  <drepper@redhat.com>
++
++	[BZ #12078]
++	* posix/regcomp.c (parse_branch): One more memory leak plugged.
++	* posix/bug-regex31.input: Add test case.
++
++2010-10-11  Ulrich Drepper  <drepper@gmail.com>
++
++	* posix/bug-regex31.c: Rewrite to run multiple tests from stdin.
++	* posix/bug-regex31.input: New file.
++
++	[BZ #12078]
++	* posix/regcomp.c (parse_branch): Free memory when allocation failed.
++	(parse_sub_exp): Fix last change, use postorder.
++
++2010-10-11  Ulrich Drepper  <drepper@gmail.com>
++
++	* posix/bug-regex31.c: New file.
++	* posix/Makefile: Add rules to build and run bug-regex31.
++
++2010-10-11  Ulrich Drepper  <drepper@gmail.com>
++
++	* posix/regcomp.c (parse_bracket_exp): Add missing re_free calls.
++
++	[BZ #12078]
++	* posix/regcomp.c (parse_sub_exp): Free tree data when it is not used.
++
++2010-10-11  Ulrich Drepper  <drepper@gmail.com>
++
++	[BZ #12093]
++	* sysdeps/unix/sysv/linux/check_pf.c (__check_pf): ->ifa_addr might
++	be NULL.
++
++2010-10-03  Ulrich Drepper  <drepper@gmail.com>
++
++	[BZ #12005]
++	* malloc/mcheck.c: Handle large requests.
++
++2010-09-15  Joseph Myers  <joseph@codesourcery.com>
++
++	* sysdeps/unix/sysv/linux/getdents.c (__GETDENTS): When
++	implementing getdents64 using getdents syscall, set d_type if
++	__ASSUME_GETDENTS32_D_TYPE.
++
++2010-09-14  Andreas Schwab  <schwab@redhat.com>
++
++	* sysdeps/s390/s390-32/__longjmp.c (__longjmp): Define register
++	variables after CHECK_SP call.
++	* sysdeps/s390/s390-64/__longjmp.c (__longjmp): Likewise.
++
++2010-09-08  Chung-Lin Tang  <cltang@codesourcery.com>
++	    Ulrich Drepper  <drepper@redhat.com>
++
++	[BZ #11968]
++	* sysdeps/unix/sysv/linux/x86_64/____longjmp_chk.S
++	(____longjmp_chk): Use %ebx for saving value across system call.
++	Add unwind info.
++
++2010-08-31  Mike Frysinger  <vapier@gentoo.org>
++
++	* sysdeps/unix/sysv/linux/x86_64/sys/epoll.h: Fix typo.
++
++2010-08-31  Andreas Schwab  <schwab@redhat.com>
++
++	[BZ #7066]
++	* stdlib/strtod_l.c (____STRTOF_INTERNAL): Fix array overflow when
++	shifting retval into place.
++
++2010-09-14  Ulrich Drepper  <drepper@redhat.com>
++
++	* resolv/res_init.c (__res_vinit): Count the default server we added.
++
++2010-08-25  Ulrich Drepper  <drepper@redhat.com>
++
++	[BZ #10851]
++	* resolv/res_init.c (__res_vinit): When no server address at all
++	is given default to loopback.
++
++2010-08-12  H.J. Lu  <hongjiu.lu@intel.com>
++
++	* sysdeps/i386/elf/Makefile: New file.
++
++2010-07-31  Samuel Thibault  <samuel.thibault@ens-lyon.org>
++
++	* hurd/hurdselect.c (_hurd_select): Round timeout up instead of down
++	when converting to ms.
++
++2010-07-29  Roland McGrath  <roland@redhat.com>
++
++	[BZ 11856]
++	* manual/locale.texi (Yes-or-No Questions): Fix example code.
++
++2010-07-27  Andreas Schwab  <schwab@redhat.com>
++
++	* manual/memory.texi (Malloc Tunable Parameters): Document
++	M_PERTURB.
++
++2010-07-26  Roland McGrath  <roland@redhat.com>
++
++	[BZ #11840]
++	* configure.in (-fgnu89-inline check): Set and substitute
++	gnu89_inline, not libc_cv_gnu89_inline.
++	* configure: Regenerated.
++	* config.make.in (gnu89-inline-CFLAGS): Use @gnu89_inline@.
++
++2010-07-20  Roland McGrath  <roland@redhat.com>
++
++	* elf/dl-sysdep.c (_dl_important_hwcaps): Add dsocaps mask to
++	dl_hwcap_mask as well as dl_hwcap.  Without this, dsocaps matching in
++	ld.so.cache was broken.  With it, there is no way to disable dsocaps
++	like LD_HWCAP_MASK can disable hwcaps.
++
++2010-07-05  Roland McGrath  <roland@redhat.com>
++
++	* manual/arith.texi (Rounding Functions): Fix rint description
++	implicit in round description.
++
++2010-07-02  Ulrich Drepper  <drepper@redhat.com>
++
++	* elf/Makefile: Fix linking for a few tests to make recent linker
++	happy.
++
++2010-06-02  Emilio Pozuelo Monfort  <pochu27@gmail.com>
++
++	* hurd/lookup-at.c (__file_name_lookup_at): Accept
++	AT_SYMLINK_FOLLOW in AT_FLAGS.  Fail with EINVAL if both
++	AT_SYMLINK_FOLLOW and AT_SYMLINK_NOFOLLOW are present
++	in AT_FLAGS.
++	* hurd/hurd/fd.h (__file_name_lookup_at): Update comment.
++	* sysdeps/mach/hurd/linkat.c (linkat): Pass O_NOLINK in FLAGS.
++
++2010-11-03  H.J. Lu  <hongjiu.lu@intel.com>
++
++	[BZ #12191]
++	* sysdeps/i386/i686/cacheinfo.c (__x86_64_raw_data_cache_size): New.
++	(__x86_64_raw_data_cache_size_half): Likewise.
++	(__x86_64_raw_shared_cache_size): Likewise.
++	(__x86_64_raw_shared_cache_size_half): Likewise.
++
++	* sysdeps/x86_64/cacheinfo.c (__x86_64_raw_data_cache_size): New.
++	(__x86_64_raw_data_cache_size_half): Likewise.
++	(__x86_64_raw_shared_cache_size): Likewise.
++	(__x86_64_raw_shared_cache_size_half): Likewise.
++	(init_cacheinfo): Set __x86_64_raw_data_cache_size,
++	__x86_64_raw_data_cache_size_half, __x86_64_raw_shared_cache_size
++	and __x86_64_raw_shared_cache_size_half.  Round
++	__x86_64_data_cache_size_half, __x86_64_data_cache_size
++	__x86_64_shared_cache_size_half and __x86_64_shared_cache_size,
++	to multiple of 256 bytes.
++
++2010-11-03  Ulrich Drepper  <drepper@gmail.com>
++
++	[BZ #12167]
++	* sysdeps/unix/sysv/linux/ttyname.c (ttyname): Recognize new mangling
++	of inacessible symlinks.  Verify result of symlink before returning it.
++	* sysdeps/unix/sysv/linux/ttyname_r.c (__ttyname_r): Likewise.
++	Patch mostly by Miklos Szeredi <miklos@szeredi.hu>.
++
++2010-10-20  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
++	    Ulrich Drepper  <drepper@gmail.com>
++
++	* elf/dl-object.c (_dl_new_object): Don't append the new object to
++	the global list here.  Move code to...
++	(_dl_add_to_namespace_list): ...here.  New function.
++	* elf/rtld.c (dl_main): Invoke _dl_add_to_namespace_list.
++	* sysdeps/generic/ldsodefs.h (_dl_add_to_namespace_list): Declare.
++	* elf/dl-load.c (lose): Don't remove the element from the list.
++	(_dl_map_object_from_fd): Invoke _dl_add_to_namespace_list.
++	(_dl_map_object): Likewise.
++
++2010-10-25  Ulrich Drepper  <drepper@redhat.com>
++
++	[BZ #12159]
++	* sysdeps/x86_64/multiarch/strchr.S: Fix propagation of search byte
++	into all bytes of SSE register.
++	Patch by Richard Li <richardpku@gmail.com>.
++
++2010-10-22  Andreas Schwab  <schwab@redhat.com>
++
++	* include/dlfcn.h (__RTLD_SECURE): Define.
++	* elf/dl-load.c (_dl_map_object): Remove preloaded parameter.  Use
++	mode & __RTLD_SECURE instead.
++	(open_path): Rename preloaded parameter to secure.
++	* sysdeps/generic/ldsodefs.h (_dl_map_object): Adjust declaration.
++	* elf/dl-open.c (dl_open_worker): Adjust call to _dl_map_object.
++	* elf/dl-deps.c (openaux): Likewise.
++	* elf/rtld.c (struct map_args): Remove is_preloaded.
++	(map_doit): Don't use it.
++	(dl_main): Likewise.
++	(do_preload): Use __RTLD_SECURE instead of is_preloaded.
++	(dlmopen_doit): Add __RTLD_SECURE to mode bits.
++
++2010-10-06  Ulrich Drepper  <drepper@gmail.com>
++
++	* string/bug-strstr1.c: New file.
++	* string/Makefile: Add rules to build and run bug-strstr1.
++
++2010-10-05  Eric Blake  <eblake@redhat.com>
++
++	[BZ #12092]
++	* string/str-two-way.h (two_way_long_needle): Always clear memory
++	when skipping input due to the shift table.
++
++2010-10-03  Ulrich Drepper  <drepper@gmail.com>
++
++	[BZ #12077]
++	* sysdeps/x86_64/strcmp.S: Fix handling of remaining bytes in buffer
++	for strncmp.
++	* string/stratcliff.c: Add tests for strcmp and strncmp.
++	* wcsmbs/wcsatcliff.c: Adjust for stratcliff change.
++
++2010-08-19  Andreas Schwab  <schwab@redhat.com>
++
++	* sysdeps/i386/i686/multiarch/strspn.S [!SHARED]: Fix SSE4.2 check.
++
++2010-08-06  Ulrich Drepper  <drepper@redhat.com>
++
++	* sysdeps/unix/sysv/linux/getlogin_r.c (__getlogin_r_loginuid):
++	Also fail if tpwd after pwuid call is NULL.
++
++2010-06-21  Andreas Schwab <schwab@redhat.com>
++
++	* sysdeps/unix/sysv/linux/getlogin_r.c (__getlogin_r_loginuid):
++	Restore proper fallback handling.
++
++2010-06-19  Ulrich Drepper  <drepper@redhat.com>
++
++	* sysdeps/unix/sysv/linux/getlogin_r.c (__getlogin_r_loginuid): Handle
++	OOM in getpwuid_r correctly.  Return error number when the caller
++	should return, otherwise -1.
++	(getlogin_r): Adjust to return also for result of __getlogin_r_loginuid
++	call returning > 0 value.
++	* sysdeps/unix/sysv/linux/getlogin.c (getlogin): Likewise.
++
+ 2010-07-27  Andreas Schwab  <schwab@redhat.com>
+ 
+ 	* version.h (VERSION): Bump for 2.12.1 release.
+diff --git a/INSTALL b/INSTALL
+index 2a58783..3ec80e3 100644
+--- a/INSTALL
++++ b/INSTALL
+@@ -317,11 +317,12 @@ build the GNU C library:
+      Check the FAQ for any special compiler issues on particular
+      platforms.
+ 
+-   * GNU `binutils' 2.15 or later
++   * GNU `binutils'
+ 
+      You must use GNU `binutils' (as and ld) to build the GNU C library.
+      No other assembler or linker has the necessary functionality at the
+-     moment.
++     moment.  The configure scripts checks for the appropriate version
++     for the platform.  Too-old versions will prevent building glibc.
+ 
+    * GNU `texinfo' 3.12f
+ 
+@@ -460,4 +461,3 @@ or the manual has a bug, so report the disagreement.  If you find any
+ errors or omissions in this manual, please report them to the bug
+ database.  If you refer to specific sections of the manual, please
+ include the section names for easier identification.
+-
+diff --git a/Makeconfig b/Makeconfig
+index c5a58f2..e5cbf64 100644
+--- a/Makeconfig
++++ b/Makeconfig
+@@ -695,7 +695,7 @@ CPPFLAGS = $($(subdir)-CPPFLAGS) $(+includes) $(defines) \
+ 	   -include $(..)include/libc-symbols.h $(sysdep-CPPFLAGS) \
+ 	   $(CPPFLAGS-$(suffix $@)) \
+ 	   $(foreach lib,$(libof-$(basename $(@F))) \
+-		         $(libof-$(<F)) $(libof-$(@F)),$(CPPFLAGS-$(lib))) \
++			 $(libof-$(<F)) $(libof-$(@F)),$(CPPFLAGS-$(lib))) \
+ 	   $(CPPFLAGS-$(<F)) $(CPPFLAGS-$(@F)) $(CPPFLAGS-$(basename $(@F)))
+ override CFLAGS	= -std=gnu99 $(gnu89-inline-CFLAGS) \
+ 		  $(filter-out %frame-pointer,$(+cflags)) $(+gccwarn-c) \
+@@ -966,7 +966,7 @@ endif
+ # emitted into sysd-rules.  A sysdeps Makeconfig fragment can
+ # add its own special object file prefix to this list with e.g. foo-%:%
+ # to have foo-*.? compiled from *.? using $(foo-CPPFLAGS).
+-sysd-rules-patterns := %:% rtld-%:% m_%:s_%
++sysd-rules-patterns := %:% rtld-%:rtld-% rtld-%:% m_%:s_%
+ 
+ # Let sysdeps/ subdirs contain a Makeconfig fragment for us to include here.
+ sysdep-makeconfigs := $(wildcard $(+sysdep_dirs:=/Makeconfig))
+@@ -975,8 +975,8 @@ include $(sysdep-makeconfigs)
+ endif
+ 
+ # Compute just the target patterns.  Makeconfig has set sysd-rules-patterns.
+-sysd-rules-targets := $(foreach p,$(sysd-rules-patterns),\
+-		      		$(firstword $(subst :, ,$p)))
++sysd-rules-targets := $(sort $(foreach p,$(sysd-rules-patterns),\
++					 $(firstword $(subst :, ,$p))))
+ 
+ endif # Makeconfig not yet included
+ 
+diff --git a/config.make.in b/config.make.in
+index adfda9d..efffee4 100644
+--- a/config.make.in
++++ b/config.make.in
+@@ -59,7 +59,7 @@ have-cpp-asm-debuginfo = @libc_cv_cpp_asm_debuginfo@
+ enable-check-abi = @enable_check_abi@
+ have-forced-unwind = @libc_cv_forced_unwind@
+ have-fpie = @libc_cv_fpie@
+-gnu89-inline-CFLAGS = @libc_cv_gnu89_inline@
++gnu89-inline-CFLAGS = @gnu89_inline@
+ have-ssp = @libc_cv_ssp@
+ have-selinux = @have_selinux@
+ have-libaudit = @have_libaudit@
+diff --git a/configure b/configure
+index b6752d1..2af27a5 100755
+--- a/configure
++++ b/configure
+@@ -682,7 +682,7 @@ libc_cv_cc_submachine
+ exceptions
+ no_whole_archive
+ libc_cv_have_initfini
+-libc_cv_gnu89_inline
++gnu89_inline
+ libc_cv_ssp
+ fno_unit_at_a_time
+ libc_cv_hashstyle
+@@ -6924,9 +6924,9 @@ fi
+ { $as_echo "$as_me:$LINENO: result: $libc_cv_gnu89_inline" >&5
+ $as_echo "$libc_cv_gnu89_inline" >&6; }
+ if test $libc_cv_gnu89_inline = yes; then
+-  libc_cv_gnu89_inline=-fgnu89-inline
++  gnu89_inline=-fgnu89-inline
+ else
+-  libc_cv_gnu89_inline=
++  gnu89_inline=
+ fi
+ 
+ 
+diff --git a/configure.in b/configure.in
+index 56849df..036a950 100644
+--- a/configure.in
++++ b/configure.in
+@@ -1803,11 +1803,11 @@ else
+ fi
+ rm -f conftest*])
+ if test $libc_cv_gnu89_inline = yes; then
+-  libc_cv_gnu89_inline=-fgnu89-inline
++  gnu89_inline=-fgnu89-inline
+ else
+-  libc_cv_gnu89_inline=
++  gnu89_inline=
+ fi
+-AC_SUBST(libc_cv_gnu89_inline)
++AC_SUBST(gnu89_inline)
+ 
+ if test $elf != yes; then
+   AC_CACHE_CHECK(for .init and .fini sections, libc_cv_have_initfini,
+diff --git a/elf/Makefile b/elf/Makefile
+index e600cc3..2ac8beb 100644
+--- a/elf/Makefile
++++ b/elf/Makefile
+@@ -759,11 +759,11 @@ $(objpfx)tst-tls8.out: $(objpfx)tst-tlsmod3.so $(objpfx)tst-tlsmod4.so
+ $(objpfx)tst-tls9: $(libdl)
+ $(objpfx)tst-tls9.out: $(objpfx)tst-tlsmod5.so $(objpfx)tst-tlsmod6.so
+ 
+-$(objpfx)tst-tls10: $(objpfx)tst-tlsmod8.so
++$(objpfx)tst-tls10: $(objpfx)tst-tlsmod8.so $(objpfx)tst-tlsmod7.so
+ 
+-$(objpfx)tst-tls11: $(objpfx)tst-tlsmod10.so
++$(objpfx)tst-tls11: $(objpfx)tst-tlsmod10.so $(objpfx)tst-tlsmod9.so
+ 
+-$(objpfx)tst-tls12: $(objpfx)tst-tlsmod12.so
++$(objpfx)tst-tls12: $(objpfx)tst-tlsmod12.so $(objpfx)tst-tlsmod11.so
+ 
+ $(objpfx)tst-tls13: $(libdl)
+ $(objpfx)tst-tls13.out: $(objpfx)tst-tlsmod13a.so
+diff --git a/elf/dl-deps.c b/elf/dl-deps.c
+index a58de5c..a51fb6e 100644
+--- a/elf/dl-deps.c
++++ b/elf/dl-deps.c
+@@ -62,7 +62,7 @@ openaux (void *a)
+ {
+   struct openaux_args *args = (struct openaux_args *) a;
+ 
+-  args->aux = _dl_map_object (args->map, args->name, 0,
++  args->aux = _dl_map_object (args->map, args->name,
+ 			      (args->map->l_type == lt_executable
+ 			       ? lt_library : args->map->l_type),
+ 			      args->trace_mode, args->open_mode,
+diff --git a/elf/dl-load.c b/elf/dl-load.c
+index 0adddf5..de58283 100644
+--- a/elf/dl-load.c
++++ b/elf/dl-load.c
+@@ -801,22 +801,7 @@ lose (int code, int fd, const char *name, char *realname, struct link_map *l,
+   /* The file might already be closed.  */
+   if (fd != -1)
+     (void) __close (fd);
+-  if (l != NULL)
+-    {
+-      /* We modify the list of loaded objects.  */
+-      __rtld_lock_lock_recursive (GL(dl_load_write_lock));
+-      /* Remove the stillborn object from the list and free it.  */
+-      assert (l->l_next == NULL);
+-      if (l->l_prev == NULL)
+-	/* No other module loaded. This happens only in the static library,
+-	   or in rtld under --verify.  */
+-	GL(dl_ns)[l->l_ns]._ns_loaded = NULL;
+-      else
+-	l->l_prev->l_next = NULL;
+-      --GL(dl_ns)[l->l_ns]._ns_nloaded;
+-      free (l);
+-      __rtld_lock_unlock_recursive (GL(dl_load_write_lock));
+-    }
++  free (l);
+   free (realname);
+ 
+   if (r != NULL)
+@@ -901,6 +886,9 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
+ 	 never be unloaded.  */
+       __close (fd);
+ 
++      /* Add the map for the mirrored object to the object list.  */
++      _dl_add_to_namespace_list (l, nsid);
++
+       return l;
+     }
+ #endif
+@@ -1495,6 +1483,9 @@ cannot enable executable stack as shared object requires");
+     add_name_to_object (l, ((const char *) D_PTR (l, l_info[DT_STRTAB])
+ 			    + l->l_info[DT_SONAME]->d_un.d_val));
+ 
++  /* Now that the object is fully initialized add it to the object list.  */
++  _dl_add_to_namespace_list (l, nsid);
++
+ #ifdef SHARED
+   /* Auditing checkpoint: we have a new object.  */
+   if (__builtin_expect (GLRO(dl_naudit) > 0, 0)
+@@ -1815,7 +1806,7 @@ open_verify (const char *name, struct filebuf *fbp, struct link_map *loader,
+    if MAY_FREE_DIRS is true.  */
+ 
+ static int
+-open_path (const char *name, size_t namelen, int preloaded,
++open_path (const char *name, size_t namelen, int secure,
+ 	   struct r_search_path_struct *sps, char **realname,
+ 	   struct filebuf *fbp, struct link_map *loader, int whatcode,
+ 	   bool *found_other_class)
+@@ -1897,7 +1888,7 @@ open_path (const char *name, size_t namelen, int preloaded,
+ 	  /* Remember whether we found any existing directory.  */
+ 	  here_any |= this_dir->status[cnt] != nonexisting;
+ 
+-	  if (fd != -1 && __builtin_expect (preloaded, 0)
++	  if (fd != -1 && __builtin_expect (secure, 0)
+ 	      && INTUSE(__libc_enable_secure))
+ 	    {
+ 	      /* This is an extra security effort to make sure nobody can
+@@ -1966,7 +1957,7 @@ open_path (const char *name, size_t namelen, int preloaded,
+ 
+ struct link_map *
+ internal_function
+-_dl_map_object (struct link_map *loader, const char *name, int preloaded,
++_dl_map_object (struct link_map *loader, const char *name,
+ 		int type, int trace_mode, int mode, Lmid_t nsid)
+ {
+   int fd;
+@@ -2070,7 +2061,8 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
+ 	  for (l = loader; l; l = l->l_loader)
+ 	    if (cache_rpath (l, &l->l_rpath_dirs, DT_RPATH, "RPATH"))
+ 	      {
+-		fd = open_path (name, namelen, preloaded, &l->l_rpath_dirs,
++		fd = open_path (name, namelen, mode & __RTLD_SECURE,
++				&l->l_rpath_dirs,
+ 				&realname, &fb, loader, LA_SER_RUNPATH,
+ 				&found_other_class);
+ 		if (fd != -1)
+@@ -2085,14 +2077,15 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
+ 	      && main_map != NULL && main_map->l_type != lt_loaded
+ 	      && cache_rpath (main_map, &main_map->l_rpath_dirs, DT_RPATH,
+ 			      "RPATH"))
+-	    fd = open_path (name, namelen, preloaded, &main_map->l_rpath_dirs,
++	    fd = open_path (name, namelen, mode & __RTLD_SECURE,
++			    &main_map->l_rpath_dirs,
+ 			    &realname, &fb, loader ?: main_map, LA_SER_RUNPATH,
+ 			    &found_other_class);
+ 	}
+ 
+       /* Try the LD_LIBRARY_PATH environment variable.  */
+       if (fd == -1 && env_path_list.dirs != (void *) -1)
+-	fd = open_path (name, namelen, preloaded, &env_path_list,
++	fd = open_path (name, namelen, mode & __RTLD_SECURE, &env_path_list,
+ 			&realname, &fb,
+ 			loader ?: GL(dl_ns)[LM_ID_BASE]._ns_loaded,
+ 			LA_SER_LIBPATH, &found_other_class);
+@@ -2101,12 +2094,12 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
+       if (fd == -1 && loader != NULL
+ 	  && cache_rpath (loader, &loader->l_runpath_dirs,
+ 			  DT_RUNPATH, "RUNPATH"))
+-	fd = open_path (name, namelen, preloaded,
++	fd = open_path (name, namelen, mode & __RTLD_SECURE,
+ 			&loader->l_runpath_dirs, &realname, &fb, loader,
+ 			LA_SER_RUNPATH, &found_other_class);
+ 
+       if (fd == -1
+-	  && (__builtin_expect (! preloaded, 1)
++	  && (__builtin_expect (! (mode & __RTLD_SECURE), 1)
+ 	      || ! INTUSE(__libc_enable_secure)))
+ 	{
+ 	  /* Check the list of libraries in the file /etc/ld.so.cache,
+@@ -2172,7 +2165,7 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
+ 	  && ((l = loader ?: GL(dl_ns)[nsid]._ns_loaded) == NULL
+ 	      || __builtin_expect (!(l->l_flags_1 & DF_1_NODEFLIB), 1))
+ 	  && rtld_search_dirs.dirs != (void *) -1)
+-	fd = open_path (name, namelen, preloaded, &rtld_search_dirs,
++	fd = open_path (name, namelen, mode & __RTLD_SECURE, &rtld_search_dirs,
+ 			&realname, &fb, l, LA_SER_DEFAULT, &found_other_class);
+ 
+       /* Add another newline when we are tracing the library loading.  */
+@@ -2217,7 +2210,7 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
+ 	     have.  */
+ 	  static const Elf_Symndx dummy_bucket = STN_UNDEF;
+ 
+-	  /* Enter the new object in the list of loaded objects.  */
++	  /* Allocate a new object map.  */
+ 	  if ((name_copy = local_strdup (name)) == NULL
+ 	      || (l = _dl_new_object (name_copy, name, type, loader,
+ 				      mode, nsid)) == NULL)
+@@ -2235,6 +2228,9 @@ _dl_map_object (struct link_map *loader, const char *name, int preloaded,
+ 	  l->l_nbuckets = 1;
+ 	  l->l_relocated = 1;
+ 
++	  /* Enter the object in the object list.  */
++	  _dl_add_to_namespace_list (l, nsid);
++
+ 	  return l;
+ 	}
+       else if (found_other_class)
+diff --git a/elf/dl-object.c b/elf/dl-object.c
+index 22a1635..5d15ce1 100644
+--- a/elf/dl-object.c
++++ b/elf/dl-object.c
+@@ -1,5 +1,5 @@
+ /* Storage management for the chain of loaded shared objects.
+-   Copyright (C) 1995-2002,2004,2006-2008,2009 Free Software Foundation, Inc.
++   Copyright (C) 1995-2002,2004,2006-2009,2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -26,16 +26,41 @@
+ #include <assert.h>
+ 
+ 
++/* Add the new link_map NEW to the end of the namespace list.  */
++void
++internal_function
++_dl_add_to_namespace_list (struct link_map *new, Lmid_t nsid)
++{
++  /* We modify the list of loaded objects.  */
++  __rtld_lock_lock_recursive (GL(dl_load_write_lock));
++
++  if (GL(dl_ns)[nsid]._ns_loaded != NULL)
++    {
++      struct link_map *l = GL(dl_ns)[nsid]._ns_loaded;
++      while (l->l_next != NULL)
++	l = l->l_next;
++      new->l_prev = l;
++      /* new->l_next = NULL;   Would be necessary but we use calloc.  */
++      l->l_next = new;
++    }
++  else
++    GL(dl_ns)[nsid]._ns_loaded = new;
++  ++GL(dl_ns)[nsid]._ns_nloaded;
++  new->l_serial = GL(dl_load_adds);
++  ++GL(dl_load_adds);
++
++  __rtld_lock_unlock_recursive (GL(dl_load_write_lock));
++}
++
++
+ /* Allocate a `struct link_map' for a new object being loaded,
+    and enter it into the _dl_loaded list.  */
+-
+ struct link_map *
+ internal_function
+ _dl_new_object (char *realname, const char *libname, int type,
+ 		struct link_map *loader, int mode, Lmid_t nsid)
+ {
+   struct link_map *l;
+-  int idx;
+   size_t libname_len = strlen (libname) + 1;
+   struct link_map *new;
+   struct libname_list *newname;
+@@ -93,31 +118,12 @@ _dl_new_object (char *realname, const char *libname, int type,
+   new->l_scope = new->l_scope_mem;
+   new->l_scope_max = sizeof (new->l_scope_mem) / sizeof (new->l_scope_mem[0]);
+ 
+-  /* We modify the list of loaded objects.  */
+-  __rtld_lock_lock_recursive (GL(dl_load_write_lock));
+-
+   /* Counter for the scopes we have to handle.  */
+-  idx = 0;
++  int idx = 0;
+ 
+   if (GL(dl_ns)[nsid]._ns_loaded != NULL)
+-    {
+-      l = GL(dl_ns)[nsid]._ns_loaded;
+-      while (l->l_next != NULL)
+-	l = l->l_next;
+-      new->l_prev = l;
+-      /* new->l_next = NULL;	Would be necessary but we use calloc.  */
+-      l->l_next = new;
+-
+-      /* Add the global scope.  */
+-      new->l_scope[idx++] = &GL(dl_ns)[nsid]._ns_loaded->l_searchlist;
+-    }
+-  else
+-    GL(dl_ns)[nsid]._ns_loaded = new;
+-  ++GL(dl_ns)[nsid]._ns_nloaded;
+-  new->l_serial = GL(dl_load_adds);
+-  ++GL(dl_load_adds);
+-
+-  __rtld_lock_unlock_recursive (GL(dl_load_write_lock));
++    /* Add the global scope.  */
++    new->l_scope[idx++] = &GL(dl_ns)[nsid]._ns_loaded->l_searchlist;
+ 
+   /* If we have no loader the new object acts as it.  */
+   if (loader == NULL)
+diff --git a/elf/dl-open.c b/elf/dl-open.c
+index 754a263..cf8e8cc 100644
+--- a/elf/dl-open.c
++++ b/elf/dl-open.c
+@@ -221,38 +221,9 @@ dl_open_worker (void *a)
+ 
+   assert (_dl_debug_initialize (0, args->nsid)->r_state == RT_CONSISTENT);
+ 
+-  /* Maybe we have to expand a DST.  */
+-  if (__builtin_expect (dst != NULL, 0))
+-    {
+-      size_t len = strlen (file);
+-
+-      /* Determine how much space we need.  We have to allocate the
+-	 memory locally.  */
+-      size_t required = DL_DST_REQUIRED (call_map, file, len,
+-					 _dl_dst_count (dst, 0));
+-
+-      /* Get space for the new file name.  */
+-      char *new_file = (char *) alloca (required + 1);
+-
+-      /* Generate the new file name.  */
+-      _dl_dst_substitute (call_map, file, new_file, 0);
+-
+-      /* If the substitution failed don't try to load.  */
+-      if (*new_file == '\0')
+-	_dl_signal_error (0, "dlopen", NULL,
+-			  N_("empty dynamic string token substitution"));
+-
+-      /* Now we have a new file name.  */
+-      file = new_file;
+-
+-      /* It does not matter whether call_map is set even if we
+-	 computed it only because of the DST.  Since the path contains
+-	 a slash the value is not used.  See dl-load.c.  */
+-    }
+-
+   /* Load the named object.  */
+   struct link_map *new;
+-  args->map = new = _dl_map_object (call_map, file, 0, lt_loaded, 0,
++  args->map = new = _dl_map_object (call_map, file, lt_loaded, 0,
+ 				    mode | __RTLD_CALLMAP, args->nsid);
+ 
+   /* If the pointer returned is NULL this means the RTLD_NOLOAD flag is
+diff --git a/elf/dl-sysdep.c b/elf/dl-sysdep.c
+index 160503d..e6c8660 100644
+--- a/elf/dl-sysdep.c
++++ b/elf/dl-sysdep.c
+@@ -425,6 +425,11 @@ _dl_important_hwcaps (const char *platform, size_t platform_len, size_t *sz,
+     {
+       const ElfW(Word) mask = ((const ElfW(Word) *) dsocaps)[-1];
+       GLRO(dl_hwcap) |= (uint64_t) mask << _DL_FIRST_EXTRA;
++      /* Note that we add the dsocaps to the set already chosen by the
++	 LD_HWCAP_MASK environment variable (or default HWCAP_IMPORTANT).
++	 So there is no way to request ignoring an OS-supplied dsocap
++	 string and bit like you can ignore an OS-supplied HWCAP bit.  */
++      GLRO(dl_hwcap_mask) |= (uint64_t) mask << _DL_FIRST_EXTRA;
+       size_t len;
+       for (const char *p = dsocaps; p < dsocaps + dsocapslen; p += len + 1)
+ 	{
+diff --git a/elf/ldconfig.c b/elf/ldconfig.c
+index b4af31e..b82ca8e 100644
+--- a/elf/ldconfig.c
++++ b/elf/ldconfig.c
+@@ -1359,14 +1359,9 @@ main (int argc, char **argv)
+ 
+   const char *aux_cache_file = _PATH_LDCONFIG_AUX_CACHE;
+   if (opt_chroot)
+-    {
+-      aux_cache_file = chroot_canon (opt_chroot, aux_cache_file);
+-      if (aux_cache_file == NULL)
+-	error (EXIT_FAILURE, errno, _("Can't open cache file %s\n"),
+-	       _PATH_LDCONFIG_AUX_CACHE);
+-    }
++    aux_cache_file = chroot_canon (opt_chroot, aux_cache_file);
+ 
+-  if (! opt_ignore_aux_cache)
++  if (! opt_ignore_aux_cache && aux_cache_file)
+     load_aux_cache (aux_cache_file);
+   else
+     init_aux_cache ();
+@@ -1376,7 +1371,8 @@ main (int argc, char **argv)
+   if (opt_build_cache)
+     {
+       save_cache (cache_file);
+-      save_aux_cache (aux_cache_file);
++      if (aux_cache_file)
++        save_aux_cache (aux_cache_file);
+     }
+ 
+   return 0;
+diff --git a/elf/rtld-Rules b/elf/rtld-Rules
+index 9f31a56..10c9452 100644
+--- a/elf/rtld-Rules
++++ b/elf/rtld-Rules
+@@ -1,6 +1,6 @@
+ # Subroutine makefile for compiling libc modules linked into dynamic linker.
+ 
+-# Copyright (C) 2002, 2003, 2005, 2006, 2008 Free Software Foundation, Inc.
++# Copyright (C) 2002,2003,2005,2006,2008,2010 Free Software Foundation, Inc.
+ # This file is part of the GNU C Library.
+ 
+ # The GNU C Library is free software; you can redistribute it and/or
+@@ -56,7 +56,7 @@ $(objpfx)rtld-libc.a: $(foreach dir,$(rtld-subdirs),\
+ # Use the verbose option of ar and tar when not running silently.
+ ifeq	"$(findstring s,$(MAKEFLAGS))" ""	# if not -s
+ verbose := v
+-else	   					# -s
++else						# -s
+ verbose	:=
+ endif						# not -s
+ 
+@@ -93,6 +93,12 @@ else
+ # These are the basic compilation rules corresponding to the Makerules ones.
+ # The sysd-rules generated makefile already defines pattern rules for rtld-%
+ # targets built from sysdeps source files.
++$(objpfx)rtld-%.os: rtld-%.S $(before-compile)
++	$(compile-command.S) $(rtld-CPPFLAGS)
++$(objpfx)rtld-%.os: rtld-%.s $(before-compile)
++	$(compile-command.s) $(rtld-CPPFLAGS)
++$(objpfx)rtld-%.os: rtld-%.c $(before-compile)
++	$(compile-command.c) $(rtld-CPPFLAGS)
+ $(objpfx)rtld-%.os: %.S $(before-compile)
+ 	$(compile-command.S) $(rtld-CPPFLAGS)
+ $(objpfx)rtld-%.os: %.s $(before-compile)
+@@ -101,6 +107,9 @@ $(objpfx)rtld-%.os: %.c $(before-compile)
+ 	$(compile-command.c) $(rtld-CPPFLAGS)
+ 
+ # The rules for generated source files.
++$(objpfx)rtld-%.os: $(objpfx)rtld-%.S $(before-compile); $(compile-command.S)
++$(objpfx)rtld-%.os: $(objpfx)rtld-%.s $(before-compile); $(compile-command.s)
++$(objpfx)rtld-%.os: $(objpfx)rtld-%.c $(before-compile); $(compile-command.c)
+ $(objpfx)rtld-%.os: $(objpfx)%.S $(before-compile); $(compile-command.S)
+ $(objpfx)rtld-%.os: $(objpfx)%.s $(before-compile); $(compile-command.s)
+ $(objpfx)rtld-%.os: $(objpfx)%.c $(before-compile); $(compile-command.c)
+diff --git a/elf/rtld.c b/elf/rtld.c
+index 90f3ff1..b451ab5 100644
+--- a/elf/rtld.c
++++ b/elf/rtld.c
+@@ -589,7 +589,6 @@ struct map_args
+   /* Argument to map_doit.  */
+   char *str;
+   struct link_map *loader;
+-  int is_preloaded;
+   int mode;
+   /* Return value of map_doit.  */
+   struct link_map *map;
+@@ -627,16 +626,17 @@ static void
+ map_doit (void *a)
+ {
+   struct map_args *args = (struct map_args *) a;
+-  args->map = _dl_map_object (args->loader, args->str,
+-			      args->is_preloaded, lt_library, 0, args->mode,
+-			      LM_ID_BASE);
++  args->map = _dl_map_object (args->loader, args->str, lt_library, 0,
++			      args->mode, LM_ID_BASE);
+ }
+ 
+ static void
+ dlmopen_doit (void *a)
+ {
+   struct dlmopen_args *args = (struct dlmopen_args *) a;
+-  args->map = _dl_open (args->fname, RTLD_LAZY | __RTLD_DLOPEN | __RTLD_AUDIT,
++  args->map = _dl_open (args->fname,
++			(RTLD_LAZY | __RTLD_DLOPEN | __RTLD_AUDIT
++			 | __RTLD_SECURE),
+ 			dl_main, LM_ID_NEWLM, _dl_argc, INTUSE(_dl_argv),
+ 			__environ);
+ }
+@@ -806,8 +806,7 @@ do_preload (char *fname, struct link_map *main_map, const char *where)
+ 
+   args.str = fname;
+   args.loader = main_map;
+-  args.is_preloaded = 1;
+-  args.mode = 0;
++  args.mode = __RTLD_SECURE;
+ 
+   unsigned int old_nloaded = GL(dl_ns)[LM_ID_BASE]._ns_nloaded;
+ 
+@@ -1054,7 +1053,6 @@ of this helper program; chances are you did not intend to run this program.\n\
+ 
+ 	  args.str = rtld_progname;
+ 	  args.loader = NULL;
+-	  args.is_preloaded = 0;
+ 	  args.mode = __RTLD_OPENEXEC;
+ 	  (void) _dl_catch_error (&objname, &err_str, &malloced, map_doit,
+ 				  &args);
+@@ -1066,7 +1064,7 @@ of this helper program; chances are you did not intend to run this program.\n\
+       else
+ 	{
+ 	  HP_TIMING_NOW (start);
+-	  _dl_map_object (NULL, rtld_progname, 0, lt_library, 0,
++	  _dl_map_object (NULL, rtld_progname, lt_library, 0,
+ 			  __RTLD_OPENEXEC, LM_ID_BASE);
+ 	  HP_TIMING_NOW (stop);
+ 
+@@ -1110,11 +1108,15 @@ of this helper program; chances are you did not intend to run this program.\n\
+       main_map = _dl_new_object ((char *) "", "", lt_executable, NULL,
+ 				 __RTLD_OPENEXEC, LM_ID_BASE);
+       assert (main_map != NULL);
+-      assert (main_map == GL(dl_ns)[LM_ID_BASE]._ns_loaded);
+       main_map->l_phdr = phdr;
+       main_map->l_phnum = phnum;
+       main_map->l_entry = *user_entry;
+ 
++      /* Even though the link map is not yet fully initialized we can add
++	 it to the map list since there are no possible users running yet.  */
++      _dl_add_to_namespace_list (main_map, LM_ID_BASE);
++      assert (main_map == GL(dl_ns)[LM_ID_BASE]._ns_loaded);
++
+       /* At this point we are in a bit of trouble.  We would have to
+ 	 fill in the values for l_dev and l_ino.  But in general we
+ 	 do not know where the file is.  We also do not handle AT_EXECFD
+@@ -1257,7 +1259,7 @@ of this helper program; chances are you did not intend to run this program.\n\
+       /* We were invoked directly, so the program might not have a
+ 	 PT_INTERP.  */
+       _dl_rtld_libname.name = GL(dl_rtld_map).l_name;
+-      /* _dl_rtld_libname.next = NULL; 	Already zero.  */
++      /* _dl_rtld_libname.next = NULL;	Already zero.  */
+       GL(dl_rtld_map).l_libname =  &_dl_rtld_libname;
+     }
+   else
+@@ -1382,6 +1384,9 @@ of this helper program; chances are you did not intend to run this program.\n\
+ 	      l->l_libname->name = memcpy (copy, dsoname, len);
+ 	    }
+ 
++	  /* Add the vDSO to the object list.  */
++	  _dl_add_to_namespace_list (l, LM_ID_BASE);
++
+ 	  /* Rearrange the list so this DSO appears after rtld_map.  */
+ 	  assert (l->l_next == NULL);
+ 	  assert (l->l_prev == main_map);
+diff --git a/hurd/hurd/fd.h b/hurd/hurd/fd.h
+index d1aa867..2473476 100644
+--- a/hurd/hurd/fd.h
++++ b/hurd/hurd/fd.h
+@@ -254,8 +254,9 @@ extern int _hurd_select (int nfds, struct pollfd *pollfds,
+ 			 const sigset_t *sigmask);
+ 
+ /* Variant of file_name_lookup used in *at function implementations.
+-   AT_FLAGS should contain only AT_SYMLINK_NOFOLLOW; other bits
+-   cause EINVAL.  */
++   AT_FLAGS may only contain AT_SYMLINK_FOLLOW or AT_SYMLINK_NOFOLLOW,
++   which will remove and add O_NOLINK from FLAGS respectively.
++   Other bits cause EINVAL.  */
+ extern file_t __file_name_lookup_at (int fd, int at_flags,
+ 				     const char *file_name,
+ 				     int flags, mode_t mode);
+diff --git a/hurd/hurdselect.c b/hurd/hurdselect.c
+index 544eee9..a7228f0 100644
+--- a/hurd/hurdselect.c
++++ b/hurd/hurdselect.c
+@@ -52,7 +52,7 @@ _hurd_select (int nfds,
+   int firstfd, lastfd;
+   mach_msg_timeout_t to = (timeout != NULL ?
+ 			   (timeout->tv_sec * 1000 +
+-			    timeout->tv_nsec / 1000000) :
++			    (timeout->tv_nsec + 999999) / 1000000) :
+ 			   0);
+   struct
+     {
+diff --git a/hurd/lookup-at.c b/hurd/lookup-at.c
+index 7f55527..728a970 100644
+--- a/hurd/lookup-at.c
++++ b/hurd/lookup-at.c
+@@ -30,8 +30,14 @@ __file_name_lookup_at (int fd, int at_flags,
+   error_t err;
+   file_t result;
+ 
++  if ((at_flags & AT_SYMLINK_FOLLOW) && (at_flags & AT_SYMLINK_NOFOLLOW))
++    return (__hurd_fail (EINVAL), MACH_PORT_NULL);
++
+   flags |= (at_flags & AT_SYMLINK_NOFOLLOW) ? O_NOLINK : 0;
+   at_flags &= ~AT_SYMLINK_NOFOLLOW;
++  if (at_flags & AT_SYMLINK_FOLLOW)
++    flags &= ~O_NOLINK;
++  at_flags &= ~AT_SYMLINK_FOLLOW;
+   if (at_flags != 0)
+     return (__hurd_fail (EINVAL), MACH_PORT_NULL);
+ 
+diff --git a/include/dlfcn.h b/include/dlfcn.h
+index a67426d..af92483 100644
+--- a/include/dlfcn.h
++++ b/include/dlfcn.h
+@@ -9,6 +9,7 @@
+ #define __RTLD_OPENEXEC	0x20000000
+ #define __RTLD_CALLMAP	0x10000000
+ #define __RTLD_AUDIT	0x08000000
++#define __RTLD_SECURE	0x04000000 /* Apply additional security checks.  */
+ 
+ #define __LM_ID_CALLER	-2
+ 
+diff --git a/locale/programs/locale.c b/locale/programs/locale.c
+index a3602cf..2005dec 100644
+--- a/locale/programs/locale.c
++++ b/locale/programs/locale.c
+@@ -762,6 +762,29 @@ write_charmaps (void)
+   twalk (all_data, print_names);
+ }
+ 
++/* Print a properly quoted assignment of NAME with VAL, using double
++   quotes iff DQUOTE is true.  */
++static void
++print_assignment (const char *name, const char *val, bool dquote)
++{
++  printf ("%s=", name);
++  if (dquote)
++    putchar ('"');
++  while (*val != '\0')
++    {
++      size_t segment
++	= strcspn (val, dquote ? "$`\"\\" : "~|&;<>()$`\\\"' \t\n");
++      printf ("%.*s", (int) segment, val);
++      val += segment;
++      if (*val == '\0')
++	break;
++      putchar ('\\');
++      putchar (*val++);
++    }
++  if (dquote)
++    putchar ('"');
++  putchar ('\n');
++}
+ 
+ /* We have to show the contents of the environments determining the
+    locale.  */
+@@ -769,7 +792,7 @@ static void
+ show_locale_vars (void)
+ {
+   size_t cat_no;
+-  const char *lcall = getenv ("LC_ALL");
++  const char *lcall = getenv ("LC_ALL") ? : "";
+   const char *lang = getenv ("LANG") ? : "";
+ 
+   auto void get_source (const char *name);
+@@ -778,15 +801,15 @@ show_locale_vars (void)
+     {
+       char *val = getenv (name);
+ 
+-      if ((lcall ?: "")[0] != '\0' || val == NULL)
+-	printf ("%s=\"%s\"\n", name,
+-		(lcall ?: "")[0] ? lcall : (lang ?: "")[0] ? lang : "POSIX");
++      if (lcall[0] != '\0' || val == NULL)
++	print_assignment (name, lcall[0] ? lcall : lang[0] ? lang : "POSIX",
++			  true);
+       else
+-	printf ("%s=%s\n", name, val);
++	print_assignment (name, val, false);
+     }
+ 
+   /* LANG has to be the first value.  */
+-  printf ("LANG=%s\n", lang);
++  print_assignment ("LANG", lang, false);
+ 
+   /* Now all categories in an unspecified order.  */
+   for (cat_no = 0; cat_no < NCATEGORIES; ++cat_no)
+@@ -794,7 +817,7 @@ show_locale_vars (void)
+       get_source (category[cat_no].name);
+ 
+   /* The last is the LC_ALL value.  */
+-  printf ("LC_ALL=%s\n", lcall ? : "");
++  print_assignment ("LC_ALL", lcall, false);
+ }
+ 
+ 
+diff --git a/malloc/malloc.c b/malloc/malloc.c
+index 9594be4..b492c0a 100644
+--- a/malloc/malloc.c
++++ b/malloc/malloc.c
+@@ -4850,7 +4850,7 @@ _int_free(mstate av, mchunkptr p)
+       }
+ 
+     if (__builtin_expect (perturb_byte, 0))
+-      free_perturb (chunk2mem(p), size - SIZE_SZ);
++      free_perturb (chunk2mem(p), size - 2 * SIZE_SZ);
+ 
+     set_fastchunks(av);
+     unsigned int idx = fastbin_index(size);
+@@ -4954,7 +4954,7 @@ _int_free(mstate av, mchunkptr p)
+       }
+ 
+     if (__builtin_expect (perturb_byte, 0))
+-      free_perturb (chunk2mem(p), size - SIZE_SZ);
++      free_perturb (chunk2mem(p), size - 2 * SIZE_SZ);
+ 
+     /* consolidate backward */
+     if (!prev_inuse(p)) {
+diff --git a/malloc/mcheck.c b/malloc/mcheck.c
+index 524acc7..e2eb83f 100644
+--- a/malloc/mcheck.c
++++ b/malloc/mcheck.c
+@@ -1,5 +1,6 @@
+ /* Standard debugging hooks for `malloc'.
+-   Copyright (C) 1990-1997,1999,2000-2002,2007 Free Software Foundation, Inc.
++   Copyright (C) 1990-1997,1999,2000-2002,2007,2010
++   Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Written May 1989 by Mike Haertel.
+ 
+@@ -25,6 +26,7 @@
+ # include <stdint.h>
+ # include <stdio.h>
+ # include <libintl.h>
++# include <errno.h>
+ #endif
+ 
+ /* Old hook values.  */
+@@ -209,6 +211,12 @@ mallochook (__malloc_size_t size, const __ptr_t caller)
+   if (pedantic)
+     mcheck_check_all ();
+ 
++  if (size > ~((size_t) 0) - (sizeof (struct hdr) + 1))
++    {
++      __set_errno (ENOMEM);
++      return NULL;
++    }
++
+   __malloc_hook = old_malloc_hook;
+   if (old_malloc_hook != NULL)
+     hdr = (struct hdr *) (*old_malloc_hook) (sizeof (struct hdr) + size + 1,
+@@ -241,6 +249,12 @@ memalignhook (__malloc_size_t alignment, __malloc_size_t size,
+ 
+   slop = (sizeof *hdr + alignment - 1) & -alignment;
+ 
++  if (size > ~((size_t) 0) - (slop + 1))
++    {
++      __set_errno (ENOMEM);
++      return NULL;
++    }
++
+   __memalign_hook = old_memalign_hook;
+   if (old_memalign_hook != NULL)
+     block = (*old_memalign_hook) (alignment, slop + size + 1, caller);
+@@ -276,6 +290,12 @@ reallochook (__ptr_t ptr, __malloc_size_t size, const __ptr_t caller)
+   if (pedantic)
+     mcheck_check_all ();
+ 
++  if (size > ~((size_t) 0) - (sizeof (struct hdr) + 1))
++    {
++      __set_errno (ENOMEM);
++      return NULL;
++    }
++
+   if (ptr)
+     {
+       hdr = ((struct hdr *) ptr) - 1;
+diff --git a/manual/Makefile b/manual/Makefile
+index c5866eb..b1f5fa7 100644
+--- a/manual/Makefile
++++ b/manual/Makefile
+@@ -232,7 +232,10 @@ ifdef objpfx
+ .PHONY: stubs
+ stubs: $(objpfx)stubs
+ endif
+-$(objpfx)stubs ../po/manual.pot $(objpfx)stamp%:
++$(objpfx)stubs ../po/manual.pot:
++	$(make-target-directory)
++	touch $@
++$(objpfx)stamp%:
+ 	$(make-target-directory)
+ 	touch $@
+ 
+diff --git a/manual/arith.texi b/manual/arith.texi
+index b1580a0..1b8a8c3 100644
+--- a/manual/arith.texi
++++ b/manual/arith.texi
+@@ -1407,7 +1407,8 @@ do not raise the inexact exception if @var{x} is not an integer.
+ @comment ISO
+ @deftypefunx {long double} roundl (long double @var{x})
+ These functions are similar to @code{rint}, but they round halfway
+-cases away from zero instead of to the nearest even integer.
++cases away from zero instead of to the nearest integer (or other
++current rounding mode).
+ @end deftypefun
+ 
+ @comment math.h
+diff --git a/manual/locale.texi b/manual/locale.texi
+index e3e0563..d1a50cb 100644
+--- a/manual/locale.texi
++++ b/manual/locale.texi
+@@ -1210,7 +1210,7 @@ This function would normally be used like this:
+   /* @r{Prepare the @code{getline} call.}  */
+   line = NULL;
+   len = 0;
+-  while (getline (&line, &len, stdout) >= 0)
++  while (getline (&line, &len, stdin) >= 0)
+     @{
+       /* @r{Check the response.}  */
+       int res = rpmatch (line);
+diff --git a/manual/memory.texi b/manual/memory.texi
+index 59ea1ee..db63c33 100644
+--- a/manual/memory.texi
++++ b/manual/memory.texi
+@@ -702,6 +702,11 @@ be allocated via @code{mmap}.
+ @item M_MMAP_MAX
+ The maximum number of chunks to allocate with @code{mmap}.  Setting this
+ to zero disables all use of @code{mmap}.
++@item M_PERTURB
++If non-zero, memory blocks are filled with values depending on some
++low order bits of this parameter when they are allocated (except when
++allocated by @code{calloc}) and freed.  This can be used to debug the
++use of uninitialized or freed heap memory.
+ @end table
+ 
+ @end deftypefun
+diff --git a/nis/nss_compat/compat-initgroups.c b/nis/nss_compat/compat-initgroups.c
+index 07a3b92..de8d95c 100644
+--- a/nis/nss_compat/compat-initgroups.c
++++ b/nis/nss_compat/compat-initgroups.c
+@@ -474,18 +474,21 @@ internal_getgrent_r (ent_t *ent, char *buffer, size_t buflen, const char *user,
+ 	  /* If the selected module does not support getgrent_r or
+ 	     initgroups_dyn, abort. We cannot find the needed group
+ 	     entries.  */
+-	  if (nss_getgrent_r == NULL && nss_initgroups_dyn == NULL)
++	  if (nss_initgroups_dyn == NULL || nss_getgrgid_r == NULL)
++	    {
++	      if (nss_setgrent != NULL)
++	        {
++		  nss_setgrent (1);
++		  ent->need_endgrent = true;
++		}
++	      ent->skip_initgroups_dyn = true;
++	    }
++
++	  if (ent->skip_initgroups_dyn && nss_getgrent_r == NULL)
+ 	    return NSS_STATUS_UNAVAIL;
+ 
+ 	  ent->files = false;
+ 
+-	  if (nss_initgroups_dyn == NULL && nss_setgrent != NULL)
+-	    {
+-	      nss_setgrent (1);
+-	      ent->need_endgrent = true;
+-	    }
+-	  ent->skip_initgroups_dyn = true;
+-
+ 	  return getgrent_next_nss (ent, buffer, buflen, user, group,
+ 				    start, size, groupsp, limit, errnop);
+ 	}
+diff --git a/nptl/ChangeLog b/nptl/ChangeLog
+index 49ead51..cf038e3 100644
+--- a/nptl/ChangeLog
++++ b/nptl/ChangeLog
+@@ -1,3 +1,52 @@
++2010-08-10  Dinakar Guniguntala  <dino@in.ibm.com>
++	    Stefan Hajnoczi  <stefanha@linux.vnet.ibm.com>
++
++	* sysdeps/unix/sysv/linux/i386/i486/pthread_cond_signal.S: If
++	FUTEX_WAKE_OP fails make sure to call FUTEX_WAKE instead.
++
++2010-07-03  Ulrich Drepper  <drepper@redhat.com>
++
++	* tst-abstime.c (do_test): Some more cleanups
++
++2010-07-02  Ulrich Drepper  <drepper@redhat.com>
++
++	* tst-abstime.c: Correct testing and add test for sem_timedwait.
++
++2010-07-01  Andreas Schwab  <schwab@redhat.com>
++	    Ulrich Drepper  <drepper@redhat.com>
++
++	* Makefile (tests): Add tst-abstime.
++	* tst-abstime.c: New file.
++	* sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
++	(__lll_timedlock_wait): Check for timestamp before the Epoch.
++	* sysdeps/unix/sysv/linux/x86_64/lowlevellock.S
++	(__lll_timedlock_wait): Likewise.
++	* sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S
++	(__lll_robust_timedlock_wait): Likewise.
++	* sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
++	(__pthread_cond_timedwait): Likewise.
++	* sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S
++	(pthread_rwlock_timedrdlock): Likewise.
++	* sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S
++	(pthread_rwlock_timedwrlock): Likewise.
++	* sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S (sem_timedwait):
++	Likewise.
++
++2010-08-12  H.J. Lu  <hongjiu.lu@intel.com>
++
++	* nptl/sysdeps/unix/sysv/linux/i386/Makefile: New file.
++
++2010-07-01  Ulrich Drepper  <drepper@redhat.com>
++
++	* Makefile (tst-_res1): Add tst-_res1mod1 to dependency list.
++
++2010-10-13  H.J. Lu  <hongjiu.lu@intel.com>
++
++	[BZ #12113]
++	* sysdeps/x86_64/pthreaddef.h (TCB_ALIGNMENT): Changed to 32.
++	* sysdeps/x86_64/tls.h (TLS_TCB_ALIGN): Defined with alignment
++	of "struct pthread".
++
+ 2010-06-01  Takashi Yoshii  <takashi.yoshii.zj@renesas.com>
+ 
+ 	* sysdeps/unix/sysv/linux/sh/lowlevellock.S: Fix incorrect
+diff --git a/nptl/Makefile b/nptl/Makefile
+index 982db8e..51b6ae5 100644
+--- a/nptl/Makefile
++++ b/nptl/Makefile
+@@ -256,6 +256,7 @@ tests = tst-typesizes \
+ 	tst-sched1 \
+ 	tst-backtrace1 \
+ 	tst-oddstacklimit \
++	tst-abstime \
+ 	tst-vfork1 tst-vfork2 tst-vfork1x tst-vfork2x \
+ 	tst-getpid1 tst-getpid2 tst-getpid3 \
+ 	tst-initializers1 $(patsubst %,tst-initializers1-%,c89 gnu89 c99 gnu99)
+@@ -491,7 +492,8 @@ $(objpfx)tst-rwlock14: $(common-objpfx)rt/librt.so
+ $(objpfx)tst-_res1mod2.so: $(objpfx)tst-_res1mod1.so
+ LDFLAGS-tst-_res1mod1.so = -Wl,-soname,tst-_res1mod1.so
+ LDFLAGS-tst-_res1mod2.so = -Wl,-soname,tst-_res1mod2.so
+-$(objpfx)tst-_res1: $(objpfx)tst-_res1mod2.so $(shared-thread-library)
++$(objpfx)tst-_res1: $(objpfx)tst-_res1mod1.so $(objpfx)tst-_res1mod2.so \
++		    $(shared-thread-library)
+ else
+ $(objpfx)tst-cond11: $(common-objpfx)rt/librt.a
+ $(objpfx)tst-cond19: $(common-objpfx)rt/librt.a
+diff --git a/nptl/sysdeps/unix/sysv/linux/i386/Makefile b/nptl/sysdeps/unix/sysv/linux/i386/Makefile
+new file mode 100644
+index 0000000..48eef38
+--- /dev/null
++++ b/nptl/sysdeps/unix/sysv/linux/i386/Makefile
+@@ -0,0 +1,3 @@
++ifeq ($(subdir),nptl)
++CFLAGS-pt-initfini.s += -fno-asynchronous-unwind-tables
++endif
+diff --git a/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S b/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
+index 7578c7e..2198ccf 100644
+--- a/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
++++ b/nptl/sysdeps/unix/sysv/linux/i386/i486/lowlevellock.S
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2002-2004, 2006, 2007, 2009 Free Software Foundation, Inc.
++/* Copyright (C) 2002-2004,2006,2007,2009,2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
+ 
+@@ -188,6 +188,9 @@ __lll_timedlock_wait:
+ 	je	.Lreltmo
+ # endif
+ 
++	cmpl	$0, (%edx)
++	js	8f
++
+ 	movl	%ecx, %ebx
+ 	movl	%esi, %ecx
+ 	movl	%edx, %esi
+@@ -223,6 +226,9 @@ __lll_timedlock_wait:
+ 	cfi_restore(%ebp)
+ 	ret
+ 
++8:	movl	$ETIMEDOUT, %eax
++	jmp	7b
++
+ # ifndef __ASSUME_FUTEX_CLOCK_REALTIME
+ .Lreltmo:
+ 	/* Check for a valid timeout value.  */
+diff --git a/nptl/sysdeps/unix/sysv/linux/i386/i486/pthread_cond_signal.S b/nptl/sysdeps/unix/sysv/linux/i386/i486/pthread_cond_signal.S
+index 9fc2cbf..05cda25 100644
+--- a/nptl/sysdeps/unix/sysv/linux/i386/i486/pthread_cond_signal.S
++++ b/nptl/sysdeps/unix/sysv/linux/i386/i486/pthread_cond_signal.S
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2002,2003,2004,2005,2007,2009 Free Software Foundation, Inc.
++/* Copyright (C) 2002-2005,2007,2009,2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
+ 
+@@ -163,7 +163,6 @@ __pthread_cond_signal:
+ #endif
+ 	orl	$FUTEX_WAKE, %ecx
+ 
+-	xorl	$(FUTEX_WAKE ^ FUTEX_WAKE_OP), %ecx
+ 	movl	$SYS_futex, %eax
+ 	/* %edx should be 1 already from $FUTEX_WAKE_OP syscall.
+ 	movl	$1, %edx  */
+diff --git a/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S b/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S
+index 8de9cf4..3195db2 100644
+--- a/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S
++++ b/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2002-2006, 2007, 2009 Free Software Foundation, Inc.
++/* Copyright (C) 2002-2006, 2007, 2009, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
+ 
+@@ -169,9 +169,13 @@ __lll_timedlock_wait:
+ 	je	.Lreltmo
+ # endif
+ 
++	cmpq	$0, (%rdx)
++	js	5f
++
+ 	pushq	%r9
+ 	cfi_adjust_cfa_offset(8)
+ 	cfi_rel_offset(%r9, 0)
++
+ 	movq	%rdx, %r10
+ 	movl	$0xffffffff, %r9d
+ 	LOAD_FUTEX_WAIT_ABS (%esi)
+@@ -202,6 +206,9 @@ __lll_timedlock_wait:
+ 	cfi_restore(%r9)
+ 	retq
+ 
++5:	movl	$ETIMEDOUT, %eax
++	retq
++
+ # ifndef __ASSUME_FUTEX_CLOCK_REALTIME
+ .Lreltmo:
+ 	/* Check for a valid timeout value.  */
+diff --git a/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S b/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S
+index 02db0a4..5218a4f 100644
+--- a/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S
++++ b/nptl/sysdeps/unix/sysv/linux/x86_64/lowlevelrobustlock.S
+@@ -1,5 +1,4 @@
+-/* Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2009
+-   Free Software Foundation, Inc.
++/* Copyright (C) 2002=2007, 2009, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
+ 
+@@ -125,6 +124,9 @@ __lll_robust_timedlock_wait:
+ 	je	.Lreltmo
+ # endif
+ 
++	cmpq	$0, (%rdx)
++	js	7f
++
+ 	pushq	%r9
+ 	cfi_adjust_cfa_offset(8)
+ 	cfi_rel_offset(%r9, 0)
+@@ -180,6 +182,9 @@ __lll_robust_timedlock_wait:
+ 	cfi_adjust_cfa_offset(-8)
+ 	cfi_restore(%r9)
+ 
++7:	movl	$ETIMEDOUT, %eax
++	retq
++
+ 
+ # ifndef __ASSUME_FUTEX_CLOCK_REALTIME
+ .Lreltmo:
+diff --git a/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S b/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+index be14fc8..e6535fb 100644
+--- a/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
++++ b/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_cond_timedwait.S
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2002-2005, 2007, 2009 Free Software Foundation, Inc.
++/* Copyright (C) 2002-2005, 2007, 2009, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
+ 
+@@ -144,6 +144,10 @@ __pthread_cond_timedwait:
+ 	movq	%r9, 24(%rsp)
+ 	movl	%edx, 4(%rsp)
+ 
++	cmpq	$0, (%r13)
++	movq	$-ETIMEDOUT, %r14
++	js	36f
++
+ 38:	movl	cond_futex(%rdi), %r12d
+ 
+ 	/* Unlock.  */
+diff --git a/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S b/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S
+index 23b218a..f5d055c 100644
+--- a/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S
++++ b/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedrdlock.S
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2002-2005, 2007, 2009 Free Software Foundation, Inc.
++/* Copyright (C) 2002-2005, 2007, 2009, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
+ 
+@@ -102,6 +102,9 @@ pthread_rwlock_timedrdlock:
+ 	je	.Lreltmo
+ #endif
+ 
++	cmpq	$0, (%r13)
++	js	16f		/* Time is already up.  */
++
+ 	movl	$FUTEX_PRIVATE_FLAG|FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, %esi
+ 	xorl	PSHARED(%r12), %esi
+ 	movq	%r13, %r10
+diff --git a/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S b/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S
+index cd867b6..6ed8b49 100644
+--- a/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S
++++ b/nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timedwrlock.S
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2002, 2003, 2005, 2007, 2009 Free Software Foundation, Inc.
++/* Copyright (C) 2002, 2003, 2005, 2007, 2009, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
+ 
+@@ -99,6 +99,9 @@ pthread_rwlock_timedwrlock:
+ 	je	.Lreltmo
+ #endif
+ 
++	cmpq	$0, (%r13)
++	js	16f		/* Time is already up. */
++
+ 	movl	$FUTEX_PRIVATE_FLAG|FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, %esi
+ 	xorl	PSHARED(%r12), %esi
+ 	movq	%r13, %r10
+diff --git a/nptl/sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S b/nptl/sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S
+index 0291beb..ca49cb8 100644
+--- a/nptl/sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S
++++ b/nptl/sysdeps/unix/sysv/linux/x86_64/sem_timedwait.S
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2002, 2003, 2005, 2007, 2009 Free Software Foundation, Inc.
++/* Copyright (C) 2002,2003,2005,2007,2009,2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@redhat.com>, 2002.
+ 
+@@ -77,6 +77,9 @@ sem_timedwait:
+ 	je	.Lreltmo
+ #endif
+ 
++	cmpq	$0, (%rsi)
++	js	16f
++
+ 	/* This push is only needed to store the sem_t pointer for the
+ 	   exception handler.  */
+ 	pushq	%rdi
+@@ -169,6 +172,19 @@ sem_timedwait:
+ 
+ 	retq
+ 
++16:
++#if USE___THREAD
++	movq	errno@gottpoff(%rip), %rdx
++	movl	$ETIMEDOUT, %fs:(%rdx)
++#else
++	callq	__errno_location@plt
++	movl	$ETIMEDOUT, (%rax)
++#endif
++
++	orl	$-1, %eax
++
++	retq
++
+ #ifndef __ASSUME_FUTEX_CLOCK_REALTIME
+ .Lreltmo:
+ 	pushq	%r12
+diff --git a/nptl/sysdeps/x86_64/pthreaddef.h b/nptl/sysdeps/x86_64/pthreaddef.h
+index be63a8c..8ec135c 100644
+--- a/nptl/sysdeps/x86_64/pthreaddef.h
++++ b/nptl/sysdeps/x86_64/pthreaddef.h
+@@ -27,8 +27,9 @@
+ /* Minimal stack size after allocating thread descriptor and guard size.  */
+ #define MINIMAL_REST_STACK	2048
+ 
+-/* Alignment requirement for TCB.  */
+-#define TCB_ALIGNMENT		16
++/* Alignment requirement for TCB.  Need to store post-AVX vector registers
++   in the TCB and we want the storage to be aligned at 32-byte.  */
++#define TCB_ALIGNMENT		32
+ 
+ 
+ /* Location of current stack frame.  The frame pointer is not usable.  */
+diff --git a/nptl/sysdeps/x86_64/tls.h b/nptl/sysdeps/x86_64/tls.h
+index e39eb5f..41b5e6d 100644
+--- a/nptl/sysdeps/x86_64/tls.h
++++ b/nptl/sysdeps/x86_64/tls.h
+@@ -117,12 +117,7 @@ typedef struct
+ # define TLS_TCB_SIZE sizeof (struct pthread)
+ 
+ /* Alignment requirements for the TCB.  */
+-//# define TLS_TCB_ALIGN __alignof__ (struct pthread)
+-// Normally the above would be correct  But we have to store post-AVX
+-// vector registers in the TCB and we want the storage to be aligned.
+-// unfortunately there isn't yet a type for these values and hence no
+-// 32-byte alignment requirement.  Make this explicit, for now.
+-# define TLS_TCB_ALIGN 32
++# define TLS_TCB_ALIGN __alignof__ (struct pthread)
+ 
+ /* The TCB can have any size and the memory following the address the
+    thread pointer points to is unspecified.  Allocate the TCB there.  */
+diff --git a/nptl/tst-abstime.c b/nptl/tst-abstime.c
+new file mode 100644
+index 0000000..50f35d5
+--- /dev/null
++++ b/nptl/tst-abstime.c
+@@ -0,0 +1,98 @@
++/* Copyright (C) 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++   Contributed by Andreas Schwab <schwab@redhat.com>, 2010.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <errno.h>
++#include <pthread.h>
++#include <semaphore.h>
++#include <stdio.h>
++
++static pthread_cond_t c = PTHREAD_COND_INITIALIZER;
++static pthread_mutex_t m1 = PTHREAD_MUTEX_INITIALIZER;
++static pthread_mutex_t m2 = PTHREAD_MUTEX_INITIALIZER;
++static pthread_rwlock_t rw1 = PTHREAD_RWLOCK_INITIALIZER;
++static pthread_rwlock_t rw2 = PTHREAD_RWLOCK_INITIALIZER;
++static sem_t sem;
++
++static void *
++th (void *arg)
++{
++  long int res = 0;
++  int r;
++  struct timespec t = { -2, 0 };
++
++  r = pthread_mutex_timedlock (&m1, &t);
++  if (r != ETIMEDOUT)
++    {
++      puts ("pthread_mutex_timedlock did not return ETIMEDOUT");
++      res = 1;
++    }
++  r = pthread_rwlock_timedrdlock (&rw1, &t);
++  if (r != ETIMEDOUT)
++    {
++      puts ("pthread_rwlock_timedrdlock did not return ETIMEDOUT");
++      res = 1;
++    }
++  r = pthread_rwlock_timedwrlock (&rw2, &t);
++  if (r != ETIMEDOUT)
++    {
++      puts ("pthread_rwlock_timedwrlock did not return ETIMEDOUT");
++      res = 1;
++    }
++  return (void *) res;
++}
++
++static int
++do_test (void)
++{
++  int res = 0;
++  int r;
++  struct timespec t = { -2, 0 };
++  pthread_t pth;
++
++  sem_init (&sem, 0, 0);
++  r = sem_timedwait (&sem, &t);
++  if (r != -1 || errno != ETIMEDOUT)
++    {
++      puts ("sem_timedwait did not fail with ETIMEDOUT");
++      res = 1;
++    }
++
++  pthread_mutex_lock (&m1);
++  pthread_rwlock_wrlock (&rw1);
++  pthread_rwlock_rdlock (&rw2);
++  pthread_mutex_lock (&m2);
++  if (pthread_create (&pth, 0, th, 0) != 0)
++    {
++      puts ("cannot create thread");
++      return 1;
++    }
++  r = pthread_cond_timedwait (&c, &m2, &t);
++  if (r != ETIMEDOUT)
++    {
++      puts ("pthread_cond_timedwait did not return ETIMEDOUT");
++      res = 1;
++    }
++  void *thres;
++  pthread_join (pth, &thres);
++  return res | (thres != NULL);
++}
++
++
++#define TEST_FUNCTION do_test ()
++#include "../test-skeleton.c"
+diff --git a/ports/ChangeLog.m68k b/ports/ChangeLog.m68k
+index c7d068e..9c6697c 100644
+--- a/ports/ChangeLog.m68k
++++ b/ports/ChangeLog.m68k
+@@ -1,3 +1,37 @@
++2010-08-25  Andreas Schwab  <schwab@linux-m68k.org>
++
++	* sysdeps/unix/sysv/linux/m68k/coldfire/sysdep.h
++	(SYSCALL_ERROR_LOAD_GOT): Use & instead of #.
++
++2010-08-02  Andreas Schwab  <schwab@linux-m68k.org>
++
++	* sysdeps/m68k/coldfire/sysdep.h: New file.
++	(PCREL_OP): Define.
++	* sysdeps/m68k/m680x0/sysdep.h: New file.
++	(PCREL_OP): Define.
++	* sysdeps/m68k/sysdep.h (PCREL_OP): Don't define here.
++	* sysdeps/unix/sysv/linux/m68k/coldfire/sysdep.h: New file.
++	(SYSCALL_ERROR_LOAD_GOT): Define.
++	* sysdeps/unix/sysv/linux/m68k/m680x0/sysdep.h: New file.
++	(SYSCALL_ERROR_LOAD_GOT): Define.
++	* sysdeps/unix/sysv/linux/m68k/sysdep.h: Don't include subordinate
++	sysdep files.
++	(SYSCALL_ERROR_HANDLER) [PIC && USE___THREAD]: Use
++	SYSCALL_ERROR_LOAD_GOT.
++
++2010-06-13  Andreas Schwab  <schwab@linux-m68k.org>
++
++	* sysdeps/m68k/m680x0/fpu/bits/mathinline.h: Mark all functions as
++	non-throwing.
++
++	* sysdeps/unix/sysv/linux/m68k/sys/user.h (NBPG, UPAGES)
++	(HOST_TEXT_START_ADDR, HOST_STACK_END_ADDR): Define.
++
++2010-06-11  Andreas Schwab  <schwab@linux-m68k.org>
++
++	* sysdeps/unix/sysv/linux/m68k/nptl/bits/pthreadtypes.h: Force
++	alignment of futex variables.
++
+ 2010-03-13  Andreas Schwab  <schwab@linux-m68k.org>
+ 
+ 	* sysdeps/m68k/m680x0/fpu/s_ccosh.c: Use signbit macro.
+diff --git a/ports/ChangeLog.mips b/ports/ChangeLog.mips
+index dbdb68c..fe7b60d 100644
+--- a/ports/ChangeLog.mips
++++ b/ports/ChangeLog.mips
+@@ -1,3 +1,14 @@
++2010-08-13  Joseph Myers  <joseph@codesourcery.com>
++
++	* sysdeps/unix/sysv/linux/mips/kernel-features.h
++	(__ASSUME_GETDENTS64_SYSCALL): Undefine for n32 ABI before 2.6.35.
++
++2010-08-13  Chandrakala Chavva  <cchavva@caviumnetworks.com>
++
++	* sysdeps/unix/mips/mips64/n64/sysdep.h (PSEUDO): Add 'nop' in
++	jump delay slot.
++	* sysdeps/unix/mips/mips64/n32/sysdep.h (PSEUDO): Ditto.
++
+ 2010-05-21  Joseph Myers  <joseph@codesourcery.com>
+ 
+ 	* sysdeps/unix/sysv/linux/mips/mips32/recvmmsg.c,
+diff --git a/ports/sysdeps/m68k/coldfire/sysdep.h b/ports/sysdeps/m68k/coldfire/sysdep.h
+new file mode 100644
+index 0000000..37f66d1
+--- /dev/null
++++ b/ports/sysdeps/m68k/coldfire/sysdep.h
+@@ -0,0 +1,36 @@
++/* Assembler macros for Coldfire.
++   Copyright (C) 1998, 2003, 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <sysdeps/m68k/sysdep.h>
++
++#ifdef __ASSEMBLER__
++
++/* Perform operation OP with PC-relative SRC as the first operand and
++   DST as the second.  TMP is available as a temporary if needed.  */
++# define PCREL_OP(OP, SRC, DST, TMP) \
++  move.l &SRC - ., TMP; OP (-8, %pc, TMP), DST
++
++#else
++
++/* As above, but PC is the spelling of the PC register.  We need this
++   so that the macro can be used in both normal and extended asms.  */
++# define PCREL_OP(OP, SRC, DST, TMP, PC) \
++  "move.l #" SRC " - ., " TMP "\n\t" OP " (-8, " PC ", " TMP "), " DST
++
++#endif	/* __ASSEMBLER__ */
+diff --git a/ports/sysdeps/m68k/m680x0/fpu/bits/mathinline.h b/ports/sysdeps/m68k/m680x0/fpu/bits/mathinline.h
+index 975ffd8..8a17127 100644
+--- a/ports/sysdeps/m68k/m680x0/fpu/bits/mathinline.h
++++ b/ports/sysdeps/m68k/m680x0/fpu/bits/mathinline.h
+@@ -126,7 +126,7 @@ __NTH (__signbitl (long double __x))
+ /* Define a const math function.  */
+ #define __m81_defun(rettype, func, args)				      \
+   __m81_inline rettype __attribute__((__const__))			      \
+-  __m81_u(func) args
++  __NTH (__m81_u(func) args)
+ 
+ /* Define the three variants of a math function that has a direct
+    implementation in the m68k fpu.  FUNC is the name for C (which will be
+@@ -329,8 +329,8 @@ __m81_defun (long int, __CONCAT(__lrint,s), (float_type __x))		  \
+ }									  \
+ 									  \
+ __m81_inline float_type							  \
+-__m81_u(__CONCAT(__fma,s))(float_type __x, float_type __y,		  \
+-			   float_type __z)				  \
++__NTH (__m81_u(__CONCAT(__fma,s))(float_type __x, float_type __y,	  \
++				  float_type __z))			  \
+ {									  \
+   return (__x * __y) + __z;						  \
+ }
+@@ -346,8 +346,8 @@ __inline_functions (long double,l)
+ 
+ # define __inline_functions(float_type, s)				\
+ __m81_inline void							\
+-__m81_u(__CONCAT(__sincos,s))(float_type __x, float_type *__sinx,	\
+-			      float_type *__cosx)			\
++__NTH (__m81_u(__CONCAT(__sincos,s))(float_type __x, float_type *__sinx, \
++				     float_type *__cosx))		\
+ {									\
+   __asm ("fsincos%.x %2,%1:%0"						\
+ 	 : "=f" (*__sinx), "=f" (*__cosx) : "f" (__x));			\
+@@ -368,13 +368,13 @@ __inline_functions (long double,l)
+    NAME, to make token pasting work correctly with -traditional.  */
+ # define __inline_forward_c(rettype, name, args1, args2)	\
+ __MATH_INLINE rettype __attribute__((__const__))		\
+-  name args1							\
++__NTH (name args1)						\
+ {								\
+   return __CONCAT(__,name) args2;				\
+ }
+ 
+ # define __inline_forward(rettype, name, args1, args2)	\
+-__MATH_INLINE rettype name args1			\
++__MATH_INLINE rettype __NTH (name args1)		\
+ {							\
+   return __CONCAT(__,name) args2;			\
+ }
+diff --git a/ports/sysdeps/m68k/m680x0/sysdep.h b/ports/sysdeps/m68k/m680x0/sysdep.h
+new file mode 100644
+index 0000000..013bc5e
+--- /dev/null
++++ b/ports/sysdeps/m68k/m680x0/sysdep.h
+@@ -0,0 +1,36 @@
++/* Assembler macros for m680x0.
++   Copyright (C) 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#include <sysdeps/m68k/sysdep.h>
++
++#ifdef __ASSEMBLER__
++
++/* Perform operation OP with PC-relative SRC as the first operand and
++   DST as the second.  TMP is available as a temporary if needed.  */
++#define PCREL_OP(OP, SRC, DST, TMP) \
++  OP SRC(%pc), DST
++
++#else
++
++/* As above, but PC is the spelling of the PC register.  We need this
++   so that the macro can be used in both normal and extended asms.  */
++#define PCREL_OP(OP, SRC, DST, TMP, PC) \
++  OP " " SRC "(" PC "), " DST
++
++#endif	/* __ASSEMBLER__ */
+diff --git a/ports/sysdeps/m68k/sysdep.h b/ports/sysdeps/m68k/sysdep.h
+index 3698628..ce70a0d 100644
+--- a/ports/sysdeps/m68k/sysdep.h
++++ b/ports/sysdeps/m68k/sysdep.h
+@@ -1,5 +1,5 @@
+ /* Assembler macros for m68k.
+-   Copyright (C) 1998, 2003 Free Software Foundation, Inc.
++   Copyright (C) 1998, 2003, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -97,26 +97,4 @@
+ #  define JUMPTARGET(name)	name
+ # endif
+ 
+-/* Perform operation OP with PC-relative SRC as the first operand and
+-   DST as the second.  TMP is available as a temporary if needed.  */
+-#ifdef __mcoldfire__
+-#define PCREL_OP(OP, SRC, DST, TMP) \
+-  move.l &SRC - ., TMP; OP (-8, %pc, TMP), DST
+-#else
+-#define PCREL_OP(OP, SRC, DST, TMP) \
+-  OP SRC(%pc), DST
+-#endif
+-
+-#else
+-
+-/* As above, but PC is the spelling of the PC register.  We need this
+-   so that the macro can be used in both normal and extended asms.  */
+-#ifdef __mcoldfire__
+-#define PCREL_OP(OP, SRC, DST, TMP, PC) \
+-  "move.l #" SRC " - ., " TMP "\n\t" OP " (-8, " PC ", " TMP "), " DST
+-#else
+-#define PCREL_OP(OP, SRC, DST, TMP, PC) \
+-  OP " " SRC "(" PC "), " DST
+-#endif
+-
+ #endif	/* __ASSEMBLER__ */
+diff --git a/ports/sysdeps/unix/mips/mips64/n32/sysdep.h b/ports/sysdeps/unix/mips/mips64/n32/sysdep.h
+index ec93fad..df1391d 100644
+--- a/ports/sysdeps/unix/mips/mips64/n32/sysdep.h
++++ b/ports/sysdeps/unix/mips/mips64/n32/sysdep.h
+@@ -45,6 +45,7 @@ L(syse1):
+   .set noreorder;							      \
+   .align 2;								      \
+   99: j __syscall_error;						      \
++  nop;                                                                        \
+   ENTRY(name)								      \
+   .set noreorder;							      \
+   li v0, SYS_ify(syscall_name);						      \
+diff --git a/ports/sysdeps/unix/mips/mips64/n64/sysdep.h b/ports/sysdeps/unix/mips/mips64/n64/sysdep.h
+index 502b667..da5f6a0 100644
+--- a/ports/sysdeps/unix/mips/mips64/n64/sysdep.h
++++ b/ports/sysdeps/unix/mips/mips64/n64/sysdep.h
+@@ -45,6 +45,7 @@ L(syse1):
+   .set noreorder;							      \
+   .align 2;								      \
+   99: j __syscall_error;						      \
++  nop;                                                                        \
+   ENTRY(name)								      \
+   .set noreorder;							      \
+   li v0, SYS_ify(syscall_name);						      \
+diff --git a/ports/sysdeps/unix/sysv/linux/m68k/coldfire/sysdep.h b/ports/sysdeps/unix/sysv/linux/m68k/coldfire/sysdep.h
+new file mode 100644
+index 0000000..bbbb156
+--- /dev/null
++++ b/ports/sysdeps/unix/sysv/linux/m68k/coldfire/sysdep.h
+@@ -0,0 +1,30 @@
++/* Copyright (C) 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#ifndef _LINUX_M68K_COLDFIRE_SYSDEP_H
++#define _LINUX_M68K_COLDFIRE_SYSDEP_H 1
++
++#include <sysdeps/unix/sysdep.h>
++#include <sysdeps/m68k/coldfire/sysdep.h>
++#include <sysdeps/unix/sysv/linux/m68k/sysdep.h>
++
++#define SYSCALL_ERROR_LOAD_GOT(reg)					      \
++    move.l &_GLOBAL_OFFSET_TABLE_@GOTPC, reg;				      \
++    lea (-6, %pc, reg), reg
++
++#endif
+diff --git a/ports/sysdeps/unix/sysv/linux/m68k/m680x0/sysdep.h b/ports/sysdeps/unix/sysv/linux/m68k/m680x0/sysdep.h
+new file mode 100644
+index 0000000..371befb
+--- /dev/null
++++ b/ports/sysdeps/unix/sysv/linux/m68k/m680x0/sysdep.h
+@@ -0,0 +1,29 @@
++/* Copyright (C) 2010 Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, write to the Free
++   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
++   02111-1307 USA.  */
++
++#ifndef _LINUX_M68K_M680X0_SYSDEP_H
++#define _LINUX_M68K_M680X0_SYSDEP_H 1
++
++#include <sysdeps/unix/sysdep.h>
++#include <sysdeps/m68k/m680x0/sysdep.h>
++#include <sysdeps/unix/sysv/linux/m68k/sysdep.h>
++
++#define SYSCALL_ERROR_LOAD_GOT(reg)					      \
++    lea (_GLOBAL_OFFSET_TABLE_@GOTPC, %pc), reg
++
++#endif
+diff --git a/ports/sysdeps/unix/sysv/linux/m68k/nptl/bits/pthreadtypes.h b/ports/sysdeps/unix/sysv/linux/m68k/nptl/bits/pthreadtypes.h
+index 0140810..832609d 100644
+--- a/ports/sysdeps/unix/sysv/linux/m68k/nptl/bits/pthreadtypes.h
++++ b/ports/sysdeps/unix/sysv/linux/m68k/nptl/bits/pthreadtypes.h
+@@ -57,7 +57,7 @@ typedef union
+ {
+   struct __pthread_mutex_s
+   {
+-    int __lock;
++    int __lock __attribute__ ((__aligned__ (4)));
+     unsigned int __count;
+     int __owner;
+     /* KIND must stay at this position in the structure to maintain
+@@ -87,7 +87,7 @@ typedef union
+ {
+   struct
+   {
+-    int __lock;
++    int __lock __attribute__ ((__aligned__ (4)));
+     unsigned int __futex;
+     __extension__ unsigned long long int __total_seq;
+     __extension__ unsigned long long int __wakeup_seq;
+@@ -112,7 +112,7 @@ typedef unsigned int pthread_key_t;
+ 
+ 
+ /* Once-only execution */
+-typedef int pthread_once_t;
++typedef int __attribute__ ((__aligned__ (4))) pthread_once_t;
+ 
+ 
+ #if defined __USE_UNIX98 || defined __USE_XOPEN2K
+@@ -122,7 +122,7 @@ typedef union
+ {
+   struct
+   {
+-    int __lock;
++    int __lock __attribute__ ((__aligned__ (4)));
+     unsigned int __nr_readers;
+     unsigned int __readers_wakeup;
+     unsigned int __writer_wakeup;
+@@ -158,7 +158,7 @@ typedef volatile int pthread_spinlock_t;
+ typedef union
+ {
+   char __size[__SIZEOF_PTHREAD_BARRIER_T];
+-  long int __align;
++  long int __align __attribute__ ((__aligned__ (4)));
+ } pthread_barrier_t;
+ 
+ typedef union
+diff --git a/ports/sysdeps/unix/sysv/linux/m68k/sys/user.h b/ports/sysdeps/unix/sysv/linux/m68k/sys/user.h
+index f8b19fc..2663ac6 100644
+--- a/ports/sysdeps/unix/sysv/linux/m68k/sys/user.h
++++ b/ports/sysdeps/unix/sysv/linux/m68k/sys/user.h
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2008 Free Software Foundation, Inc.
++/* Copyright (C) 2008, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -58,4 +58,9 @@ struct user {
+ 	char u_comm[32];
+ };
+ 
++#define NBPG 4096
++#define UPAGES 1
++#define HOST_TEXT_START_ADDR u.start_code
++#define HOST_STACK_END_ADDR (u.start_stack + u.u_ssize * NBPG)
++
+ #endif
+diff --git a/ports/sysdeps/unix/sysv/linux/m68k/sysdep.h b/ports/sysdeps/unix/sysv/linux/m68k/sysdep.h
+index 8bd188b..d381189 100644
+--- a/ports/sysdeps/unix/sysv/linux/m68k/sysdep.h
++++ b/ports/sysdeps/unix/sysv/linux/m68k/sysdep.h
+@@ -19,11 +19,6 @@
+    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+    02111-1307 USA.  */
+ 
+-#ifndef _LINUX_M68K_SYSDEP_H
+-#define _LINUX_M68K_SYSDEP_H 1
+-
+-#include <sysdeps/unix/sysdep.h>
+-#include <sysdeps/m68k/sysdep.h>
+ #include <tls.h>
+ 
+ /* Defines RTLD_PRIVATE_ERRNO.  */
+@@ -122,7 +117,7 @@ SYSCALL_ERROR_LABEL:							      \
+     neg.l %d0;								      \
+     move.l %d0, -(%sp);							      \
+     jbsr __m68k_read_tp@PLTPC;						      \
+-    lea (_GLOBAL_OFFSET_TABLE_@GOTPC, %pc), %a1;			      \
++    SYSCALL_ERROR_LOAD_GOT (%a1);					      \
+     add.l (SYSCALL_ERROR_ERRNO@TLSIE, %a1), %a0;			      \
+     move.l (%sp)+, (%a0);						      \
+     move.l &-1, %d0;							      \
+@@ -333,5 +328,3 @@ SYSCALL_ERROR_LABEL:							      \
+    even when statically linked.  */
+ # define NEED_STATIC_SYSINFO_DSO 1
+ #endif
+-
+-#endif
+diff --git a/ports/sysdeps/unix/sysv/linux/mips/kernel-features.h b/ports/sysdeps/unix/sysv/linux/mips/kernel-features.h
+index 6fe9b08..092c35d 100644
+--- a/ports/sysdeps/unix/sysv/linux/mips/kernel-features.h
++++ b/ports/sysdeps/unix/sysv/linux/mips/kernel-features.h
+@@ -38,3 +38,9 @@
+ #endif
+ 
+ #include_next <kernel-features.h>
++
++/* The n32 syscall ABI did not have a getdents64 syscall until
++   2.6.35.  */
++#if _MIPS_SIM == _ABIN32 && __LINUX_KERNEL_VERSION < 0x020623
++# undef __ASSUME_GETDENTS64_SYSCALL
++#endif
+diff --git a/posix/Makefile b/posix/Makefile
+index 643d7e5..dff6b51 100644
+--- a/posix/Makefile
++++ b/posix/Makefile
+@@ -82,7 +82,7 @@ tests		:= tstgetopt testfnm runtests runptests	     \
+ 		   bug-regex17 bug-regex18 bug-regex19 bug-regex20 \
+ 		   bug-regex21 bug-regex22 bug-regex23 bug-regex24 \
+ 		   bug-regex25 bug-regex26 bug-regex27 bug-regex28 \
+-		   bug-regex29 bug-regex30 \
++		   bug-regex29 bug-regex30 bug-regex31 \
+ 		   tst-nice tst-nanosleep tst-regex2 \
+ 		   transbug tst-rxspencer tst-pcre tst-boost \
+ 		   bug-ga1 tst-vfork1 tst-vfork2 tst-vfork3 tst-waitid \
+@@ -111,10 +111,12 @@ generated := $(addprefix wordexp-test-result, 1 2 3 4 5 6 7 8 9 10) \
+ 	     annexc annexc.out wordexp-tst.out bug-regex2-mem \
+ 	     bug-regex2.mtrace bug-regex14-mem bug-regex14.mtrace \
+ 	     bug-regex21-mem bug-regex21.mtrace \
++	     bug-regex31-mem bug-regex31.mtrace \
+ 	     tst-rxspencer-mem tst-rxspencer.mtrace tst-getconf.out \
+ 	     tst-pcre-mem tst-pcre.mtrace tst-boost-mem tst-boost.mtrace \
+ 	     bug-ga2.mtrace bug-ga2-mem bug-glob2.mtrace bug-glob2-mem \
+-	     tst-vfork3-mem tst-vfork3.mtrace getconf.speclist
++	     tst-vfork3-mem tst-vfork3.mtrace getconf.speclist \
++	     tst-fnmatch-mem tst-fnmatch.mtrace
+ 
+ include ../Rules
+ 
+@@ -224,9 +226,9 @@ endif
+ tests: $(objpfx)annexc.out
+ ifeq (no,$(cross-compiling))
+ tests: $(objpfx)bug-regex2-mem $(objpfx)bug-regex14-mem \
+-  $(objpfx)bug-regex21-mem $(objpfx)tst-rxspencer-mem \
++  $(objpfx)bug-regex21-mem $(objpfx)bug-regex31-mem $(objpfx)tst-rxspencer-mem\
+   $(objpfx)tst-pcre-mem $(objpfx)tst-boost-mem $(objpfx)tst-getconf.out \
+-  $(objpfx)bug-glob2-mem $(objpfx)tst-vfork3-mem
++  $(objpfx)bug-glob2-mem $(objpfx)tst-vfork3-mem $(objpfx)tst-fnmatch-mem
+ xtests: $(objpfx)bug-ga2-mem
+ endif
+ 
+@@ -238,6 +240,11 @@ annexc-CFLAGS = -O
+ $(objpfx)annexc: annexc.c
+ 	$(native-compile)
+ 
++tst-fnmatch-ENV += MALLOC_TRACE=$(objpfx)tst-fnmatch.mtrace
++
++$(objpfx)tst-fnmatch-mem: $(objpfx)tst-fnmatch.out
++	$(common-objpfx)malloc/mtrace $(objpfx)tst-fnmatch.mtrace > $@
++
+ bug-regex2-ENV = MALLOC_TRACE=$(objpfx)bug-regex2.mtrace
+ 
+ $(objpfx)bug-regex2-mem: $(objpfx)bug-regex2.out
+@@ -253,6 +260,11 @@ bug-regex21-ENV = MALLOC_TRACE=$(objpfx)bug-regex21.mtrace
+ $(objpfx)bug-regex21-mem: $(objpfx)bug-regex21.out
+ 	$(common-objpfx)malloc/mtrace $(objpfx)bug-regex21.mtrace > $@
+ 
++bug-regex31-ENV = MALLOC_TRACE=$(objpfx)bug-regex31.mtrace
++
++$(objpfx)bug-regex31-mem: $(objpfx)bug-regex31.out
++	$(common-objpfx)malloc/mtrace $(objpfx)bug-regex31.mtrace > $@
++
+ tst-vfork3-ENV = MALLOC_TRACE=$(objpfx)tst-vfork3.mtrace
+ 
+ $(objpfx)tst-vfork3-mem: $(objpfx)tst-vfork3.out
+diff --git a/posix/bug-regex31.c b/posix/bug-regex31.c
+new file mode 100644
+index 0000000..974e860
+--- /dev/null
++++ b/posix/bug-regex31.c
+@@ -0,0 +1,36 @@
++#include <mcheck.h>
++#include <regex.h>
++#include <stdio.h>
++#include <sys/types.h>
++
++int
++main (void)
++{
++  mtrace ();
++
++  int res = 0;
++  char *buf = NULL;
++  size_t len = 0;
++  while (! feof (stdin))
++    {
++      ssize_t n = getline (&buf, &len, stdin);
++      if (n <= 0)
++	break;
++      if (buf[n - 1] == '\n')
++	buf[n - 1] = '\0';
++
++      regex_t regex;
++      int rc = regcomp (&regex, buf, REG_EXTENDED);
++      if (rc != 0)
++	printf ("%s: Error %d (expected)\n", buf, rc);
++      else
++	{
++	  printf ("%s: succeeded !\n", buf);
++	  res = 1;
++	}
++    }
++
++  free (buf);
++
++  return 0;
++}
+diff --git a/posix/bug-regex31.input b/posix/bug-regex31.input
+new file mode 100644
+index 0000000..3d1f531
+--- /dev/null
++++ b/posix/bug-regex31.input
+@@ -0,0 +1,4 @@
++[[][
++([0]
++([0]a
++([0]([0])
+diff --git a/posix/fnmatch.c b/posix/fnmatch.c
+index 4baef9e..0af5ee6 100644
+--- a/posix/fnmatch.c
++++ b/posix/fnmatch.c
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 1991,1992,1993,1996,1997,1998,1999,2000,2001,2002,2003,2007
++/* Copyright (C) 1991,1992,1993,1996,1997,1998,1999,2000,2001,2002,2003,2007,2010
+ 	Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+@@ -41,6 +41,12 @@
+ # include <stdlib.h>
+ #endif
+ 
++#ifdef _LIBC
++# include <alloca.h>
++#else
++# define alloca_account(size., var) alloca (size)
++#endif
++
+ /* For platform which support the ISO C amendement 1 functionality we
+    support user defined character classes.  */
+ #if defined _LIBC || (defined HAVE_WCTYPE_H && defined HAVE_WCHAR_H)
+@@ -330,8 +336,11 @@ fnmatch (pattern, string, flags)
+       mbstate_t ps;
+       size_t n;
+       const char *p;
++      wchar_t *wpattern_malloc = NULL;
+       wchar_t *wpattern;
++      wchar_t *wstring_malloc = NULL;
+       wchar_t *wstring;
++      size_t alloca_used = 0;
+ 
+       /* Convert the strings into wide characters.  */
+       memset (&ps, '\0', sizeof (ps));
+@@ -343,7 +352,8 @@ fnmatch (pattern, string, flags)
+ #endif
+       if (__builtin_expect (n < 1024, 1))
+ 	{
+-	  wpattern = (wchar_t *) alloca ((n + 1) * sizeof (wchar_t));
++	  wpattern = (wchar_t *) alloca_account ((n + 1) * sizeof (wchar_t),
++						 alloca_used);
+ 	  n = mbsrtowcs (wpattern, &p, n + 1, &ps);
+ 	  if (__builtin_expect (n == (size_t) -1, 0))
+ 	    /* Something wrong.
+@@ -365,8 +375,11 @@ fnmatch (pattern, string, flags)
+ 	       XXX Do we have to set `errno' to something which mbsrtows hasn't
+ 	       already done?  */
+ 	    return -1;
+-	  wpattern = (wchar_t *) alloca ((n + 1) * sizeof (wchar_t));
++	  wpattern_malloc = wpattern
++	    = (wchar_t *) malloc ((n + 1) * sizeof (wchar_t));
+ 	  assert (mbsinit (&ps));
++	  if (wpattern == NULL)
++	    return -2;
+ 	  (void) mbsrtowcs (wpattern, &pattern, n + 1, &ps);
+ 	}
+ 
+@@ -379,13 +392,18 @@ fnmatch (pattern, string, flags)
+       p = string;
+       if (__builtin_expect (n < 1024, 1))
+ 	{
+-	  wstring = (wchar_t *) alloca ((n + 1) * sizeof (wchar_t));
++	  wstring = (wchar_t *) alloca_account ((n + 1) * sizeof (wchar_t),
++						alloca_used);
+ 	  n = mbsrtowcs (wstring, &p, n + 1, &ps);
+ 	  if (__builtin_expect (n == (size_t) -1, 0))
+-	    /* Something wrong.
+-	       XXX Do we have to set `errno' to something which mbsrtows hasn't
+-	       already done?  */
+-	    return -1;
++	    {
++	      /* Something wrong.
++		 XXX Do we have to set `errno' to something which
++		 mbsrtows hasn't already done?  */
++	    free_return:
++	      free (wpattern_malloc);
++	      return -1;
++	    }
+ 	  if (p)
+ 	    {
+ 	      memset (&ps, '\0', sizeof (ps));
+@@ -400,19 +418,32 @@ fnmatch (pattern, string, flags)
+ 	    /* Something wrong.
+ 	       XXX Do we have to set `errno' to something which mbsrtows hasn't
+ 	       already done?  */
+-	    return -1;
+-	  wstring = (wchar_t *) alloca ((n + 1) * sizeof (wchar_t));
++	    goto free_return;
++
++	  wstring_malloc = wstring
++	    = (wchar_t *) malloc ((n + 1) * sizeof (wchar_t));
++	  if (wstring == NULL)
++	    {
++	      free (wpattern_malloc);
++	      return -2;
++	    }
+ 	  assert (mbsinit (&ps));
+ 	  (void) mbsrtowcs (wstring, &string, n + 1, &ps);
+ 	}
+ 
+-      return internal_fnwmatch (wpattern, wstring, wstring + n,
+-				flags & FNM_PERIOD, flags, NULL);
++      int res = internal_fnwmatch (wpattern, wstring, wstring + n,
++				   flags & FNM_PERIOD, flags, NULL,
++				   alloca_used);
++
++      free (wstring_malloc);
++      free (wpattern_malloc);
++
++      return res;
+     }
+ # endif  /* mbstate_t and mbsrtowcs or _LIBC.  */
+ 
+   return internal_fnmatch (pattern, string, string + strlen (string),
+-			   flags & FNM_PERIOD, flags, NULL);
++			   flags & FNM_PERIOD, flags, NULL, 0);
+ }
+ 
+ # ifdef _LIBC
+diff --git a/posix/fnmatch_loop.c b/posix/fnmatch_loop.c
+index 67c0ee4..6b0224e 100644
+--- a/posix/fnmatch_loop.c
++++ b/posix/fnmatch_loop.c
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 1991-1993,1996-2001,2003-2005,2007
++/* Copyright (C) 1991-1993,1996-2001,2003-2005,2007,2010
+    Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+@@ -28,22 +28,24 @@ struct STRUCT
+    it matches, nonzero if not.  */
+ static int FCT (const CHAR *pattern, const CHAR *string,
+ 		const CHAR *string_end, int no_leading_period, int flags,
+-		struct STRUCT *ends)
++		struct STRUCT *ends, size_t alloca_used)
+      internal_function;
+ static int EXT (INT opt, const CHAR *pattern, const CHAR *string,
+-		const CHAR *string_end, int no_leading_period, int flags)
++		const CHAR *string_end, int no_leading_period, int flags,
++		size_t alloca_used)
+      internal_function;
+ static const CHAR *END (const CHAR *patternp) internal_function;
+ 
+ static int
+ internal_function
+-FCT (pattern, string, string_end, no_leading_period, flags, ends)
++FCT (pattern, string, string_end, no_leading_period, flags, ends, alloca_used)
+      const CHAR *pattern;
+      const CHAR *string;
+      const CHAR *string_end;
+      int no_leading_period;
+      int flags;
+      struct STRUCT *ends;
++     size_t alloca_used;
+ {
+   register const CHAR *p = pattern, *n = string;
+   register UCHAR c;
+@@ -67,10 +69,8 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
+ 	case L('?'):
+ 	  if (__builtin_expect (flags & FNM_EXTMATCH, 0) && *p == '(')
+ 	    {
+-	      int res;
+-
+-	      res = EXT (c, p, n, string_end, no_leading_period,
+-			 flags);
++	      int res = EXT (c, p, n, string_end, no_leading_period,
++			     flags, alloca_used);
+ 	      if (res != -1)
+ 		return res;
+ 	    }
+@@ -99,10 +99,8 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
+ 	case L('*'):
+ 	  if (__builtin_expect (flags & FNM_EXTMATCH, 0) && *p == '(')
+ 	    {
+-	      int res;
+-
+-	      res = EXT (c, p, n, string_end, no_leading_period,
+-			 flags);
++	      int res = EXT (c, p, n, string_end, no_leading_period,
++			     flags, alloca_used);
+ 	      if (res != -1)
+ 		return res;
+ 	    }
+@@ -191,7 +189,7 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
+ 
+ 		  for (--p; n < endp; ++n, no_leading_period = 0)
+ 		    if (FCT (p, n, string_end, no_leading_period, flags2,
+-			     &end) == 0)
++			     &end, alloca_used) == 0)
+ 		      goto found;
+ 		}
+ 	      else if (c == L('/') && (flags & FNM_FILE_NAME))
+@@ -200,7 +198,7 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
+ 		    ++n;
+ 		  if (n < string_end && *n == L('/')
+ 		      && (FCT (p, n + 1, string_end, flags & FNM_PERIOD, flags,
+-			       NULL) == 0))
++			       NULL, alloca_used) == 0))
+ 		    return 0;
+ 		}
+ 	      else
+@@ -214,7 +212,7 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
+ 		  for (--p; n < endp; ++n, no_leading_period = 0)
+ 		    if (FOLD ((UCHAR) *n) == c
+ 			&& (FCT (p, n, string_end, no_leading_period, flags2,
+-				 &end) == 0))
++				 &end, alloca_used) == 0))
+ 		      {
+ 		      found:
+ 			if (end.pattern == NULL)
+@@ -749,7 +747,7 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
+ 					       _NL_COLLATE_SYMB_EXTRAMB);
+ 
+ 				/* Locate the character in the hashing
+-                                   table.  */
++				   table.  */
+ 				hash = elem_hash (str, c1);
+ 
+ 				idx = 0;
+@@ -971,9 +969,8 @@ FCT (pattern, string, string_end, no_leading_period, flags, ends)
+ 	case L('!'):
+ 	  if (__builtin_expect (flags & FNM_EXTMATCH, 0) && *p == '(')
+ 	    {
+-	      int res;
+-
+-	      res = EXT (c, p, n, string_end, no_leading_period, flags);
++	      int res = EXT (c, p, n, string_end, no_leading_period, flags,
++			     alloca_used);
+ 	      if (res != -1)
+ 		return res;
+ 	    }
+@@ -1052,26 +1049,32 @@ END (const CHAR *pattern)
+ static int
+ internal_function
+ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+-     int no_leading_period, int flags)
++     int no_leading_period, int flags, size_t alloca_used)
+ {
+   const CHAR *startp;
+   int level;
+   struct patternlist
+   {
+     struct patternlist *next;
++    CHAR malloced;
+     CHAR str[0];
+   } *list = NULL;
+   struct patternlist **lastp = &list;
+   size_t pattern_len = STRLEN (pattern);
++  int any_malloced = 0;
+   const CHAR *p;
+   const CHAR *rs;
++  int retval = 0;
+ 
+   /* Parse the pattern.  Store the individual parts in the list.  */
+   level = 0;
+   for (startp = p = pattern + 1; level >= 0; ++p)
+     if (*p == L('\0'))
+-      /* This is an invalid pattern.  */
+-      return -1;
++      {
++	/* This is an invalid pattern.  */
++	retval = -1;
++	goto out;
++      }
+     else if (*p == L('['))
+       {
+ 	/* Handle brackets special.  */
+@@ -1088,8 +1091,11 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+ 	/* Skip over all characters of the list.  */
+ 	while (*p != L(']'))
+ 	  if (*p++ == L('\0'))
+-	    /* This is no valid pattern.  */
+-	    return -1;
++	    {
++	      /* This is no valid pattern.  */
++	      retval = -1;
++	      goto out;
++	    }
+       }
+     else if ((*p == L('?') || *p == L('*') || *p == L('+') || *p == L('@')
+ 	      || *p == L('!')) && p[1] == L('('))
+@@ -1102,15 +1108,25 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+ 	    /* This means we found the end of the pattern.  */
+ #define NEW_PATTERN \
+ 	    struct patternlist *newp;					      \
+-									      \
+-	    if (opt == L('?') || opt == L('@'))				      \
+-	      newp = alloca (sizeof (struct patternlist)		      \
+-			     + (pattern_len * sizeof (CHAR)));		      \
++	    size_t slen = (opt == L('?') || opt == L('@')		      \
++			   ? pattern_len : (p - startp + 1));		      \
++	    slen = sizeof (struct patternlist) + (slen * sizeof (CHAR));      \
++	    int malloced = ! __libc_use_alloca (alloca_used + slen);	      \
++	    if (__builtin_expect (malloced, 0))				      \
++	      {								      \
++		newp = malloc (slen);					      \
++		if (newp == NULL)					      \
++		  {							      \
++		    retval = -2;					      \
++		    goto out;						      \
++		  }							      \
++		any_malloced = 1;					      \
++	      }								      \
+ 	    else							      \
+-	      newp = alloca (sizeof (struct patternlist)		      \
+-			     + ((p - startp + 1) * sizeof (CHAR)));	      \
+-	    *((CHAR *) MEMPCPY (newp->str, startp, p - startp)) = L('\0');    \
++	      newp = alloca_account (slen, alloca_used);		      \
+ 	    newp->next = NULL;						      \
++	    newp->malloced = malloced;					      \
++	    *((CHAR *) MEMPCPY (newp->str, startp, p - startp)) = L('\0');    \
+ 	    *lastp = newp;						      \
+ 	    lastp = &newp->next
+ 	    NEW_PATTERN;
+@@ -1131,8 +1147,9 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+   switch (opt)
+     {
+     case L('*'):
+-      if (FCT (p, string, string_end, no_leading_period, flags, NULL) == 0)
+-	return 0;
++      if (FCT (p, string, string_end, no_leading_period, flags, NULL,
++	       alloca_used) == 0)
++	goto success;
+       /* FALLTHROUGH */
+ 
+     case L('+'):
+@@ -1143,7 +1160,7 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+ 	       current pattern.  */
+ 	    if (FCT (list->str, string, rs, no_leading_period,
+ 		     flags & FNM_FILE_NAME ? flags : flags & ~FNM_PERIOD,
+-		     NULL) == 0
++		     NULL, alloca_used) == 0
+ 		/* This was successful.  Now match the rest with the rest
+ 		   of the pattern.  */
+ 		&& (FCT (p, rs, string_end,
+@@ -1151,7 +1168,7 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+ 			 ? no_leading_period
+ 			 : rs[-1] == '/' && NO_LEADING_PERIOD (flags) ? 1 : 0,
+ 			 flags & FNM_FILE_NAME
+-			 ? flags : flags & ~FNM_PERIOD, NULL) == 0
++			 ? flags : flags & ~FNM_PERIOD, NULL, alloca_used) == 0
+ 		    /* This didn't work.  Try the whole pattern.  */
+ 		    || (rs != string
+ 			&& FCT (pattern - 1, rs, string_end,
+@@ -1160,18 +1177,21 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+ 				: (rs[-1] == '/' && NO_LEADING_PERIOD (flags)
+ 				   ? 1 : 0),
+ 				flags & FNM_FILE_NAME
+-				? flags : flags & ~FNM_PERIOD, NULL) == 0)))
++				? flags : flags & ~FNM_PERIOD, NULL,
++				alloca_used) == 0)))
+ 	      /* It worked.  Signal success.  */
+-	      return 0;
++	      goto success;
+ 	}
+       while ((list = list->next) != NULL);
+ 
+       /* None of the patterns lead to a match.  */
+-      return FNM_NOMATCH;
++      retval = FNM_NOMATCH;
++      break;
+ 
+     case L('?'):
+-      if (FCT (p, string, string_end, no_leading_period, flags, NULL) == 0)
+-	return 0;
++      if (FCT (p, string, string_end, no_leading_period, flags, NULL,
++	       alloca_used) == 0)
++	goto success;
+       /* FALLTHROUGH */
+ 
+     case L('@'):
+@@ -1183,13 +1203,14 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+ 	if (FCT (STRCAT (list->str, p), string, string_end,
+ 		 no_leading_period,
+ 		 flags & FNM_FILE_NAME ? flags : flags & ~FNM_PERIOD,
+-		 NULL) == 0)
++		 NULL, alloca_used) == 0)
+ 	  /* It worked.  Signal success.  */
+-	  return 0;
++	  goto success;
+       while ((list = list->next) != NULL);
+ 
+       /* None of the patterns lead to a match.  */
+-      return FNM_NOMATCH;
++      retval = FNM_NOMATCH;
++      break;
+ 
+     case L('!'):
+       for (rs = string; rs <= string_end; ++rs)
+@@ -1199,7 +1220,7 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+ 	  for (runp = list; runp != NULL; runp = runp->next)
+ 	    if (FCT (runp->str, string, rs,  no_leading_period,
+ 		     flags & FNM_FILE_NAME ? flags : flags & ~FNM_PERIOD,
+-		     NULL) == 0)
++		     NULL, alloca_used) == 0)
+ 	      break;
+ 
+ 	  /* If none of the patterns matched see whether the rest does.  */
+@@ -1209,21 +1230,34 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+ 		       ? no_leading_period
+ 		       : rs[-1] == '/' && NO_LEADING_PERIOD (flags) ? 1 : 0,
+ 		       flags & FNM_FILE_NAME ? flags : flags & ~FNM_PERIOD,
+-		       NULL) == 0))
++		       NULL, alloca_used) == 0))
+ 	    /* This is successful.  */
+-	    return 0;
++	    goto success;
+ 	}
+ 
+       /* None of the patterns together with the rest of the pattern
+ 	 lead to a match.  */
+-      return FNM_NOMATCH;
++      retval = FNM_NOMATCH;
++      break;
+ 
+     default:
+       assert (! "Invalid extended matching operator");
++      retval = -1;
+       break;
+     }
+ 
+-  return -1;
++ success:
++ out:
++  if (any_malloced)
++    while (list != NULL)
++      {
++	struct patternlist *old = list;
++	list = list->next;
++	if (old->malloced)
++	  free (old);
++      }
++
++  return retval;
+ }
+ 
+ 
+diff --git a/posix/regcomp.c b/posix/regcomp.c
+index 03ab123..b238c08 100644
+--- a/posix/regcomp.c
++++ b/posix/regcomp.c
+@@ -2160,16 +2160,21 @@ parse_branch (re_string_t *regexp, regex_t *preg, re_token_t *token,
+       exp = parse_expression (regexp, preg, token, syntax, nest, err);
+       if (BE (*err != REG_NOERROR && exp == NULL, 0))
+ 	{
++	  if (tree != NULL)
++	    postorder (tree, free_tree, NULL);
+ 	  return NULL;
+ 	}
+       if (tree != NULL && exp != NULL)
+ 	{
+-	  tree = create_tree (dfa, tree, exp, CONCAT);
+-	  if (tree == NULL)
++	  bin_tree_t *newtree = create_tree (dfa, tree, exp, CONCAT);
++	  if (newtree == NULL)
+ 	    {
++	      postorder (exp, free_tree, NULL);
++	      postorder (tree, free_tree, NULL);
+ 	      *err = REG_ESPACE;
+ 	      return NULL;
+ 	    }
++	  tree = newtree;
+ 	}
+       else if (tree == NULL)
+ 	tree = exp;
+@@ -2418,7 +2423,11 @@ parse_sub_exp (re_string_t *regexp, regex_t *preg, re_token_t *token,
+     {
+       tree = parse_reg_exp (regexp, preg, token, syntax, nest, err);
+       if (BE (*err == REG_NOERROR && token->type != OP_CLOSE_SUBEXP, 0))
+-	*err = REG_EPAREN;
++	{
++	  if (tree != NULL)
++	    postorder (tree, free_tree, NULL);
++	  *err = REG_EPAREN;
++	}
+       if (BE (*err != REG_NOERROR, 0))
+ 	return NULL;
+     }
+@@ -3028,6 +3037,10 @@ parse_bracket_exp (re_string_t *regexp, re_dfa_t *dfa, re_token_t *token,
+   if (BE (sbcset == NULL, 0))
+ #endif /* RE_ENABLE_I18N */
+     {
++      re_free (sbcset);
++#ifdef RE_ENABLE_I18N
++      re_free (mbcset);
++#endif
+       *err = REG_ESPACE;
+       return NULL;
+     }
+diff --git a/posix/tst-fnmatch.c b/posix/tst-fnmatch.c
+index 25471f8..7e1f73a 100644
+--- a/posix/tst-fnmatch.c
++++ b/posix/tst-fnmatch.c
+@@ -1,5 +1,5 @@
+ /* Tests for fnmatch function.
+-   Copyright (C) 2000, 2001 Free Software Foundation, Inc.
++   Copyright (C) 2000, 2001, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -25,6 +25,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/types.h>
++#include <mcheck.h>
+ 
+ 
+ static char *next_input (char **line, int first, int last);
+@@ -46,6 +47,8 @@ main (void)
+   size_t escpatternlen = 0;
+   int nr = 0;
+ 
++  mtrace ();
++
+   /* Read lines from stdin with the following format:
+ 
+        locale  input-string  match-string  flags  result
+diff --git a/resolv/nss_dns/dns-host.c b/resolv/nss_dns/dns-host.c
+index 8592183..fe4ac2d 100644
+--- a/resolv/nss_dns/dns-host.c
++++ b/resolv/nss_dns/dns-host.c
+@@ -599,7 +599,6 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
+   int (*name_ok) (const char *);
+   u_char packtmp[NS_MAXCDNAME];
+   int have_to_map = 0;
+-  int32_t ttl = 0;
+   uintptr_t pad = -(uintptr_t) buffer % __alignof__ (struct host_data);
+   buffer += pad;
+   if (__builtin_expect (buflen < sizeof (struct host_data) + pad, 0))
+@@ -733,7 +732,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
+       cp += INT16SZ;			/* type */
+       class = __ns_get16 (cp);
+       cp += INT16SZ;			/* class */
+-      ttl = __ns_get32 (cp);
++      int32_t ttl = __ns_get32 (cp);
+       cp += INT32SZ;			/* TTL */
+       n = __ns_get16 (cp);
+       cp += INT16SZ;			/* len */
+@@ -907,7 +906,7 @@ getanswer_r (const querybuf *answer, int anslen, const char *qname, int qtype,
+ 	    {
+ 	      register int nn;
+ 
+-	      if (ttlp != NULL && ttl != 0)
++	      if (ttlp != NULL)
+ 		*ttlp = ttl;
+ 	      if (canonp != NULL)
+ 		*canonp = bp;
+@@ -1163,7 +1162,7 @@ gaih_getanswer_slice (const querybuf *answer, int anslen, const char *qname,
+ 
+       if (*firstp)
+ 	{
+-	  if (ttl != 0 && ttlp != NULL)
++	  if (ttlp != NULL)
+ 	    *ttlp = ttl;
+ 
+ 	  (*pat)->name = canon ?: h_name;
+diff --git a/resolv/res_init.c b/resolv/res_init.c
+index 40dbe7d..74715f3 100644
+--- a/resolv/res_init.c
++++ b/resolv/res_init.c
+@@ -176,13 +176,6 @@ __res_vinit(res_state statp, int preinit) {
+ 		statp->id = res_randomid();
+ 	}
+ 
+-#ifdef USELOOPBACK
+-	statp->nsaddr.sin_addr = inet_makeaddr(IN_LOOPBACKNET, 1);
+-#else
+-	statp->nsaddr.sin_addr.s_addr = INADDR_ANY;
+-#endif
+-	statp->nsaddr.sin_family = AF_INET;
+-	statp->nsaddr.sin_port = htons(NAMESERVER_PORT);
+ 	statp->nscount = 0;
+ 	statp->ndots = 1;
+ 	statp->pfcode = 0;
+@@ -321,24 +314,24 @@ __res_vinit(res_state statp, int preinit) {
+ 			nserv++;
+ #ifdef _LIBC
+ 			nservall++;
+-                    } else {
+-                        struct in6_addr a6;
+-                        char *el;
++		    } else {
++			struct in6_addr a6;
++			char *el;
+ 
+-                        if ((el = strchr(cp, '\n')) != NULL)
+-                            *el = '\0';
++			if ((el = strchr(cp, '\n')) != NULL)
++			    *el = '\0';
+ 			if ((el = strchr(cp, SCOPE_DELIMITER)) != NULL)
+ 			    *el = '\0';
+-                        if ((*cp != '\0') &&
+-                            (inet_pton(AF_INET6, cp, &a6) > 0)) {
+-                            struct sockaddr_in6 *sa6;
+-
+-                            sa6 = malloc(sizeof(*sa6));
+-                            if (sa6 != NULL) {
+-                                sa6->sin6_family = AF_INET6;
+-                                sa6->sin6_port = htons(NAMESERVER_PORT);
++			if ((*cp != '\0') &&
++			    (inet_pton(AF_INET6, cp, &a6) > 0)) {
++			    struct sockaddr_in6 *sa6;
++
++			    sa6 = malloc(sizeof(*sa6));
++			    if (sa6 != NULL) {
++				sa6->sin6_family = AF_INET6;
++				sa6->sin6_port = htons(NAMESERVER_PORT);
+ 				sa6->sin6_flowinfo = 0;
+-                                sa6->sin6_addr = a6;
++				sa6->sin6_addr = a6;
+ 
+ 				if (__builtin_expect (el == NULL, 1))
+ 				    sa6->sin6_scope_id = 0;
+@@ -365,9 +358,9 @@ __res_vinit(res_state statp, int preinit) {
+ 				statp->_u._ext.nsaddrs[nservall] = sa6;
+ 				statp->_u._ext.nssocks[nservall] = -1;
+ 				statp->_u._ext.nsmap[nservall] = MAXNS + 1;
+-                                nservall++;
+-                            }
+-                        }
++				nservall++;
++			    }
++			}
+ #endif
+ 		    }
+ 		    continue;
+@@ -433,6 +426,12 @@ __res_vinit(res_state statp, int preinit) {
+ #endif
+ 	    (void) fclose(fp);
+ 	}
++	if (__builtin_expect(statp->nscount == 0, 0)) {
++	    statp->nsaddr.sin_addr = inet_makeaddr(IN_LOOPBACKNET, 1);
++	    statp->nsaddr.sin_family = AF_INET;
++	    statp->nsaddr.sin_port = htons(NAMESERVER_PORT);
++	    statp->nscount = 1;
++	}
+ 	if (statp->defdname[0] == 0 &&
+ 	    __gethostname(buf, sizeof(statp->defdname) - 1) == 0 &&
+ 	    (cp = strchr(buf, '.')) != NULL)
+@@ -538,12 +537,12 @@ res_setoptions(res_state statp, const char *options, const char *source) {
+ 		} else if (!strncmp(cp, "no-check-names",
+ 				    sizeof("no-check-names") - 1)) {
+ 			statp->options |= RES_NOCHECKNAME;
+-                } else if (!strncmp(cp, "edns0", sizeof("edns0") - 1)) {
++		} else if (!strncmp(cp, "edns0", sizeof("edns0") - 1)) {
+ 			statp->options |= RES_USE_EDNS0;
+-                } else if (!strncmp(cp, "single-request-reopen",
++		} else if (!strncmp(cp, "single-request-reopen",
+ 				    sizeof("single-request-reopen") - 1)) {
+ 			statp->options |= RES_SNGLKUPREOP;
+-                } else if (!strncmp(cp, "single-request",
++		} else if (!strncmp(cp, "single-request",
+ 				    sizeof("single-request") - 1)) {
+ 			statp->options |= RES_SNGLKUP;
+ 		} else {
+diff --git a/scripts/data/localplt-s390-linux-gnu.data b/scripts/data/localplt-s390-linux-gnu.data
+new file mode 100644
+index 0000000..8fb56b6
+--- /dev/null
++++ b/scripts/data/localplt-s390-linux-gnu.data
+@@ -0,0 +1,7 @@
++libc.so: _Unwind_Find_FDE
++libc.so: calloc
++libc.so: free
++libc.so: malloc
++libc.so: memalign
++libc.so: realloc
++libm.so: matherr
+diff --git a/scripts/data/localplt-s390x-linux-gnu.data b/scripts/data/localplt-s390x-linux-gnu.data
+new file mode 100644
+index 0000000..8fb56b6
+--- /dev/null
++++ b/scripts/data/localplt-s390x-linux-gnu.data
+@@ -0,0 +1,7 @@
++libc.so: _Unwind_Find_FDE
++libc.so: calloc
++libc.so: free
++libc.so: malloc
++libc.so: memalign
++libc.so: realloc
++libm.so: matherr
+diff --git a/stdlib/strtod_l.c b/stdlib/strtod_l.c
+index cde1280..537d1fb 100644
+--- a/stdlib/strtod_l.c
++++ b/stdlib/strtod_l.c
+@@ -1491,7 +1491,9 @@ ____STRTOF_INTERNAL (nptr, endptr, group, loc)
+ 			  register int i;
+ 			  (void) __mpn_lshift (&retval[used
+ 						       / BITS_PER_MP_LIMB],
+-					       retval, RETURN_LIMB_SIZE,
++					       retval,
++					       (RETURN_LIMB_SIZE
++						- used / BITS_PER_MP_LIMB),
+ 					       used % BITS_PER_MP_LIMB);
+ 			  for (i = used / BITS_PER_MP_LIMB - 1; i >= 0; --i)
+ 			    retval[i] = 0;
+diff --git a/string/Makefile b/string/Makefile
+index db9b508..558b08b 100644
+--- a/string/Makefile
++++ b/string/Makefile
+@@ -54,7 +54,8 @@ tests		:= tester inl-tester noinl-tester testcopy test-ffs	\
+ 		   bug-strncat1 bug-strspn1 bug-strpbrk1 tst-bswap	\
+ 		   tst-strtok tst-strxfrm bug-strcoll1 tst-strfry	\
+ 		   bug-strtok1 $(addprefix test-,$(strop-tests))	\
+-		   bug-envz1 tst-strxfrm2 tst-endian tst-svc2
++		   bug-envz1 tst-strxfrm2 tst-endian tst-svc2		\
++		   bug-strstr1 bug-strchr1
+ distribute	:= memcopy.h pagecopy.h tst-svc.expect test-string.h	\
+ 		   str-two-way.h
+ 
+@@ -73,6 +74,7 @@ CFLAGS-tst-strlen.c = -fno-builtin
+ CFLAGS-stratcliff.c = -fno-builtin
+ CFLAGS-test-ffs.c = -fno-builtin
+ CFLAGS-tst-inlcall.c = -fno-builtin
++CFLAGS-bug-strstr1.c = -fno-builtin
+ 
+ ifeq ($(cross-compiling),no)
+ tests: $(objpfx)tst-svc.out
+diff --git a/string/bug-strchr1.c b/string/bug-strchr1.c
+new file mode 100644
+index 0000000..21155d8
+--- /dev/null
++++ b/string/bug-strchr1.c
+@@ -0,0 +1,14 @@
++#include <stdio.h>
++#include <string.h>
++
++static int
++do_test (void)
++{
++  char s[] __attribute__((aligned(16))) = "\xff";
++  char *p = strchr (s, '\xfe');
++  printf ("%p\n", p);
++  return p != NULL;
++}
++
++#define TEST_FUNCTION do_test ()
++#include "../test-skeleton.c"
+diff --git a/string/bug-strstr1.c b/string/bug-strstr1.c
+new file mode 100644
+index 0000000..889de12
+--- /dev/null
++++ b/string/bug-strstr1.c
+@@ -0,0 +1,26 @@
++#include <stdio.h>
++#include <string.h>
++
++int main (int argc, char** argv)
++{
++  const char haystack[] =
++    "F_BD_CE_BD_EF_BF_BD_EF_BF_BD_EF_BF_BD_EF_BF_BD_C3_88_20_EF_BF_BD_EF_BF_BD_EF_BF_BD_C3_A7_20_EF_BF_BD";
++
++  const char needle[] =
++    "_EF_BF_BD_EF_BF_BD_EF_BF_BD_EF_BF_BD_EF_BF_BD";
++
++  const char* sub = strstr (haystack, needle);
++
++  if (sub != NULL)
++    {
++      int j;
++
++      fprintf (stderr, "BUG: expected NULL, got:\n%s\n%s\n", sub, needle);
++      for (j = 0; needle[j] != '\0'; ++j)
++        putchar (needle[j] == sub[j] ? ' ' : '^');
++      puts ("");
++      return 1;
++    }
++
++  return 0;
++}
+diff --git a/string/str-two-way.h b/string/str-two-way.h
+index 87ed8a0..73c99d9 100644
+--- a/string/str-two-way.h
++++ b/string/str-two-way.h
+@@ -350,8 +350,8 @@ two_way_long_needle (const unsigned char *haystack, size_t haystack_len,
+ 		     a byte out of place, there can be no match until
+ 		     after the mismatch.  */
+ 		  shift = needle_len - period;
+-		  memory = 0;
+ 		}
++	      memory = 0;
+ 	      j += shift;
+ 	      continue;
+ 	    }
+diff --git a/string/stratcliff.c b/string/stratcliff.c
+index 2bb5982..5165be2 100644
+--- a/string/stratcliff.c
++++ b/string/stratcliff.c
+@@ -1,5 +1,6 @@
+ /* Test for string function add boundaries of usable memory.
+-   Copyright (C) 1996,1997,1999-2003,2007, 2009 Free Software Foundation, Inc.
++   Copyright (C) 1996,1997,1999-2003,2007,2009,2010
++   Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
+ 
+@@ -47,6 +48,8 @@
+ # define MEMCPY memcpy
+ # define MEMPCPY mempcpy
+ # define MEMCHR memchr
++# define STRCMP strcmp
++# define STRNCMP strncmp
+ #endif
+ 
+ 
+@@ -70,12 +73,12 @@ do_test (void)
+   if (adr == MAP_FAILED || dest == MAP_FAILED)
+     {
+       if (errno == ENOSYS)
+-        puts ("No test, mmap not available.");
++	puts ("No test, mmap not available.");
+       else
+-        {
+-          printf ("mmap failed: %m");
+-          result = 1;
+-        }
++	{
++	  printf ("mmap failed: %m");
++	  result = 1;
++	}
+     }
+   else
+     {
+@@ -93,8 +96,8 @@ do_test (void)
+ 
+       /* strlen/wcslen test */
+       for (outer = nchars - 1; outer >= MAX (0, nchars - 128); --outer)
+-        {
+-          for (inner = MAX (outer, nchars - 64); inner < nchars; ++inner)
++	{
++	  for (inner = MAX (outer, nchars - 64); inner < nchars; ++inner)
+ 	    {
+ 	      adr[inner] = L('\0');
+ 
+@@ -107,12 +110,12 @@ do_test (void)
+ 
+ 	      adr[inner] = L('T');
+ 	    }
+-        }
++	}
+ 
+       /* strnlen/wcsnlen test */
+       for (outer = nchars; outer >= MAX (0, nchars - 128); --outer)
+-        {
+-          for (inner = MAX (outer, nchars - 64); inner < nchars; ++inner)
++	{
++	  for (inner = MAX (outer, nchars - 64); inner < nchars; ++inner)
+ 	    {
+ 	      adr[inner] = L('\0');
+ 
+@@ -126,9 +129,9 @@ do_test (void)
+ 
+ 	      adr[inner] = L('T');
+ 	    }
+-        }
++	}
+       for (outer = nchars; outer >= MAX (0, nchars - 128); --outer)
+-        {
++	{
+ 	  for (inner = MAX (outer, nchars - 64); inner <= nchars; ++inner)
+ 	    {
+ 	      if (STRNLEN (&adr[outer], inner - outer)
+@@ -139,11 +142,11 @@ do_test (void)
+ 		  result = 1;
+ 		}
+ 	    }
+-        }
++	}
+ 
+       /* strchr/wcschr test */
+       for (outer = nchars - 1; outer >= MAX (0, nchars - 128); --outer)
+-        {
++	{
+ 	  for (middle = MAX (outer, nchars - 64); middle < nchars; ++middle)
+ 	    {
+ 	      for (inner = middle; inner < nchars; ++inner)
+@@ -167,7 +170,7 @@ do_test (void)
+ 		  adr[middle] = L('T');
+ 		}
+ 	    }
+-        }
++	}
+ 
+       /* Special test.  */
+       adr[nchars - 1] = L('\0');
+@@ -180,7 +183,7 @@ do_test (void)
+ 
+       /* strrchr/wcsrchr test */
+       for (outer = nchars - 1; outer >= MAX (0, nchars - 128); --outer)
+-        {
++	{
+ 	  for (middle = MAX (outer, nchars - 64); middle < nchars; ++middle)
+ 	    {
+ 	      for (inner = middle; inner < nchars; ++inner)
+@@ -204,11 +207,11 @@ do_test (void)
+ 		  adr[middle] = L('T');
+ 		}
+ 	    }
+-        }
++	}
+ 
+       /* memchr test */
+       for (outer = nchars - 1; outer >= MAX (0, nchars - 128); --outer)
+-        {
++	{
+ 	  for (middle = MAX (outer, nchars - 64); middle < nchars; ++middle)
+ 	    {
+ 	      adr[middle] = L('V');
+@@ -224,9 +227,9 @@ do_test (void)
+ 
+ 	      adr[middle] = L('T');
+ 	    }
+-        }
++	}
+       for (outer = nchars; outer >= MAX (0, nchars - 128); --outer)
+-        {
++	{
+ 	  CHAR *cp = MEMCHR (&adr[outer], L('V'), nchars - outer);
+ 
+ 	  if (cp != NULL)
+@@ -235,13 +238,13 @@ do_test (void)
+ 		      STRINGIFY (MEMCHR), outer);
+ 	      result = 1;
+ 	    }
+-        }
++	}
+ 
+       /* This function only exists for single-byte characters.  */
+ #ifndef WCSTEST
+       /* rawmemchr test */
+       for (outer = nchars - 1; outer >= MAX (0, nchars - 128); --outer)
+-        {
++	{
+ 	  for (middle = MAX (outer, nchars - 64); middle < nchars; ++middle)
+ 	    {
+ 	      adr[middle] = L('V');
+@@ -257,13 +260,13 @@ do_test (void)
+ 
+ 	      adr[middle] = L('T');
+ 	    }
+-        }
++	}
+ #endif
+ 
+       /* strcpy/wcscpy test */
+       for (outer = nchars - 1; outer >= MAX (0, nchars - 128); --outer)
+-        {
+-          for (inner = MAX (outer, nchars - 64); inner < nchars; ++inner)
++	{
++	  for (inner = MAX (outer, nchars - 64); inner < nchars; ++inner)
+ 	    {
+ 	      adr[inner] = L('\0');
+ 
+@@ -277,7 +280,74 @@ do_test (void)
+ 
+ 	      adr[inner] = L('T');
+ 	    }
+-        }
++	}
++
++      /* strcmp/wcscmp tests */
++      for (outer = 1; outer < 32; ++outer)
++	for (middle = 0; middle < 16; ++middle)
++	  {
++	    MEMSET (adr + middle, L('T'), 256);
++	    adr[256] = L('\0');
++	    MEMSET (dest + nchars - outer, L('T'), outer - 1);
++	    dest[nchars - 1] = L('\0');
++
++	    if (STRCMP (adr + middle, dest + nchars - outer) <= 0)
++	      {
++		printf ("%s 1 flunked for outer = %d, middle = %d\n",
++			STRINGIFY (STRCMP), outer, middle);
++		result = 1;
++	      }
++
++	    if (STRCMP (dest + nchars - outer, adr + middle) >= 0)
++	      {
++		printf ("%s 2 flunked for outer = %d, middle = %d\n",
++			STRINGIFY (STRCMP), outer, middle);
++		result = 1;
++	      }
++	  }
++
++      /* strncmp/wcsncmp tests */
++      for (outer = 1; outer < 32; ++outer)
++	for (middle = 0; middle < 16; ++middle)
++	  {
++	    MEMSET (adr + middle, L('T'), 256);
++	    adr[256] = L('\0');
++	    MEMSET (dest + nchars - outer, L('T'), outer - 1);
++	    dest[nchars - 1] = L('U');
++
++	    for (inner = 0; inner < outer; ++inner)
++	      {
++		if (STRNCMP (adr + middle, dest + nchars - outer, inner) != 0)
++		  {
++		    printf ("%s 1 flunked for outer = %d, middle = %d, "
++			    "inner = %d\n",
++			    STRINGIFY (STRNCMP), outer, middle, inner);
++		    result = 1;
++		  }
++
++		if (STRNCMP (dest + nchars - outer, adr + middle, inner) != 0)
++		  {
++		    printf ("%s 2 flunked for outer = %d, middle = %d, "
++			    "inner = %d\n",
++			    STRINGIFY (STRNCMP), outer, middle, inner);
++		    result = 1;
++		  }
++	      }
++
++	    if (STRNCMP (adr + middle, dest + nchars - outer, outer) >= 0)
++	      {
++		printf ("%s 1 flunked for outer = %d, middle = %d, full\n",
++			STRINGIFY (STRNCMP), outer, middle);
++		result = 1;
++	      }
++
++	    if (STRNCMP (dest + nchars - outer, adr + middle, outer) <= 0)
++	      {
++		printf ("%s 2 flunked for outer = %d, middle = %d, full\n",
++			STRINGIFY (STRNCMP), outer, middle);
++		result = 1;
++	      }
++	  }
+ 
+       /* strncpy/wcsncpy tests */
+       adr[nchars - 1] = L('T');
+@@ -295,12 +365,12 @@ do_test (void)
+ 		  result = 1;
+ 		}
+ 	    }
+-        }
++	}
+       adr[nchars - 1] = L('\0');
+ 
+       for (outer = nchars - 1; outer >= MAX (0, nchars - 128); --outer)
+-        {
+-          for (inner = MAX (outer, nchars - 64); inner < nchars; ++inner)
++	{
++	  for (inner = MAX (outer, nchars - 64); inner < nchars; ++inner)
+ 	    {
+ 	      size_t len;
+ 
+@@ -334,12 +404,12 @@ do_test (void)
+ 
+ 	      adr[inner] = L('T');
+ 	    }
+-        }
++	}
+ 
+       /* stpcpy/wcpcpy test */
+       for (outer = nchars - 1; outer >= MAX (0, nchars - 128); --outer)
+-        {
+-          for (inner = MAX (outer, nchars - 64); inner < nchars; ++inner)
++	{
++	  for (inner = MAX (outer, nchars - 64); inner < nchars; ++inner)
+ 	    {
+ 	      adr[inner] = L('\0');
+ 
+@@ -352,7 +422,7 @@ do_test (void)
+ 
+ 	      adr[inner] = L('T');
+ 	    }
+-        }
++	}
+ 
+       /* stpncpy/wcpncpy test */
+       adr[nchars - 1] = L('T');
+@@ -374,8 +444,8 @@ do_test (void)
+       adr[nchars - 1] = L('\0');
+ 
+       for (outer = nchars - 1; outer >= MAX (0, nchars - 128); --outer)
+-        {
+-          for (middle = MAX (outer, nchars - 64); middle < nchars; ++middle)
++	{
++	  for (middle = MAX (outer, nchars - 64); middle < nchars; ++middle)
+ 	    {
+ 	      adr[middle] = L('\0');
+ 
+@@ -393,7 +463,7 @@ do_test (void)
+ 
+ 	      adr[middle] = L('T');
+ 	    }
+-        }
++	}
+ 
+       /* memcpy/wmemcpy test */
+       for (outer = nchars; outer >= MAX (0, nchars - 128); --outer)
+diff --git a/sysdeps/generic/ldsodefs.h b/sysdeps/generic/ldsodefs.h
+index fcc943b..d040590 100644
+--- a/sysdeps/generic/ldsodefs.h
++++ b/sysdeps/generic/ldsodefs.h
+@@ -824,11 +824,9 @@ extern void _dl_receive_error (receiver_fct fct, void (*operate) (void *),
+ 
+ /* Open the shared object NAME and map in its segments.
+    LOADER's DT_RPATH is used in searching for NAME.
+-   If the object is already opened, returns its existing map.
+-   For preloaded shared objects PRELOADED is set to a non-zero
+-   value to allow additional security checks.  */
++   If the object is already opened, returns its existing map.  */
+ extern struct link_map *_dl_map_object (struct link_map *loader,
+-					const char *name, int preloaded,
++					const char *name,
+ 					int type, int trace_mode, int mode,
+ 					Lmid_t nsid)
+      internal_function attribute_hidden;
+@@ -893,8 +891,11 @@ extern lookup_t _dl_lookup_symbol_x (const char *undef,
+ extern ElfW(Addr) _dl_symbol_value (struct link_map *map, const char *name)
+      internal_function;
+ 
+-/* Allocate a `struct link_map' for a new object being loaded,
+-   and enter it into the _dl_main_map list.  */
++/* Add the new link_map NEW to the end of the namespace list.  */
++extern void _dl_add_to_namespace_list (struct link_map *new, Lmid_t nsid)
++     internal_function attribute_hidden;
++
++/* Allocate a `struct link_map' for a new object being loaded.  */
+ extern struct link_map *_dl_new_object (char *realname, const char *libname,
+ 					int type, struct link_map *loader,
+ 					int mode, Lmid_t nsid)
+diff --git a/sysdeps/i386/bits/byteswap.h b/sysdeps/i386/bits/byteswap.h
+index 1f3fc5e..c246ae8 100644
+--- a/sysdeps/i386/bits/byteswap.h
++++ b/sysdeps/i386/bits/byteswap.h
+@@ -1,5 +1,5 @@
+ /* Macros to swap the order of bytes in integer values.
+-   Copyright (C) 1997, 1998, 2000, 2002, 2003, 2006, 2007, 2008
++   Copyright (C) 1997, 1998, 2000, 2002, 2003, 2006, 2007, 2008, 2010
+    Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+@@ -27,26 +27,27 @@
+ 
+ /* Swap bytes in 16 bit value.  */
+ #define __bswap_constant_16(x) \
+-     ((((x) >> 8) & 0xff) | (((x) & 0xff) << 8))
++     ((unsigned short int) ((((x) >> 8) & 0xff) | (((x) & 0xff) << 8)))
+ 
+ #ifdef __GNUC__
+ # if __GNUC__ >= 2
+ #  define __bswap_16(x) \
+      (__extension__							      \
+-      ({ register unsigned short int __v, __x = (x);			      \
++      ({ register unsigned short int __v, __x = (unsigned short int) (x);     \
+ 	 if (__builtin_constant_p (__x))				      \
+ 	   __v = __bswap_constant_16 (__x);				      \
+ 	 else								      \
+ 	   __asm__ ("rorw $8, %w0"					      \
+ 		    : "=r" (__v)					      \
+- 		    : "0" (__x)						      \
+- 		    : "cc");						      \
++		    : "0" (__x)						      \
++		    : "cc");						      \
+ 	 __v; }))
+ # else
+ /* This is better than nothing.  */
+ #  define __bswap_16(x) \
+      (__extension__							      \
+-      ({ register unsigned short int __x = (x); __bswap_constant_16 (__x); }))
++      ({ register unsigned short int __x = (unsigned short int) (x);	      \
++	 __bswap_constant_16 (__x); }))
+ # endif
+ #else
+ static __inline unsigned short int
+@@ -122,7 +123,7 @@ __bswap_32 (unsigned int __bsx)
+      (__extension__							      \
+       ({ union { __extension__ unsigned long long int __ll;		      \
+ 		 unsigned long int __l[2]; } __w, __r;			      \
+-         if (__builtin_constant_p (x))					      \
++	 if (__builtin_constant_p (x))					      \
+ 	   __r.__ll = __bswap_constant_64 (x);				      \
+ 	 else								      \
+ 	   {								      \
+diff --git a/sysdeps/i386/elf/Makefile b/sysdeps/i386/elf/Makefile
+new file mode 100644
+index 0000000..61064d4
+--- /dev/null
++++ b/sysdeps/i386/elf/Makefile
+@@ -0,0 +1,4 @@
++ifeq ($(subdir),csu)
++# Turn off -fasynchronous-unwind-tables
++CFLAGS-initfini.s += -fno-asynchronous-unwind-tables
++endif
+diff --git a/sysdeps/i386/i686/cacheinfo.c b/sysdeps/i386/i686/cacheinfo.c
+index f8b7f52..3635961 100644
+--- a/sysdeps/i386/i686/cacheinfo.c
++++ b/sysdeps/i386/i686/cacheinfo.c
+@@ -1,7 +1,11 @@
+ #define __x86_64_data_cache_size __x86_data_cache_size
++#define __x86_64_raw_data_cache_size __x86_raw_data_cache_size
+ #define __x86_64_data_cache_size_half __x86_data_cache_size_half
++#define __x86_64_raw_data_cache_size_half __x86_raw_data_cache_size_half
+ #define __x86_64_shared_cache_size __x86_shared_cache_size
++#define __x86_64_raw_shared_cache_size __x86_raw_shared_cache_size
+ #define __x86_64_shared_cache_size_half __x86_shared_cache_size_half
++#define __x86_64_raw_shared_cache_size_half __x86_raw_shared_cache_size_half
+ 
+ #define DISABLE_PREFETCHW
+ #define DISABLE_PREFERRED_MEMORY_INSTRUCTION
+diff --git a/sysdeps/i386/i686/multiarch/strspn.S b/sysdeps/i386/i686/multiarch/strspn.S
+index 7fe6f97..dbdf1af 100644
+--- a/sysdeps/i386/i686/multiarch/strspn.S
++++ b/sysdeps/i386/i686/multiarch/strspn.S
+@@ -1,5 +1,5 @@
+ /* Multiple versions of strspn
+-   Copyright (C) 2009 Free Software Foundation, Inc.
++   Copyright (C) 2009,2010 Free Software Foundation, Inc.
+    Contributed by Intel Corporation.
+    This file is part of the GNU C Library.
+ 
+@@ -65,7 +65,7 @@ ENTRY(strspn)
+ 	jne	1f
+ 	call	__init_cpu_features
+ 1:	leal	__strspn_ia32, %eax
+-	testl	$index_SSE2, CPUID_OFFSET+index_SSE4_2+__cpu_features
++	testl	$bit_SSE4_2, CPUID_OFFSET+index_SSE4_2+__cpu_features
+ 	jz	2f
+ 	leal	__strspn_sse42, %eax
+ 2:	ret
+diff --git a/sysdeps/ieee754/ldbl-128ibm/e_sqrtl.c b/sysdeps/ieee754/ldbl-128ibm/e_sqrtl.c
+index 1f533ca..fe6bb55 100644
+--- a/sysdeps/ieee754/ldbl-128ibm/e_sqrtl.c
++++ b/sysdeps/ieee754/ldbl-128ibm/e_sqrtl.c
+@@ -73,9 +73,9 @@ long double __ieee754_sqrtl(long double x)
+ 	m = ((a.i[2] >> 20) & 0x7ff) - 54;
+       }
+       m += n;
+-      if (m > 0)
++      if ((int) m > 0)
+ 	a.i[2] = (a.i[2] & 0x800fffff) | (m << 20);
+-      else if (m <= -54) {
++      else if ((int) m <= -54) {
+ 	a.i[2] &= 0x80000000;
+ 	a.i[3] = 0;
+       } else {
+diff --git a/sysdeps/mach/hurd/linkat.c b/sysdeps/mach/hurd/linkat.c
+index 1942144..062d913 100644
+--- a/sysdeps/mach/hurd/linkat.c
++++ b/sysdeps/mach/hurd/linkat.c
+@@ -1,5 +1,5 @@
+ /* Make a link between file names relative to open directories.  Hurd version.
+-   Copyright (C) 2006 Free Software Foundation, Inc.
++   Copyright (C) 2006,2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -38,7 +38,9 @@ linkat (fromfd, from, tofd, to, flags)
+   file_t oldfile, linknode, todir;
+   char *toname;
+ 
+-  oldfile = __file_name_lookup_at (fromfd, flags, from, 0, 0);
++  /* POSIX says linkat doesn't follow symlinks by default, so pass
++     O_NOLINK.  That can be overridden by AT_SYMLINK_FOLLOW in FLAGS.  */
++  oldfile = __file_name_lookup_at (fromfd, flags, from, O_NOLINK, 0);
+   if (oldfile == MACH_PORT_NULL)
+     return -1;
+ 
+diff --git a/sysdeps/s390/s390-32/__longjmp.c b/sysdeps/s390/s390-32/__longjmp.c
+index 4abc0ec..95f8b71 100644
+--- a/sysdeps/s390/s390-32/__longjmp.c
++++ b/sysdeps/s390/s390-32/__longjmp.c
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2000, 2001, 2005, 2009 Free Software Foundation, Inc.
++/* Copyright (C) 2000, 2001, 2005, 2009, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Martin Schwidefsky (schwidefsky@de.ibm.com).
+ 
+@@ -29,16 +29,19 @@
+ void
+ __longjmp (__jmp_buf env, int val)
+ {
+-  register int r2 __asm ("%r2") = val == 0 ? 1 : val;
+ #ifdef PTR_DEMANGLE
+-  register uintptr_t r3 __asm ("%r3") = THREAD_GET_POINTER_GUARD ();
+-  register void *r1 __asm ("%r1") = (void *) env;
++  uintptr_t guard = THREAD_GET_POINTER_GUARD ();
+ # ifdef CHECK_SP
+-  CHECK_SP (env, r3);
++  CHECK_SP (env, guard);
+ # endif
+ #elif defined CHECK_SP
+   CHECK_SP (env, 0);
+ #endif
++  register int r2 __asm ("%r2") = val == 0 ? 1 : val;
++#ifdef PTR_DEMANGLE
++  register uintptr_t r3 __asm ("%r3") = guard;
++  register void *r1 __asm ("%r1") = (void *) env;
++#endif
+   /* Restore registers and jump back.  */
+   asm volatile ("ld   %%f6,48(%1)\n\t"
+ 		"ld   %%f4,40(%1)\n\t"
+diff --git a/sysdeps/s390/s390-64/__longjmp.c b/sysdeps/s390/s390-64/__longjmp.c
+index 445bd3b..313b338 100644
+--- a/sysdeps/s390/s390-64/__longjmp.c
++++ b/sysdeps/s390/s390-64/__longjmp.c
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2001, 2005, 2009 Free Software Foundation, Inc.
++/* Copyright (C) 2001, 2005, 2009, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+    Contributed by Martin Schwidefsky (schwidefsky@de.ibm.com).
+ 
+@@ -29,16 +29,19 @@
+ void
+ __longjmp (__jmp_buf env, int val)
+ {
+-  register long int r2 __asm ("%r2") = val == 0 ? 1 : val;
+ #ifdef PTR_DEMANGLE
+-  register uintptr_t r3 __asm ("%r3") = THREAD_GET_POINTER_GUARD ();
+-  register void *r1 __asm ("%r1") = (void *) env;
++  uintptr_t guard = THREAD_GET_POINTER_GUARD ();
+ # ifdef CHECK_SP
+-  CHECK_SP (env, r3);
++  CHECK_SP (env, guard);
+ # endif
+ #elif defined CHECK_SP
+   CHECK_SP (env, 0);
+ #endif
++  register long int r2 __asm ("%r2") = val == 0 ? 1 : val;
++#ifdef PTR_DEMANGLE
++  register uintptr_t r3 __asm ("%r3") = guard;
++  register void *r1 __asm ("%r1") = (void *) env;
++#endif
+   /* Restore registers and jump back.  */
+   asm volatile ("ld   %%f7,104(%1)\n\t"
+ 		"ld   %%f5,96(%1)\n\t"
+diff --git a/sysdeps/unix/sysv/linux/check_pf.c b/sysdeps/unix/sysv/linux/check_pf.c
+index e694342..b789a32 100644
+--- a/sysdeps/unix/sysv/linux/check_pf.c
++++ b/sysdeps/unix/sysv/linux/check_pf.c
+@@ -1,5 +1,5 @@
+ /* Determine protocol families for which interfaces exist.  Linux version.
+-   Copyright (C) 2003, 2006, 2007, 2008 Free Software Foundation, Inc.
++   Copyright (C) 2003, 2006, 2007, 2008, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -304,10 +304,13 @@ __check_pf (bool *seen_ipv4, bool *seen_ipv6,
+ 
+   struct ifaddrs *runp;
+   for (runp = ifa; runp != NULL; runp = runp->ifa_next)
+-    if (runp->ifa_addr->sa_family == PF_INET)
+-      *seen_ipv4 = true;
+-    else if (runp->ifa_addr->sa_family == PF_INET6)
+-      *seen_ipv6 = true;
++    if (runp->ifa_addr != NULL)
++      {
++	if (runp->ifa_addr->sa_family == PF_INET)
++	  *seen_ipv4 = true;
++	else if (runp->ifa_addr->sa_family == PF_INET6)
++	  *seen_ipv6 = true;
++      }
+ 
+   (void) freeifaddrs (ifa);
+ #endif
+diff --git a/sysdeps/unix/sysv/linux/getdents.c b/sysdeps/unix/sysv/linux/getdents.c
+index b33d178..0aa9186 100644
+--- a/sysdeps/unix/sysv/linux/getdents.c
++++ b/sysdeps/unix/sysv/linux/getdents.c
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 1993, 1995-2003, 2004, 2006, 2007
++/* Copyright (C) 1993, 1995-2004, 2006, 2007, 2010
+    Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+@@ -285,7 +285,11 @@ __GETDENTS (int fd, char *buf, size_t nbytes)
+ 	DIRENT_SET_DP_INO(dp, kdp->d_ino);
+ 	dp->d_off = kdp->d_off;
+ 	dp->d_reclen = new_reclen;
++#ifdef __ASSUME_GETDENTS32_D_TYPE
++	dp->d_type = *((char *) kdp + kdp->d_reclen - 1);
++#else
+ 	dp->d_type = DT_UNKNOWN;
++#endif
+ 	memcpy (dp->d_name, kdp->d_name,
+ 		kdp->d_reclen - offsetof (struct kernel_dirent, d_name));
+ 
+diff --git a/sysdeps/unix/sysv/linux/getlogin.c b/sysdeps/unix/sysv/linux/getlogin.c
+index 4d15db0..58e37c4 100644
+--- a/sysdeps/unix/sysv/linux/getlogin.c
++++ b/sysdeps/unix/sysv/linux/getlogin.c
+@@ -32,8 +32,9 @@
+ char *
+ getlogin (void)
+ {
+-  if (__getlogin_r_loginuid (name, sizeof (name)) == 0)
+-    return name;
++  int res = __getlogin_r_loginuid (name, sizeof (name));
++  if (res >= 0)
++    return res == 0 ? name : NULL;
+ 
+   return getlogin_fd0 ();
+ }
+diff --git a/sysdeps/unix/sysv/linux/getlogin_r.c b/sysdeps/unix/sysv/linux/getlogin_r.c
+index dad2671..42041ee 100644
+--- a/sysdeps/unix/sysv/linux/getlogin_r.c
++++ b/sysdeps/unix/sysv/linux/getlogin_r.c
+@@ -27,6 +27,10 @@ static int getlogin_r_fd0 (char *name, size_t namesize);
+ #undef getlogin_r
+ 
+ 
++/* Try to determine login name from /proc/self/loginuid and return 0
++   if successful.  If /proc/self/loginuid cannot be read return -1.
++   Otherwise return the error number.  */
++
+ int
+ attribute_hidden
+ __getlogin_r_loginuid (name, namesize)
+@@ -35,7 +39,7 @@ __getlogin_r_loginuid (name, namesize)
+ {
+   int fd = open_not_cancel_2 ("/proc/self/loginuid", O_RDONLY);
+   if (fd == -1)
+-    return 1;
++    return -1;
+ 
+   /* We are reading a 32-bit number.  12 bytes are enough for the text
+      representation.  If not, something is wrong.  */
+@@ -51,37 +55,38 @@ __getlogin_r_loginuid (name, namesize)
+       || (uidbuf[n] = '\0',
+ 	  uid = strtoul (uidbuf, &endp, 10),
+ 	  endp == uidbuf || *endp != '\0'))
+-    return 1;
++    return -1;
+ 
+   size_t buflen = 1024;
+   char *buf = alloca (buflen);
+   bool use_malloc = false;
+   struct passwd pwd;
+   struct passwd *tpwd;
++  int result = 0;
+   int res;
+ 
+-  while ((res = __getpwuid_r (uid, &pwd, buf, buflen, &tpwd)) != 0)
++  while ((res = __getpwuid_r (uid, &pwd, buf, buflen, &tpwd)) == ERANGE)
+     if (__libc_use_alloca (2 * buflen))
+-      extend_alloca (buf, buflen, 2 * buflen);
++      buf = extend_alloca (buf, buflen, 2 * buflen);
+     else
+       {
+ 	buflen *= 2;
+ 	char *newp = realloc (use_malloc ? buf : NULL, buflen);
+ 	if (newp == NULL)
+ 	  {
+-	  fail:
+-	    if (use_malloc)
+-	      free (buf);
+-	    return 1;
++	    result = ENOMEM;
++	    goto out;
+ 	  }
+ 	buf = newp;
+ 	use_malloc = true;
+       }
+ 
+-  if (tpwd == NULL)
+-    goto fail;
++  if (res != 0 || tpwd == NULL)
++    {
++      result = -1;
++      goto out;
++    }
+ 
+-  int result = 0;
+   size_t needed = strlen (pwd.pw_name) + 1;
+   if (needed > namesize)
+     {
+@@ -109,8 +114,9 @@ getlogin_r (name, namesize)
+      char *name;
+      size_t namesize;
+ {
+-  if (__getlogin_r_loginuid (name, namesize) == 0)
+-    return 0;
++  int res = __getlogin_r_loginuid (name, namesize);
++  if (res >= 0)
++    return res;
+ 
+   return getlogin_r_fd0 (name, namesize);
+ }
+diff --git a/sysdeps/unix/sysv/linux/i386/bits/mman.h b/sysdeps/unix/sysv/linux/i386/bits/mman.h
+index 22aa401..7ac1aff 100644
+--- a/sysdeps/unix/sysv/linux/i386/bits/mman.h
++++ b/sysdeps/unix/sysv/linux/i386/bits/mman.h
+@@ -1,5 +1,6 @@
+ /* Definitions for POSIX memory map interface.  Linux/i386 version.
+-   Copyright (C) 1997,2000,2003,2005,2006,2009 Free Software Foundation, Inc.
++   Copyright (C) 1997,2000,2003,2005,2006,2009,2010
++   Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -64,6 +65,7 @@
+ # define MAP_POPULATE	0x08000		/* Populate (prefault) pagetables.  */
+ # define MAP_NONBLOCK	0x10000		/* Do not block on IO.  */
+ # define MAP_STACK	0x20000		/* Allocation is for a stack.  */
++# define MAP_HUGETLB	0x40000		/* Create huge page mapping.  */
+ #endif
+ 
+ /* Flags to `msync'.  */
+diff --git a/sysdeps/unix/sysv/linux/internal_statvfs.c b/sysdeps/unix/sysv/linux/internal_statvfs.c
+index 59b173e..63184d0 100644
+--- a/sysdeps/unix/sysv/linux/internal_statvfs.c
++++ b/sysdeps/unix/sysv/linux/internal_statvfs.c
+@@ -221,7 +221,8 @@ INTERNAL_STATVFS (const char *name, struct STATVFS *buf,
+   buf->f_files = fsbuf->f_files;
+   buf->f_ffree = fsbuf->f_ffree;
+   if (sizeof (buf->f_fsid) == sizeof (fsbuf->f_fsid))
+-    buf->f_fsid = (fsbuf->f_fsid.__val[0]
++    buf->f_fsid = ((fsbuf->f_fsid.__val[0]
++		    & ((1UL << (8 * sizeof (fsbuf->f_fsid.__val[0]))) - 1))
+ 		   | ((unsigned long int) fsbuf->f_fsid.__val[1]
+ 		      << (8 * (sizeof (buf->f_fsid)
+ 			       - sizeof (fsbuf->f_fsid.__val[0])))));
+diff --git a/sysdeps/unix/sysv/linux/sparc/sys/epoll.h b/sysdeps/unix/sysv/linux/sparc/sys/epoll.h
+index cc0ddef..9943f21 100644
+--- a/sysdeps/unix/sysv/linux/sparc/sys/epoll.h
++++ b/sysdeps/unix/sysv/linux/sparc/sys/epoll.h
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2002-2006, 2007, 2008 Free Software Foundation, Inc.
++/* Copyright (C) 2002-2006, 2007, 2008, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -31,7 +31,7 @@ typedef __sigset_t sigset_t;
+ #endif
+ 
+ 
+-/* Flags to be passed to epoll_create2.  */
++/* Flags to be passed to epoll_create1.  */
+ enum
+   {
+     EPOLL_CLOEXEC = 0x400000,
+@@ -101,8 +101,9 @@ __BEGIN_DECLS
+    returned by epoll_create() should be closed with close().  */
+ extern int epoll_create (int __size) __THROW;
+ 
+-/* Same as epoll_create but with an additional FLAGS parameter.  */
+-extern int epoll_create2 (int __size, int __flags) __THROW;
++/* Same as epoll_create but with an FLAGS parameter.  The unused SIZE
++   parameter has been dropped.  */
++extern int epoll_create1 (int __flags) __THROW;
+ 
+ 
+ /* Manipulate an epoll instance "epfd". Returns 0 in case of success,
+diff --git a/sysdeps/unix/sysv/linux/sys/swap.h b/sysdeps/unix/sysv/linux/sys/swap.h
+index b6e7bef..961006c 100644
+--- a/sysdeps/unix/sysv/linux/sys/swap.h
++++ b/sysdeps/unix/sysv/linux/sys/swap.h
+@@ -1,5 +1,5 @@
+ /* Calls to enable and disable swapping on specified locations.  Linux version.
+-   Copyright (C) 1996, 1998, 1999 Free Software Foundation, Inc.
++   Copyright (C) 1996, 1998, 1999, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -28,6 +28,7 @@
+ #define	SWAP_FLAG_PREFER	0x8000	/* Set if swap priority is specified. */
+ #define	SWAP_FLAG_PRIO_MASK	0x7fff
+ #define	SWAP_FLAG_PRIO_SHIFT	0
++#define SWAP_FLAG_DISCARD	0x10000	/* Discard swap cluster after use.  */
+ 
+ __BEGIN_DECLS
+ 
+diff --git a/sysdeps/unix/sysv/linux/ttyname.c b/sysdeps/unix/sysv/linux/ttyname.c
+index 69af6ad..6cec3a9 100644
+--- a/sysdeps/unix/sysv/linux/ttyname.c
++++ b/sysdeps/unix/sysv/linux/ttyname.c
+@@ -1,4 +1,5 @@
+-/* Copyright (C) 1991,92,93,1996-2002,2006,2009 Free Software Foundation, Inc.
++/* Copyright (C) 1991-1993,1996-2002,2006,2009,2010
++   Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -131,6 +132,9 @@ ttyname (int fd)
+   if (__builtin_expect (__tcgetattr (fd, &term) < 0, 0))
+     return NULL;
+ 
++  if (__fxstat64 (_STAT_VER, fd, &st) < 0)
++    return NULL;
++
+   /* We try using the /proc filesystem.  */
+   *_fitoa_word (fd, __stpcpy (procname, "/proc/self/fd/"), 10, 0) = '\0';
+ 
+@@ -161,13 +165,32 @@ ttyname (int fd)
+     {
+       if ((size_t) len >= buflen)
+ 	return NULL;
++
++#define UNREACHABLE_LEN strlen ("(unreachable)")
++      if (len > UNREACHABLE_LEN
++	  && memcmp (ttyname_buf, "(unreachable)", UNREACHABLE_LEN) == 0)
++	{
++	  memmove (ttyname_buf, ttyname_buf + UNREACHABLE_LEN,
++		   len - UNREACHABLE_LEN);
++	  len -= UNREACHABLE_LEN;
++	}
++
+       /* readlink need not terminate the string.  */
+       ttyname_buf[len] = '\0';
+-      return ttyname_buf;
+-    }
+ 
+-  if (__fxstat64 (_STAT_VER, fd, &st) < 0)
+-    return NULL;
++      /* Verify readlink result, fall back on iterating through devices.  */
++      if (ttyname_buf[0] == '/'
++	  && __xstat64 (_STAT_VER, ttyname_buf, &st1) == 0
++#ifdef _STATBUF_ST_RDEV
++	  && S_ISCHR (st1.st_mode)
++	  && st1.st_rdev == st.st_rdev
++#else
++	  && st1.st_ino == st.st_ino
++	  && st1.st_dev == st.st_dev
++#endif
++	  )
++	return ttyname_buf;
++    }
+ 
+   if (__xstat64 (_STAT_VER, "/dev/pts", &st1) == 0 && S_ISDIR (st1.st_mode))
+     {
+diff --git a/sysdeps/unix/sysv/linux/ttyname_r.c b/sysdeps/unix/sysv/linux/ttyname_r.c
+index cef8624..2fa7503 100644
+--- a/sysdeps/unix/sysv/linux/ttyname_r.c
++++ b/sysdeps/unix/sysv/linux/ttyname_r.c
+@@ -1,4 +1,5 @@
+-/* Copyright (C) 1991,92,93,1995-2001,2003,2006 Free Software Foundation, Inc.
++/* Copyright (C) 1991-1993,1995-2001,2003,2006,2010
++   Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -122,6 +123,9 @@ __ttyname_r (int fd, char *buf, size_t buflen)
+   if (__builtin_expect (__tcgetattr (fd, &term) < 0, 0))
+     return errno;
+ 
++  if (__fxstat64 (_STAT_VER, fd, &st) < 0)
++    return errno;
++
+   /* We try using the /proc filesystem.  */
+   *_fitoa_word (fd, __stpcpy (procname, "/proc/self/fd/"), 10, 0) = '\0';
+ 
+@@ -145,12 +149,30 @@ __ttyname_r (int fd, char *buf, size_t buflen)
+ #endif
+ 			, 1))
+     {
++#define UNREACHABLE_LEN strlen ("(unreachable)")
++      if (ret > UNREACHABLE_LEN
++	  && memcmp (buf, "(unreachable)", UNREACHABLE_LEN) == 0)
++	{
++	  memmove (buf, buf + UNREACHABLE_LEN, ret - UNREACHABLE_LEN);
++	  ret -= UNREACHABLE_LEN;
++	}
++
++      /* readlink need not terminate the string.  */
+       buf[ret] = '\0';
+-      return 0;
+-    }
+ 
+-  if (__fxstat64 (_STAT_VER, fd, &st) < 0)
+-    return errno;
++      /* Verify readlink result, fall back on iterating through devices.  */
++      if (buf[0] == '/'
++	  && __xstat64 (_STAT_VER, buf, &st1) == 0
++#ifdef _STATBUF_ST_RDEV
++	  && S_ISCHR (st1.st_mode)
++	  && st1.st_rdev == st.st_rdev
++#else
++	  && st1.st_ino == st.st_ino
++	  && st1.st_dev == st.st_dev
++#endif
++	  )
++	return 0;
++    }
+ 
+   /* Prepare the result buffer.  */
+   memcpy (buf, "/dev/pts/", sizeof ("/dev/pts/"));
+diff --git a/sysdeps/unix/sysv/linux/x86_64/____longjmp_chk.S b/sysdeps/unix/sysv/linux/x86_64/____longjmp_chk.S
+index 5e11540..da35115 100644
+--- a/sysdeps/unix/sysv/linux/x86_64/____longjmp_chk.S
++++ b/sysdeps/unix/sysv/linux/x86_64/____longjmp_chk.S
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2001,2004,2005,2006,2009 Free Software Foundation, Inc.
++/* Copyright (C) 2001,2004,2005,2006,2009,2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -49,9 +49,9 @@ longjmp_msg:
+ 	.text
+ ENTRY(____longjmp_chk)
+ 	/* Restore registers.  */
+-	movq	(JB_RSP*8)(%rdi),%r8
+-	movq	(JB_RBP*8)(%rdi),%r9
+-	movq	(JB_PC*8)(%rdi),%rdx
++	movq	(JB_RSP*8)(%rdi), %r8
++	movq	(JB_RBP*8)(%rdi), %r9
++	movq	(JB_PC*8)(%rdi), %rdx
+ #ifdef PTR_DEMANGLE
+ 	PTR_DEMANGLE (%r8)
+ 	PTR_DEMANGLE (%r9)
+@@ -63,7 +63,9 @@ ENTRY(____longjmp_chk)
+ 
+ 	/* Save function parameters.  */
+ 	movq	%rdi, %r10
+-	movl	%esi, %ecx
++	cfi_register (%rdi, %r10)
++	movl	%esi, %ebx
++	cfi_register (%rsi, %rbx)
+ 
+ 	xorl	%edi, %edi
+ 	leaq	-24(%rsp), %rsi
+@@ -84,7 +86,9 @@ ENTRY(____longjmp_chk)
+ .Lfail:	CALL_FAIL
+ 
+ .Lok2:	movq	%r10, %rdi
+-	movl	%ecx, %esi
++	cfi_restore (%rdi)
++	movl	%ebx, %esi
++	cfi_restore (%rsi)
+ 
+ .Lok:	/* We add unwind information for the target here.  */
+ 	cfi_def_cfa(%rdi, 0)
+@@ -96,11 +100,11 @@ ENTRY(____longjmp_chk)
+ 	cfi_offset(%r13,JB_R13*8)
+ 	cfi_offset(%r14,JB_R14*8)
+ 	cfi_offset(%r15,JB_R15*8)
+-	movq	(JB_RBX*8)(%rdi),%rbx
+-	movq	(JB_R12*8)(%rdi),%r12
+-	movq	(JB_R13*8)(%rdi),%r13
+-	movq	(JB_R14*8)(%rdi),%r14
+-	movq	(JB_R15*8)(%rdi),%r15
++	movq	(JB_RBX*8)(%rdi), %rbx
++	movq	(JB_R12*8)(%rdi), %r12
++	movq	(JB_R13*8)(%rdi), %r13
++	movq	(JB_R14*8)(%rdi), %r14
++	movq	(JB_R15*8)(%rdi), %r15
+ 	/* Set return value for setjmp.  */
+ 	movl	%esi, %eax
+ 	movq	%r8,%rsp
+diff --git a/sysdeps/unix/sysv/linux/x86_64/bits/mman.h b/sysdeps/unix/sysv/linux/x86_64/bits/mman.h
+index 3dcbf9c..6f3ad0d 100644
+--- a/sysdeps/unix/sysv/linux/x86_64/bits/mman.h
++++ b/sysdeps/unix/sysv/linux/x86_64/bits/mman.h
+@@ -1,5 +1,5 @@
+ /* Definitions for POSIX memory map interface.  Linux/x86_64 version.
+-   Copyright (C) 2001, 2003, 2005, 2006, 2009 Free Software Foundation, Inc.
++   Copyright (C) 2001,2003,2005,2006,2009,2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -65,6 +65,7 @@
+ # define MAP_POPULATE	0x08000		/* Populate (prefault) pagetables.  */
+ # define MAP_NONBLOCK	0x10000		/* Do not block on IO.  */
+ # define MAP_STACK	0x20000		/* Allocation is for a stack.  */
++# define MAP_HUGETLB	0x40000		/* Create huge page mapping.  */
+ #endif
+ 
+ /* Flags to `msync'.  */
+diff --git a/sysdeps/unix/sysv/linux/x86_64/sys/epoll.h b/sysdeps/unix/sysv/linux/x86_64/sys/epoll.h
+index 234798e..d799c84 100644
+--- a/sysdeps/unix/sysv/linux/x86_64/sys/epoll.h
++++ b/sysdeps/unix/sysv/linux/x86_64/sys/epoll.h
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2002,2003,2004,2005,2006,2007,2008 Free Software Foundation, Inc.
++/* Copyright (C) 2002-2008, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -31,7 +31,7 @@ typedef __sigset_t sigset_t;
+ #endif
+ 
+ 
+-/* Flags to be passed to epoll_create2.  */
++/* Flags to be passed to epoll_create1.  */
+ enum
+   {
+     EPOLL_CLOEXEC = 02000000,
+diff --git a/sysdeps/x86_64/bits/byteswap.h b/sysdeps/x86_64/bits/byteswap.h
+index 08b38e8..e350fb8 100644
+--- a/sysdeps/x86_64/bits/byteswap.h
++++ b/sysdeps/x86_64/bits/byteswap.h
+@@ -1,5 +1,5 @@
+ /* Macros to swap the order of bytes in integer values.
+-   Copyright (C) 1997, 1998, 2000, 2002, 2003, 2007, 2008
++   Copyright (C) 1997, 1998, 2000, 2002, 2003, 2007, 2008, 2010
+    Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+@@ -29,12 +29,12 @@
+ 
+ /* Swap bytes in 16 bit value.  */
+ #define __bswap_constant_16(x) \
+-     ((((x) >> 8) & 0xff) | (((x) & 0xff) << 8))
++     ((unsigned short int) ((((x) >> 8) & 0xff) | (((x) & 0xff) << 8)))
+ 
+ #if defined __GNUC__ && __GNUC__ >= 2
+ # define __bswap_16(x) \
+      (__extension__							      \
+-      ({ register unsigned short int __v, __x = (x);			      \
++      ({ register unsigned short int __v, __x = (unsigned short int) (x);     \
+ 	 if (__builtin_constant_p (__x))				      \
+ 	   __v = __bswap_constant_16 (__x);				      \
+ 	 else								      \
+@@ -47,7 +47,8 @@
+ /* This is better than nothing.  */
+ # define __bswap_16(x) \
+      (__extension__							      \
+-      ({ register unsigned short int __x = (x); __bswap_constant_16 (__x); }))
++      ({ register unsigned short int __x = (unsigned short int) (x);          \
++	 __bswap_constant_16 (__x); }))
+ #endif
+ 
+ 
+@@ -120,16 +121,16 @@
+ #  define __bswap_64(x) \
+      (__extension__                                                           \
+       ({ union { __extension__ unsigned long long int __ll;                   \
+-                 unsigned int __l[2]; } __w, __r;                             \
+-         if (__builtin_constant_p (x))                                        \
+-           __r.__ll = __bswap_constant_64 (x);                                \
+-         else                                                                 \
+-           {                                                                  \
+-             __w.__ll = (x);                                                  \
+-             __r.__l[0] = __bswap_32 (__w.__l[1]);                            \
+-             __r.__l[1] = __bswap_32 (__w.__l[0]);                            \
+-           }                                                                  \
+-         __r.__ll; }))
++		 unsigned int __l[2]; } __w, __r;                             \
++	 if (__builtin_constant_p (x))                                        \
++	   __r.__ll = __bswap_constant_64 (x);                                \
++	 else                                                                 \
++	   {                                                                  \
++	     __w.__ll = (x);                                                  \
++	     __r.__l[0] = __bswap_32 (__w.__l[1]);                            \
++	     __r.__l[1] = __bswap_32 (__w.__l[0]);                            \
++	   }                                                                  \
++	 __r.__ll; }))
+ # endif
+ #endif
+ 
+diff --git a/sysdeps/x86_64/cacheinfo.c b/sysdeps/x86_64/cacheinfo.c
+index 5422037..eae54e7 100644
+--- a/sysdeps/x86_64/cacheinfo.c
++++ b/sysdeps/x86_64/cacheinfo.c
+@@ -455,13 +455,21 @@ __cache_sysconf (int name)
+ 
+ 
+ /* Data cache size for use in memory and string routines, typically
+-   L1 size.  */
++   L1 size, rounded to multiple of 256 bytes.  */
+ long int __x86_64_data_cache_size_half attribute_hidden = 32 * 1024 / 2;
+ long int __x86_64_data_cache_size attribute_hidden = 32 * 1024;
++/* Similar to __x86_64_data_cache_size_half, but not rounded.  */
++long int __x86_64_raw_data_cache_size_half attribute_hidden = 32 * 1024 / 2;
++/* Similar to __x86_64_data_cache_size, but not rounded.  */
++long int __x86_64_raw_data_cache_size attribute_hidden = 32 * 1024;
+ /* Shared cache size for use in memory and string routines, typically
+-   L2 or L3 size.  */
++   L2 or L3 size, rounded to multiple of 256 bytes.  */
+ long int __x86_64_shared_cache_size_half attribute_hidden = 1024 * 1024 / 2;
+ long int __x86_64_shared_cache_size attribute_hidden = 1024 * 1024;
++/* Similar to __x86_64_shared_cache_size_half, but not rounded.  */
++long int __x86_64_raw_shared_cache_size_half attribute_hidden = 1024 * 1024 / 2;
++/* Similar to __x86_64_shared_cache_size, but not rounded.  */
++long int __x86_64_raw_shared_cache_size attribute_hidden = 1024 * 1024;
+ 
+ #ifndef DISABLE_PREFETCHW
+ /* PREFETCHW support flag for use in memory and string routines.  */
+@@ -661,12 +669,20 @@ init_cacheinfo (void)
+ 
+   if (data > 0)
+     {
++      __x86_64_raw_data_cache_size_half = data / 2;
++      __x86_64_raw_data_cache_size = data;
++      /* Round data cache size to multiple of 256 bytes.  */
++      data = data & ~255L;
+       __x86_64_data_cache_size_half = data / 2;
+       __x86_64_data_cache_size = data;
+     }
+ 
+   if (shared > 0)
+     {
++      __x86_64_raw_shared_cache_size_half = shared / 2;
++      __x86_64_raw_shared_cache_size = shared;
++      /* Round shared cache size to multiple of 256 bytes.  */
++      shared = shared & ~255L;
+       __x86_64_shared_cache_size_half = shared / 2;
+       __x86_64_shared_cache_size = shared;
+     }
+diff --git a/sysdeps/x86_64/multiarch/strchr.S b/sysdeps/x86_64/multiarch/strchr.S
+index 27eead9..71845a3 100644
+--- a/sysdeps/x86_64/multiarch/strchr.S
++++ b/sysdeps/x86_64/multiarch/strchr.S
+@@ -1,5 +1,5 @@
+ /* strchr with SSE4.2
+-   Copyright (C) 2009 Free Software Foundation, Inc.
++   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -87,13 +87,13 @@ __strchr_sse42:
+ 	pxor	%xmm2, %xmm2
+ 	movd	%esi, %xmm1
+ 	movl	%edi, %ecx
++	pshufb  %xmm2, %xmm1
+ 	andl	$15, %ecx
+ 	movq	%rdi, %r8
+ 	je	L(aligned_start)
+ 
+ /* Handle unaligned string.  */
+ 	andq	$-16, %r8
+-	pshufb  %xmm2, %xmm1
+ 	movdqa	(%r8), %xmm0
+ 	pcmpeqb	 %xmm0, %xmm2
+ 	pcmpeqb	 %xmm1, %xmm0
+diff --git a/sysdeps/x86_64/strcmp.S b/sysdeps/x86_64/strcmp.S
+index ac3fe14..9ce20a6 100644
+--- a/sysdeps/x86_64/strcmp.S
++++ b/sysdeps/x86_64/strcmp.S
+@@ -320,7 +320,7 @@ LABEL(nibble_ashr_1):
+ 	jnz	LABEL(ashr_1_exittail)	/* find null char*/
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$14, %r11
++	cmp	$15, %r11
+ 	jbe	LABEL(ashr_1_exittail)
+ # endif
+ 
+@@ -445,7 +445,7 @@ LABEL(nibble_ashr_2):
+ 	jnz	LABEL(ashr_2_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$13, %r11
++	cmp	$14, %r11
+ 	jbe	LABEL(ashr_2_exittail)
+ # endif
+ 
+@@ -567,7 +567,7 @@ LABEL(nibble_ashr_3):
+ 	jnz	LABEL(ashr_3_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$12, %r11
++	cmp	$13, %r11
+ 	jbe	LABEL(ashr_3_exittail)
+ # endif
+ 
+@@ -689,7 +689,7 @@ LABEL(nibble_ashr_4):
+ 	jnz	LABEL(ashr_4_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$11, %r11
++	cmp	$12, %r11
+ 	jbe	LABEL(ashr_4_exittail)
+ # endif
+ 
+@@ -811,7 +811,7 @@ LABEL(nibble_ashr_5):
+ 	jnz	LABEL(ashr_5_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$10, %r11
++	cmp	$11, %r11
+ 	jbe	LABEL(ashr_5_exittail)
+ # endif
+ 
+@@ -933,7 +933,7 @@ LABEL(nibble_ashr_6):
+ 	jnz	LABEL(ashr_6_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$9, %r11
++	cmp	$10, %r11
+ 	jbe	LABEL(ashr_6_exittail)
+ # endif
+ 
+@@ -1055,7 +1055,7 @@ LABEL(nibble_ashr_7):
+ 	jnz	LABEL(ashr_7_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$8, %r11
++	cmp	$9, %r11
+ 	jbe	LABEL(ashr_7_exittail)
+ # endif
+ 
+@@ -1177,7 +1177,7 @@ LABEL(nibble_ashr_8):
+ 	jnz	LABEL(ashr_8_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$7, %r11
++	cmp	$8, %r11
+ 	jbe	LABEL(ashr_8_exittail)
+ # endif
+ 
+@@ -1299,7 +1299,7 @@ LABEL(nibble_ashr_9):
+ 	jnz	LABEL(ashr_9_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$6, %r11
++	cmp	$7, %r11
+ 	jbe	LABEL(ashr_9_exittail)
+ # endif
+ 
+@@ -1421,7 +1421,7 @@ LABEL(nibble_ashr_10):
+ 	jnz	LABEL(ashr_10_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$5, %r11
++	cmp	$6, %r11
+ 	jbe	LABEL(ashr_10_exittail)
+ # endif
+ 
+@@ -1543,7 +1543,7 @@ LABEL(nibble_ashr_11):
+ 	jnz	LABEL(ashr_11_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$4, %r11
++	cmp	$5, %r11
+ 	jbe	LABEL(ashr_11_exittail)
+ # endif
+ 
+@@ -1665,7 +1665,7 @@ LABEL(nibble_ashr_12):
+ 	jnz	LABEL(ashr_12_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$3, %r11
++	cmp	$4, %r11
+ 	jbe	LABEL(ashr_12_exittail)
+ # endif
+ 
+@@ -1787,7 +1787,7 @@ LABEL(nibble_ashr_13):
+ 	jnz	LABEL(ashr_13_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$2, %r11
++	cmp	$3, %r11
+ 	jbe	LABEL(ashr_13_exittail)
+ # endif
+ 
+@@ -1909,7 +1909,7 @@ LABEL(nibble_ashr_14):
+ 	jnz	LABEL(ashr_14_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	cmp	$1, %r11
++	cmp	$2, %r11
+ 	jbe	LABEL(ashr_14_exittail)
+ # endif
+ 
+@@ -2033,8 +2033,8 @@ LABEL(nibble_ashr_15):
+ 	jnz	LABEL(ashr_15_exittail)
+ 
+ # ifdef USE_AS_STRNCMP
+-	test	%r11, %r11
+-	je	LABEL(ashr_15_exittail)
++	cmpq	$1, %r11
++	jbe	LABEL(ashr_15_exittail)
+ # endif
+ 
+ 	pxor	%xmm0, %xmm0
+diff --git a/wcsmbs/wcsatcliff.c b/wcsmbs/wcsatcliff.c
+index b29571f..95afff6 100644
+--- a/wcsmbs/wcsatcliff.c
++++ b/wcsmbs/wcsatcliff.c
+@@ -16,6 +16,8 @@
+ #define MEMCPY wmemcpy
+ #define MEMPCPY wmempcpy
+ #define MEMCHR wmemchr
++#define STRCMP wcscmp
++#define STRNCMP wcsncmp
+ 
+ 
+ #include "../string/stratcliff.c"

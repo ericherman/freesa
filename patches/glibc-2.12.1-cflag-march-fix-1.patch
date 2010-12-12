@@ -1,8 +1,11 @@
 With GCC 4.5.0 and GLIBC 2.12, problems occur related to the
-machine architecture (with or without setting -march in CFLAGS)
+machine architecture (with or without setting -march in CFLAGS),
+when assembling s_frexp.S, because the preprocessor replaces
+__i686 with "1".
 
-Found this fix on mailing list somewhere, don't recall the
-original source.
+See e.g.:
+
+http://www.eglibc.org/archives/patches/msg00073.html
 
 ---
  nptl/sysdeps/pthread/pt-initfini.c    |    5 +++++
