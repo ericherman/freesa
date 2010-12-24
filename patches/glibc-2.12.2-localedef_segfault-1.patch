@@ -11,6 +11,7 @@ Description: Fixes Segfault when using localdef.
              Respun for 2.9 by Brett Neumeier
              Respun for 2.11 by Brett Neumeier
              Respun for 2.12 by Brett Neumeier
+             Respun for 2.12.2 by Brett Neumeier
 
 ---
  locale/programs/3level.h |   36 ++++++++++++++++++++++++++++++++++++
@@ -64,5 +65,5 @@ index cce925e..6bf8b84 100644
  
  #ifndef NO_FINALIZE
 -- 
-1.6.3.3
+1.7.3.2
 

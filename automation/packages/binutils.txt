@@ -19,7 +19,8 @@ The +gcc+ driver program calls +as+ and +ld+ as necessary to do
 its work, and several of the other utility programs are used
 internally during the build process of other system components.
 
-No patches are required for binutils.
+patches:
+ - branch-update-20101223
 
 GNU binutils, like many toolchain components,  must be
 constructed from a directory outside the source directory.
