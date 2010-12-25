@@ -1,6 +1,6 @@
 full-name: eglibc
 name: eglibc
-version: "2.12-20101206"
+version: "2.12"
 
 eglibc is a kind of branch of GNU libc, primarily intended to
 adapt glibc to embedded systems.  For our purposes, the only
@@ -37,6 +37,7 @@ the libc against a partial GCC the stack-protector option doesn't
 work.
 
 patches:
+ - branch-update-20101219
  - workaround-missing-texinfo-1
  - workaround-stack-protector-1
 
