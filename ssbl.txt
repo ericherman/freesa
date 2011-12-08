@@ -24,22 +24,26 @@ The components we need to build the SSBL are:
    kernel)
 2. lzma, which is used to LZMA-compress the kernel (also just like
    in the nfs-boot kernel)
-3. The linux kernel
-4. The "diag" kernel module, used to spin the hard disk in the
+3. The "diag" kernel module, used to spin the hard disk in the
    WL-700gE (by activating a GPIO pin)
-5. Busybox (which provides all of the programs within the SSBL
+4. Busybox (which provides all of the programs within the SSBL
    root filesystem)
-6. uClibc (which is the libc used by busybox) -- you should
+5. uClibc (which is the libc used by busybox) -- you should
    already have built a uClibc toolchain, which includes this
-7. An init script that does the stuff we mentioned above, about
+6. An init script that does the stuff we mentioned above, about
    loading modules and doing the pivot-root and so on
-8. squashfs-lzma, used to construct the LZMA-compressed squashfs
-   root filesystem
-9. trx, which assembles the loader.gz, kernel, and squashfs into a
+7. trx, which assembles the loader.gz and kernel into a
    flashable TRX image (again, just like when you built the
    net-boot firmware)
+8. The linux kernel (which includes the root filesystem as an
+   initramfs)
 
-This file describes how to build and run all that stuff.
+The kernel build has to happen last because the root filesystem
+is attached as part of the kernel build. However, it has to be
+configured earlier so that the diag module (and other modules
+that are loaded after boot, like the IDE drivers) can be built.
+
+This file describes how to build and assemble all that stuff.
 
 Under normal circumstances, we recommend that you build all of
 this stuff in a net-booted and NFS-root-filesystem'ed freesa box,
@@ -50,22 +54,20 @@ actually run on the build system are lzma-alone, squashfs-lzma,
 and trx.  Everything else needs to be built with a
 cross-compiler.
 
+The way we figured out how to do all this was by
+reverse-engineering the OpenWRT build process. That's not a very
+hard thing to do, because make usually announces what it's doing
+as it's doing it; however, some parts of the OpenWRT build use
+"make -s" to stop echoing recipes.  We used a modified GNU Make
+that ignores the "silent" option entirely.
+
 Ready?  LET'S GO.
 
-1. loader.gz
+1. linux configuration and modules
 
-Look at section 1.c in firmware-build-notes.txt.
-
-2. lzma
-
-Look at section 1.a in firmware-build-notes.txt.  Hey, look at
-that!  We're going in a different order this time!  It's totally
-arbitrary.
-
-3. linux
-
-The kernel configuration we use is in the config directory as
-kernel-2.6.23-ssbl1.
+We need to configure the kernel and build modules before we build
+the actual kernel per se.  The kernel configuration we use is in
+the config directory as kernel-3.0.12-ssbl1.
 
 If cross-compiling from a different box, use
 
@@ -74,7 +76,10 @@ CROSS="ARCH=mips CROSS_COMPILE=mipsel-unknown-linux-uclibc-"
 (otherwise, don't set CROSS.)
 
 make $CROSS oldconfig
-make $CROSS
+make $CROSS headers_check
+make $CROSS headers_install
+make $CROSS modules_prepare
+make $CROSS modules
 
 We'll need a couple of modules during the SSBL boot process --
 otherwise, freesa won't be able to access the hard disk.  Go
@@ -83,6 +88,10 @@ ahead and copy them to where we'll want them:
 mkdir -p ${SSBL}/modules
 cp drivers/ide/{ide-core,ide-gd_mod}.ko ${SSBL}/modules
 cp drivers/ide/aec62xx.ko ${SSBL}/modules
+
+TODO: the ide and aec62xx modules are old and deprecated.  There
+may be up-to-date drivers that will work -- that's something
+we'll want to try.
 
 See all those kernel modules that got built?  If you're not doing
 a native build, you'll need to move them to the hard disk in the
@@ -104,38 +113,24 @@ just a few minutes).
 
 You're NOT done with the kernel source yet!  Don't mess with it!
 
-The kernel itself is vmlinux.  We need to convert it to a raw
-binary like we did with the nfs-boot kernel:
+2. loader.gz
 
-objcopy -O binary -R .reginfo \
-  -R .note -R .comment -R .mdebug -S vmlinux fixed-vmlinux
+Look at section 1.c in firmware-build-notes.txt.
 
-(or the cross-objcopy if you're cross-compiling)
+3. lzma
 
-Now, use the lzma_alone program you built in step 2 to compress
-the kernel:
-
-cat fixed-vmlinux | 
-    lzma_alone e -si -so -eos -lc1 -lp2 -pb2 > vmlinux.lzma
-
-This should all be hauntingly familiar.
-/
-Put vmlinux.lzma somewhere you'll be able to find it later.
+Look at section 1.a in firmware-build-notes.txt.  Hey, look at
+that!  We're going in a different order this time!  It's totally
+arbitrary.
 
 4. diag.ko
 
-Are you still in your linux source directory?  Good.
+Go back to your linux kernel source directory.
 
 pushd ${FREESAGIT}/diag
-make $CROSS KERNELDIR=$(dirs +1)
+make $CROSS -C $(dirs +1) M=$PWD
 cp diag.ko ${SSBL}/modules
 popd
-
-Now you're done with the linux source directory.  You can trash
-it if you want.  If you're building all this stuff natively,
-though, you might want to keep it around -- every so often you
-might find that some program wants to look at the current
-kernel's source tree.
 
 5. Busybox
 
@@ -153,7 +148,7 @@ aren't part of busybox, you should link busybox dynamically and
 include the required .so files in SSBL.  However, we don't think
 there's any point in doing that, so we do a static build.
 
-6. uClibc
+g. uClibc
 
 We don't actually need to do anything here, since we statically
 linked busybox and don't have any other binaries.  Just let your
@@ -177,28 +172,32 @@ do this!  Sorry about that.
 sudo mknod -m 600 ${SSBL}/dev/console c 5 1
 sudo mknod -m 666 ${SSBL}/dev/null c 1 3
 
-8. squashfs-lzma
+4. Linux kernel
 
-We're building squashfs 3.0, with a patch that adds LZMA support.
-Because it uses lzma compression, you need to provide a path to
-the LZMA library.  Unfortunately the one we built earlier, 4.65,
-doesn't work with squashfs 3.  We need to build 4.32.
-Irritating, I know...also, the patch only applies properly on the
-badly-tarred version lzma432.tar.bz2.  Feel free to improve the
-situation.
+We couldn't build the kernel before because we needed to set up
+the root filesystem contents (which are attached to the kernel as
+a CPIO archive and expanded into the initramfs after it's created).
 
-So, lzma 4.32.  Apply lzma-4.32-zlib-1.patch, and then:
+make $CROSS 
 
-make -C C/7zip/Compress/LZMA_Lib
+The kernel itself is vmlinux.  We need to convert it to a raw
+binary like we did with the nfs-boot kernel:
 
-Now squashfs 3.0:
 
-LZMADIR=/tmp/lzma-4.32/C/7zip/Compress/LZMA_Lib
-make -C squashfs-tools LZMAPATH=${LZMADIR} mksquashfs-lzma
+objcopy -O binary -R .reginfo \
+  -R .note -R .comment -R .mdebug -S vmlinux fixed-vmlinux
 
-And now create the squashfs itself:
+(or the cross-objcopy if you're cross-compiling)
 
-mksquashfs-lzma $SSBL ssbl.squashfs -nopad -noappend -root-owned -le
+Now, use the lzma_alone program you built in step 2 to compress
+the kernel:
+
+cat fixed-vmlinux | 
+    lzma_alone e -si -so -eos -lc1 -lp2 -pb2 > vmlinux.lzma
+
+This should all be hauntingly familiar.
+ 
+Put vmlinux.lzma somewhere you'll be able to find it later.
 
 9. trx
 

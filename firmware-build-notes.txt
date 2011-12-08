@@ -114,20 +114,20 @@ from OpenWRT.  It loads an LZMA-compressed Linux kernel from a
 flash device, decompresses it, and then transfers control to it.
 
 If you're building with a cross-compiler, add the kernel include
-directory to the CFLAGS in the Makefile.
+directory to the CFLAGS in the Makefile.  If you use the kernel
+build target headers_install, this copies the exported headers to
+$LINUX_SRC/usr/include, which is a good place to find them.
+Unfortunately, this doesn't seem to work; lzma_loader wants to
+find headers that are only in arch/mips/include, apparently, and
+not meant for external use.
 
 Build with:
 
 make clean
-make CC="mipsel-unknown-linux-gnu-gcc" \
-  LD="mipsel-unknown-linux-gnu-ld" \
-  CROSS_COMPILE="mipsel-unknown-linux-gnu-"
+make CC="mipsel-unknown-linux-uclibc-gcc" \
+  LD="mipsel-unknown-linux-uclibc-ld" \
+  CROSS_COMPILE="mipsel-unknown-linux-uclibc-"
 echo -ne "\\x00" >> loader.gz
-
-[NOTE -- It appears that I built this with the same MIPS
-cross-toolchain we've used for the rest of the initial system
-build, rather than with a uClibc-based toolchain, but at the
-moment I don't remember for sure. -bn]
 
 
 2. build the firmware
