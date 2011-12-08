@@ -1,11 +1,17 @@
-ifneq ($(KERNELRELEASE),)
-	obj-m := diag.o
+#
+# Makefile for diag driver
+#
+# Copyright (C) 2005 Felix Fietkau <nbd@openwrt.org>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version
+# 2 of the License, or (at your option) any later version.
+#
 
-else
-	KERNELDIR ?= /lib/modules/$(shell uname -r)/build
-	PWD := $(shell pwd)
+obj-m := diag.o
 
-default:
-	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
+ifeq ($(MAKING_MODULES),1)
 
+-include $(TOPDIR)/Rules.make
 endif

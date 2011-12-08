@@ -18,7 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id:$
  */
 
 #include <linux/irq.h>
@@ -96,13 +95,8 @@ static struct platform_t platform;
 static void register_buttons(struct button_t *b);
 static void unregister_buttons(struct button_t *b);
 
-#ifndef LINUX_2_4
 static void hotplug_button(struct work_struct *work);
 static irqreturn_t button_handler(int irq, void *dev_id);
-#else
-static void hotplug_button(struct event_t *event);
-static irqreturn_t button_handler(int irq, void *dev_id, struct pt_regs *regs);
-#endif
 
 /* leds */
 
