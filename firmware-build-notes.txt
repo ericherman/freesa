@@ -17,7 +17,9 @@ it a firmware image formatted as a TRX file.  It then installs
 that TRX file into the flash ROM right after the CFE.  The TRX
 file can be up to 1728kb in size (the flash ROM has 2048 kb of
 space, but the first 256kb hold the CFE and the last 64kb are
-reserved for non-volatile environment variable storage).
+reserved for non-volatile environment variable storage).  That's
+important!  You can't ever have a flash image for the WL-700gE
+larger than 1769472 bytes.
 
 The firmware image for the freesa box is going to be a very small
 GNU/Linux system, but we won't build that right away.  During our
@@ -27,7 +29,8 @@ build process, we will construct two separate firmware images:
    system build, and will contain just the Linux kernel produced
    during that build.  This kernel will mount its root filesystem
    over NFS from the build machine, so it doesn't need to access
-   the hard disk at all (at boot time).
+   the hard disk at all (at boot time).  This file only talks
+   about building this image!
 
  * Then, after completing the operating system installation on
    the internal hard drive, we'll build a minimal GNU/Linux
@@ -38,7 +41,8 @@ build process, we will construct two separate firmware images:
    flash-resident filesystem -- a trick that is also used by many
    standard linux distributions and rescue CDs, although they use
    an initial ramfs rather than a flash-resident initial root
-   filesystem.
+   filesystem.  This file doesn't talk about building that image!
+   See ssbl.txt for that.
 
 Essentially, the firmware becomes a second-stage boot loader.
 (The first-stage boot loader is CFE.)  That's not exactly
@@ -69,7 +73,7 @@ initial nfs-booting firmware.
 
 Note!  You can hack a WL-700gE so that its serial port can be
 accessed through a cell phone USB adapter, or something.  Look,
-there are even pictures! http://static.freesa.org/WL-700gE/
+there are even pictures!  http://static.freesa.org/WL-700gE/
 If you do that, you don't have to build a firmware image for the
 initial nfs-booted kernel -- you just have to use the serial
 console to tell CFE to load the kernel image via TFTP from your

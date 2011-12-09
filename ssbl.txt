@@ -3,19 +3,23 @@ we have to use that toolchain to build all of the stuff that will
 wind up in flash (except for the kernel image and kernel modules,
 which are built using the normal toolchain).
 
-Like OpenWRT, we are building a trx image that contains a kernel
-and a separate squashfs root filesystem.  Unlike OpenWRT, we're
-not separating the root filesystem into a read-only squashfs and
-a separate JFFS2 writeable filesystem -- we don't ever want to
-write to flash unless we're flashing a new firmware; we can write
-to the hard disk instead.
+Previously, the only thing we could get to work was a trx image
+containing a kernel and a separate squashfs root filesystem.
+These days, though, we can get an initramfs-based early userspace
+to work.  That's a better approach:  it means that we only need
+the boot loader to load one thing (the kernel image), and no part
+of it needs to be writable.  It also means that we can do test
+boots of the device without flashing an image at all when using a
+serial console, because the CFE can download and boot a kernel
+with the root filesystem already attached to it.
 
 We call the flash image "ssbl" because it is the second-stage
 boot loader -- CFE does the primary boot; it loads the linux
-kernel and the squashfs root filesystem, and then the init script
-in the squashfs spins up the hard disk, mounts the root
-filesystem, and does the pivot-root mojo that you probably all
-remember from your rescue CDs.
+kernel, which then expands its attached root filesystem archive
+into a ramfs and launches the init script from it.  The init
+script spins up the hard disk, mounts the root filesystem, and
+does the pivot-root mojo that you probably all remember from your
+rescue CDs.
 
 The components we need to build the SSBL are:
 
@@ -39,9 +43,10 @@ The components we need to build the SSBL are:
    initramfs)
 
 The kernel build has to happen last because the root filesystem
-is attached as part of the kernel build. However, it has to be
-configured earlier so that the diag module (and other modules
-that are loaded after boot, like the IDE drivers) can be built.
+is created and attached as part of the kernel build. However, it
+has to be /configured/ earlier so that the diag module (and other
+modules that are loaded after boot, like the IDE drivers) can be
+built.
 
 This file describes how to build and assemble all that stuff.
 
@@ -50,16 +55,16 @@ this stuff in a net-booted and NFS-root-filesystem'ed freesa box,
 so that you can use the final native toolchain and uClibc
 toolchain for all the compilations.  If you're cross-compiling
 the SSBL on a different box, note that the only components that
-actually run on the build system are lzma-alone, squashfs-lzma,
-and trx.  Everything else needs to be built with a
-cross-compiler.
+actually run on the build system are lzma-alone and trx.
+Everything else needs to be built with a cross-compiler.
 
 The way we figured out how to do all this was by
-reverse-engineering the OpenWRT build process. That's not a very
-hard thing to do, because make usually announces what it's doing
-as it's doing it; however, some parts of the OpenWRT build use
-"make -s" to stop echoing recipes.  We used a modified GNU Make
-that ignores the "silent" option entirely.
+reverse-engineering the OpenWRT build process. If we haven't
+mentioned this earlier, the OpenWRT guys are awesome.  That's not
+a very hard thing to do, because make usually announces what it's
+doing as it's doing it; however, some parts of the OpenWRT build
+use "make -s" to stop echoing recipes.  We used a modified GNU
+Make that ignores the "silent" option entirely.
 
 Ready?  LET'S GO.
 
@@ -119,13 +124,14 @@ Look at section 1.c in firmware-build-notes.txt.
 
 3. lzma
 
-Look at section 1.a in firmware-build-notes.txt.  Hey, look at
-that!  We're going in a different order this time!  It's totally
-arbitrary.
+Look at section 1.a in firmware-build-notes.txt.  (There's no
+particular reason we're going in a different order this time.)
 
 4. diag.ko
 
-Go back to your linux kernel source directory.
+Start by going to your linux kernel source directory.  Note that
+the magic incantation to build out-of-tree kernel modules has
+changed sometime between 2.6.20 and 3.0...
 
 pushd ${FREESAGIT}/diag
 make $CROSS -C $(dirs +1) M=$PWD
@@ -134,14 +140,14 @@ popd
 
 5. Busybox
 
-Use busybox 1.15.3, or whatever is latest-stable when you feel
+Use busybox 1.19.3, or whatever is latest-stable when you feel
 experimental.  There's a config file in configs you can start
 with.
 
 The prefix where Busybox will install itself is in the
 configuration file, and you should set it to be the ssbl build
 directory -- where you assemble everything that will become part
-of the squashfs.
+of the initramfs.
 
 If you are going to put any executable programs in the ssbl that
 aren't part of busybox, you should link busybox dynamically and
@@ -184,8 +190,8 @@ The kernel itself is vmlinux.  We need to convert it to a raw
 binary like we did with the nfs-boot kernel:
 
 
-objcopy -O binary -R .reginfo \
-  -R .note -R .comment -R .mdebug -S vmlinux fixed-vmlinux
+objcopy -O binary -R .reginfo -R .notes -R .note -R .comment \
+  -R .mdebug -R .note.gnu.build-id -S vmlinux fixed-vmlinux
 
 (or the cross-objcopy if you're cross-compiling)
 
@@ -203,18 +209,10 @@ Put vmlinux.lzma somewhere you'll be able to find it later.
 
 Look at section 1b of firmware-build-notes.txt.
 
-Now we can build the actual ssbl image.  See the TEMPFILE stuff
-just below this?  You can actually skip it.
+Now we can build the actual ssbl image.  Gather all your
+components to one place and:
 
-TEMPFILE=$(mktemp)
-echo -ne '\xde\xad\xc0\xde' > $TEMPFILE
-dd if=$TEMPFILE of=fs_mark bs=64k conv=sync
-echo -ne '\xde\xad\xc0\xde' >> fs_mark
-rm $TEMPFILE
-
-Gather all your components to one place and:
-
-trx -o freesa-ssbl.trx -f loader.gz -f vmlinux.lzma -a 1024 -f ssbl.squashfs
+trx -o freesa-ssbl.trx -f loader.gz -f vmlinux.lzma 
 
 Now reboot freesa with that orange EZ-setup button pressed, and
 use TFTP to send it freesa-ssbl.trx for flashing.  Remember to
