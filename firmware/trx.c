@@ -35,6 +35,12 @@
  * February 19, 2005 - mbm
  *
  * Add -a (align offset) and -b (absolute offset)
+ *
+ * March 24, 2010 - markus
+ *
+ * extend trx header struct for new version
+ * assume v1 for as default
+ * Add option -2 to allow v2 header
  */
 
 #include <stdio.h>
@@ -47,8 +53,10 @@
 
 #if __BYTE_ORDER == __BIG_ENDIAN
 #define STORE32_LE(X)		bswap_32(X)
+#define LOAD32_LE(X)		bswap_32(X)
 #elif __BYTE_ORDER == __LITTLE_ENDIAN
 #define STORE32_LE(X)		(X)
+#define LOAD32_LE(X)		(X)
 #else
 #error unkown endianness!
 #endif
@@ -59,8 +67,7 @@ uint32_t crc32buf(char *buf, size_t len);
 /* from trxhdr.h */
 
 #define TRX_MAGIC	0x30524448	/* "HDR0" */
-#define TRX_VERSION	1
-#define TRX_MAX_LEN	0x5A0000
+#define TRX_MAX_LEN	0x720000
 #define TRX_NO_HEADER	1		/* Do not write TRX header */	
 
 struct trx_header {
@@ -68,7 +75,7 @@ struct trx_header {
 	uint32_t len;			/* Length of file including header */
 	uint32_t crc32;			/* 32-bit CRC from flag_version to end of file */
 	uint32_t flag_version;	/* 0:15 flags, 16:31 version */
-	uint32_t offsets[3];	/* Offsets of partitions from start of header */
+	uint32_t offsets[4];	/* Offsets of partitions from start of header */
 };
 
 /**********************************************************************/
@@ -77,7 +84,9 @@ void usage(void) __attribute__ (( __noreturn__ ));
 
 void usage(void)
 {
-	fprintf(stderr, "Usage: trx [-o outfile] [-m maxlen] [-a align] [-b offset] [-f file] [-f file [-f file]]\n");
+	fprintf(stderr, "Usage:\n");
+	fprintf(stderr, " trx [-2] [-o outfile] [-m maxlen] [-a align] [-b absolute offset] [-x relative offset]\n");
+	fprintf(stderr, "     [-f file] [-f file [-f file [-f file (v2 only)]]]\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -90,9 +99,12 @@ int main(int argc, char **argv)
 	char *e;
 	int c, i, append = 0;
 	size_t n;
-	uint32_t cur_len;
+	ssize_t n2;
+	uint32_t cur_len, fsmark=0;
 	unsigned long maxlen = TRX_MAX_LEN;
 	struct trx_header *p;
+	char trx_version = 1;
+	unsigned char binheader[32];
 
 	fprintf(stderr, "mjn3's trx replacement - v0.81.1\n");
 
@@ -104,14 +116,25 @@ int main(int argc, char **argv)
 	p = (struct trx_header *) buf;
 
 	p->magic = STORE32_LE(TRX_MAGIC);
-	cur_len = sizeof(struct trx_header);
-	p->flag_version = STORE32_LE((TRX_VERSION << 16));
+	cur_len = sizeof(struct trx_header) - 4; /* assume v1 header */
 
 	in = NULL;
 	i = 0;
 
-	while ((c = getopt(argc, argv, "-:o:m:a:b:f:A:")) != -1) {
+	while ((c = getopt(argc, argv, "-:2o:m:a:x:b:f:A:F:")) != -1) {
 		switch (c) {
+			case '2':
+				/* take care that nothing was written to buf so far */
+				if (cur_len != sizeof(struct trx_header) - 4) {
+					fprintf(stderr, "-2 has to be used before any other argument!\n");
+				}
+				else {
+					trx_version = 2;
+					cur_len += 4;
+				}
+				break;
+			case 'F':
+				fsmark = cur_len;
 			case 'A':
 				append = 1;
 				/* fall through */
@@ -172,6 +195,7 @@ int main(int argc, char **argv)
 					fprintf(stderr, "realloc failed");
 					return EXIT_FAILURE;
 				}
+				p = (struct trx_header *) buf;
 				break;
 			case 'a':
 				errno = 0;
@@ -194,16 +218,36 @@ int main(int argc, char **argv)
 					usage();
 				}
 				if (n < cur_len) {
-					fprintf(stderr, "WARNING: current length exceeds -b %d offset\n",n);
+					fprintf(stderr, "WARNING: current length exceeds -b %d offset\n",(int) n);
 				} else {
 					memset(buf + cur_len, 0, n - cur_len);
 					cur_len = n;
 				}
 				break;
+			case 'x':
+				errno = 0;
+				n2 = strtol(optarg, &e, 0);
+				if (errno || (e == optarg) || *e) {
+					fprintf(stderr, "illegal numeric string\n");
+					usage();
+				}
+				if (n2 < 0) {
+					if (-n2 > cur_len) {
+						fprintf(stderr, "WARNING: current length smaller then -x %d offset\n",(int) n2);
+						cur_len = 0;
+					} else
+						cur_len += n2;
+				} else {
+					memset(buf + cur_len, 0, n2);
+					cur_len += n2;
+				}
+
+				break;
 			default:
 				usage();
 		}
 	}
+	p->flag_version = STORE32_LE((trx_version << 16));
 
 	if (!in) {
 		fprintf(stderr, "we require atleast one filename\n");
@@ -218,11 +262,27 @@ int main(int argc, char **argv)
 		cur_len += ROUND - n;
 	}
 
+	/* for TRXv2 set bin-header Flags to 0xFF for CRC calculation like CFE does */ 
+	if (trx_version == 2) {
+		if(cur_len - LOAD32_LE(p->offsets[3]) < sizeof(binheader)) {
+			fprintf(stderr, "TRXv2 binheader too small!\n");
+			return EXIT_FAILURE;
+		}
+		memcpy(binheader, buf + LOAD32_LE(p->offsets[3]), sizeof(binheader)); /* save header */
+		memset(buf + LOAD32_LE(p->offsets[3]) + 22, 0xFF, 8); /* set stable and try1-3 to 0xFF */
+	}
+
 	p->crc32 = crc32buf((char *) &p->flag_version,
-						cur_len - offsetof(struct trx_header, flag_version));
+						(fsmark)?fsmark:cur_len - offsetof(struct trx_header, flag_version));
 	p->crc32 = STORE32_LE(p->crc32);
 
-	p->len = STORE32_LE(cur_len);
+	p->len = STORE32_LE((fsmark) ? fsmark : cur_len);
+	p->len = STORE32_LE(p->len);
+
+	/* restore TRXv2 bin-header */
+	if (trx_version == 2) {
+		memcpy(buf + LOAD32_LE(p->offsets[3]), binheader, sizeof(binheader));
+	}
 
 	if (!fwrite(buf, cur_len, 1, out) || fflush(out)) {
 		fprintf(stderr, "fwrite failed\n");
