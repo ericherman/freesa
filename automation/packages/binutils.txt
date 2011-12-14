@@ -1,6 +1,6 @@
 full-name: GNU binutils
 name: binutils
-version: "2.21"
+version: "2.22"
 
 The GNU binary utilities are a collection of programs and
 libraries that produce and operate on object files.  The primary
@@ -19,8 +19,12 @@ The +gcc+ driver program calls +as+ and +ld+ as necessary to do
 its work, and several of the other utility programs are used
 internally during the build process of other system components.
 
+Like many projects, binutils maintains a maintenance branch for
+all releases.  It's always a good idea to use all the updates
+from the maintenance branch.
+
 patches:
- - branch-update-20101223
+ - branch-update-20111210
 
 GNU binutils, like many toolchain components,  must be
 constructed from a directory outside the source directory.

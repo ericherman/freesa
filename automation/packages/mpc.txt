@@ -1,5 +1,5 @@
 name: Multiple Precision Complex library
-version: "0.8.2"
+version: "0.9"
 project-url: http://www.multiprecision.org/
 
 configuration-defaults:
@@ -18,3 +18,5 @@ but MPC is a hard build-time dependency of GCC.
 If your system already has MPC installed, this step can be
 skipped.
 
+configure-commands:
+ - ./configure --prefix=PARAM[MPC_PREFIX]

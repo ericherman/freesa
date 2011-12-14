@@ -1,5 +1,5 @@
 name: MPFR library
-version: "3.0.0"
+version: "3.1.0"
 project-url: http://www.mpfr.org/
 
 configuration-defaults:
@@ -26,3 +26,5 @@ of a silly name since it's not an end.
 If your system already has MPFR installed, this step can be
 skipped.
 
+configure-commands:
+ - ./configure --prefix=PARAM[MPFR_PREFIX]

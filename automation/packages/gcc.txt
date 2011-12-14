@@ -1,6 +1,6 @@
 full-name: GNU Compiler Collection
 name: gcc
-version: "4.5.2"
+version: "4.6.2"
 project-url: http://gcc.gnu.org/
 
 GCC is the GNU Compiler Collection.  The most important compiler
@@ -53,17 +53,21 @@ it wasn't when this was written.  (If you know where sysroot
 builds are documented, please tell us!)
 
 A few dependencies were added to gcc in recent releases (4.3 and
-higher):  the GMP and MPFR libraries are required for all
+higher):  the GMP, MPFR, and MPC libraries are required for all
 compiler builds, and a few loop optimizations are only available
 if the Parma Polyhedra Library (PPL) and a version of the Chunky
-Loop Generator using that library (cloog-ppl) are available.
-Those latter two aren't hard dependencies, though; you only need
-those to be available if you want to enable three specific
-optimizations.  (The optimizations in question are
-loop-interchange, loop-strip-mine, and loop-block.  It's not
-clear to us whether or not those optimizations are particularly
-valuable, but we're certainly not worried about them for a
-cross-toolchain build.)
+Loop Generator using that library (CLooG) are available.  Those
+latter two aren't hard dependencies, though; you only need those
+to be available if you want to enable three specific
+optimizations.  (The optimizations in question, as of the last
+time I checked, are loop-interchange, loop-strip-mine, and
+loop-block.  It's not clear to us whether or not those
+optimizations are particularly valuable, but we're certainly not
+worried about them for a cross-toolchain build.)  Sources for the
+required libraries can be included in the GCC sources in
+directories named gmp, mpfr, and mpc; if they are, then they'll
+be built automatically along with gcc.  (We haven't tried doing
+that, though.)
 
 No patches are strictly required for gcc.
 

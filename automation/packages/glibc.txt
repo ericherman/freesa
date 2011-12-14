@@ -1,6 +1,6 @@
 full-name: GNU libc
 name: glibc
-version: "2.12.2"
+version: "2.14.1"
 
 glibc is the standard C library produced as part of the GNU
 project.  It contains the implementation for all of the functions
@@ -45,15 +45,20 @@ one of the other GCC libraries when a partial GCC build is done.)
 The patch allows the glibc build to complete successfully even if
 libgcc_eh is not available.
 
-The other patch we apply prevents the localedef function from
+Another patch we apply prevents the localedef function from
 failing with segmentation faults on some machine architectures.
 It's probably not particularly important for our purposes, but it
 doesn't hurt anything to apply it.
+
+The final patch corrects a configure script so that glibc can be
+built using gcc 4.5.0 -- without it, the glibc configure script
+reports that cpuid.h exists but cannot be used.
 
 patches:
  - libgcc_eh-1
  - localedef_segfault-1
  - cflag-march-fix-1
+ - cpuid-1
 
 phase: sysroot glibc
 

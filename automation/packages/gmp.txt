@@ -1,5 +1,5 @@
 name: GNU MP Library
-version: "5.0.1"
+version: "5.0.2"
 project-url: http://gmplib.org/
 
 configuration-defaults:
@@ -21,3 +21,5 @@ C++) as well.
 If your system already has GMP installed, this step can be
 skipped.
 
+configure-commands:
+ - ./configure --prefix=PARAM[GMP_PREFIX] --enable-cxx

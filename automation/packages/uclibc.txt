@@ -1,5 +1,5 @@
 name: uclibc
-version: "0.9.31"
+version: "0.9.32"
 
 uClibc is a small C library designed expressly for situations in
 which glibc is too large.  That's the case when building tools

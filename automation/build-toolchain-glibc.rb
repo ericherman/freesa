@@ -33,7 +33,7 @@ cfg_x86 = {
   'TARGET' => 'i686-pc-linux-gnu',
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'GLIBCFLAG' => '-march=i686 -g -O2',
-  'KERNEL_VERSION' => '2.6.32',
+  'KERNEL_VERSION' => '3.1.4',
   'TMPTOOLS' => '/tmp/tools'
 }
 
@@ -44,7 +44,7 @@ cfg_mips = {
   'TARGET' => 'mipsel-unknown-linux-gnu',
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'GLIBCFLAG' => '-g -O2',
-  'KERNEL_VERSION' => '2.6.32',
+  'KERNEL_VERSION' => '3.0.0',
   'TMPTOOLS' => '/tmp/tools'
 }
 
