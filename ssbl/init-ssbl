@@ -1,36 +1,37 @@
-#!/bin/sh
+#!/bin/ash
 #
-# ROOT needs to be the correct root device name (for the real
-# root filesystem).  For brett this is /dev/hde10. For eric it is
-# /dev/hde11.
+# There is a reference to /dev/hda11 which happens to be eric's root.
+# Brett uses /dev/hda10 because he only has one swap partition.
 #
-# Yes, this value should be injected/auto-adjusted rather than hard-coded
+# Yes, this value should be injected/auto-adjusted rather than hard-coded.
 #
 # Better yet, we could build busybox with fdisk (which we want anyway)
 # and grep or sed and search for the bootable partition marked with an
 # asterisk
 #
 
-ROOT=/dev/hde10
-
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
+PATH=/sbin:/bin
 export PATH
+
+echo "STARTING INIT"
 
 mount -t sysfs none /sys
 mount -t proc none /proc
-
-mount -t tmpfs -o size=64k,mode=0755 tmpfs /dev
-mkdir /dev/pts
-mount -t devpts devpts /dev/pts
+mount -t tmpfs mdev /dev
 
 echo "Creating device nodes..."
 echo mdev > /proc/sys/kernel/hotplug
 mdev -s
 
-# This activates the hard disk.
-# The timing is quite sensitive.  Shorter sleeps will certainly
-# work but removing the sleeps entirely prevents the hard disk
-# from being recognized.  We do not yet understand why.
+mkdir -p /dev/pts
+mount -t devpts devpts /dev/pts
+
+#
+# This activates the hard disk.  The timing is quite sensitive.
+# Shorter sleeps will certainly work but removing the sleeps
+# entirely prevents the hard disk from being recognized.  We do
+# not yet understand why.
+#
 echo "activating hard disk"
 cd /modules
 echo "insmod diag.ko"
@@ -38,11 +39,13 @@ insmod diag.ko
 sleep 10
 
 echo "enabling pci devices"
+echo "there will be some errors below -- ignore them."
 cd /sys/devices/pci0000:00
 for FILE in */enable
 do 
     echo -n 1 > $FILE
 done
+echo "there will be some errors above -- ignore them."
 
 cd /modules
 sleep 5
@@ -57,14 +60,22 @@ sleep 5
 echo "insmod aec62xx.ko"
 insmod aec62xx.ko
 
-echo "mount $ROOT /mnt"
-mount $ROOT /mnt
+echo "Re-running mdev to create new hard disk nodes"
+mdev -s
 
-echo "cd /mnt"
+echo "mount /dev/hda11 /mnt"
+mount /dev/hda11 /mnt
+
 cd /mnt
 
-echo "pivot_root . old_root"
-pivot_root . old_root 
+echo "umounting virtual filesystems from old root"
+umount /sys
+umount /proc
+umount /dev/pts
+umount /dev
 
-echo "chrooting"
-exec /sbin/chroot . /sbin/init </dev/console >/dev/console 2>&1
+echo "exec switch_root -c /dev/console /mnt /sbin/init"
+exec switch_root -c /dev/console /mnt /sbin/init
+
+echo "switch_root didn't exec and somehow we got here. bail out."
+exec /bin/ash
