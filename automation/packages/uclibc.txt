@@ -12,6 +12,12 @@ by uClibc are not fully implemented -- which means that even if a
 program compiles cleanly against uClibc, it may not work
 properly.
 
+There's a problem compiling uClibc 0.9.32 on x86, corrected in
+git upstream.  We'll apply the fix as a patch.
+
+patches:
+ - fix-epoll-pwait-failure-1
+
 phase: full library
 
 uClibc is configured like the Linux kernel:  a +.config+ file is
@@ -37,7 +43,6 @@ configure-commands:
  - make distclean || echo "never mind"
  - cp PARAM[UCLIBC_CONFIG] .config
  - echo 'KERNEL_HEADERS="PARAM[SYSROOT]/usr/include"' >> .config
- - echo 'SHARED_LIB_LOADER_PREFIX="/lib"' >> .config
  - echo 'RUNTIME_PREFIX="/"' >> .config
  - echo 'DEVEL_PREFIX="/usr"' >> .config
  - echo "ARCH_PARAM[ENDIANNESS]_ENDIAN=y" >> .config

@@ -50,8 +50,8 @@ cfg_x86 = {
   'SYSROOT' => '/tmp/cross-tools/sysroot',
   'UCLIBC_CONFIG' => "#{ENV['HOME']}/gits/freesa/config/uclibc-config-x86",
   'UCLIBC_CROSS_PARAM' => '',
-  'ENDIANNESS' => 'little',
-  'NOT_ENDIANNESS' => 'big'
+  'ENDIANNESS' => 'LITTLE',
+  'NOT_ENDIANNESS' => 'BIG'
 }
 
 if ARGV[0] == 'mips'
