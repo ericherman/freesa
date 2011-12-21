@@ -17,6 +17,7 @@ git upstream.  We'll apply the fix as a patch.
 
 patches:
  - fix-epoll-pwait-failure-1
+ - fix-mips-init-fini-functions-1
 
 phase: full library
 

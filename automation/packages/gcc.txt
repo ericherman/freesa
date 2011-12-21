@@ -69,6 +69,14 @@ directories named gmp, mpfr, and mpc; if they are, then they'll
 be built automatically along with gcc.  (We haven't tried doing
 that, though.)
 
+There's a problem when building a toolchain for Intel
+architecture CPUs and uClibc 0.9.32: when the C library is
+uClibc, the build of libquadmath fails.  That's a library that
+was added to GCC in 4.6 and provides 128-bit floating point math
+support.  For our cross-toolchain purposes, it's difficult to see
+how that kind of high-precision math would be useful. We just
+disable the libquadmath library altogether.
+
 No patches are strictly required for gcc.
 
 phase: static compiler
@@ -94,9 +102,10 @@ configure-commands:
  - PARAM[SOURCE_DIR]/configure --prefix=PARAM[TOOL_PREFIX]
      --build=PARAM[HOST] --host=PARAM[HOST] --target=PARAM[TARGET]
      --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
-     --disable-decimal-float --disable-libgomp --disable-libmudflap
-     --disable-libssp --disable-multilib  --disable-nls --disable-shared 
-     --disable-threads --enable-languages=c --with-newlib --without-headers 
+     --disable-decimal-float --disable-libquadmath --disable-libgomp
+     --disable-libmudflap --disable-libssp --disable-multilib
+     --disable-nls --disable-shared --disable-threads --enable-languages=c
+     --with-newlib --without-headers 
 
 make-commands:
  - make all-gcc all-target-libgcc
@@ -124,7 +133,7 @@ configure-commands:
  - PARAM[SOURCE_DIR]/configure --prefix=PARAM[TOOL_PREFIX]
     --build=PARAM[HOST] --host=PARAM[HOST] --target=PARAM[TARGET]
     --with-sysroot=PARAM[SYSROOT] --with-build-sysroot=PARAM[SYSROOT]
-    --disable-multilib --disable-nls --enable-shared
+    --disable-multilib --disable-nls --enable-shared --disable-libquadmath
     --enable-languages=c,c++ --enable-__cxa_atexit
     --enable-c99 --enable-long-long --enable-threads=posix
 
