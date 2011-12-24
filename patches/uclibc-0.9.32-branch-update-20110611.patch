@@ -1,0 +1,580 @@
+diff --git a/Makefile.in b/Makefile.in
+index 90a78db..ad9e629 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -448,8 +448,8 @@ allnoconfig: $(top_builddir)extra/config/conf
+ 	$(Q)$(top_builddir)extra/config/conf -n extra/Configs/Config.in
+ 
+ defconfig: $(top_builddir)extra/config/conf
+-	$(Q)$(top_builddir)extra/config/conf -d extra/Configs/Config.in \
+-		-D extra/Configs/defconfigs/$(ARCH)
++	$(Q)$(top_builddir)extra/config/conf \
++		-D extra/Configs/defconfigs/$(ARCH) extra/Configs/Config.in
+ 
+ menuconfig-clean-y:
+ 	$(Q)$(MAKE) -C extra/config CLEAN_extra/config
+diff --git a/Rules.mak b/Rules.mak
+index fe06c24..6b8f5b2 100644
+--- a/Rules.mak
++++ b/Rules.mak
+@@ -106,7 +106,7 @@ export RUNTIME_PREFIX DEVEL_PREFIX KERNEL_HEADERS MULTILIB_DIR
+ MAJOR_VERSION := 0
+ MINOR_VERSION := 9
+ SUBLEVEL      := 32
+-EXTRAVERSION  :=
++EXTRAVERSION  :=.1-git
+ VERSION       := $(MAJOR_VERSION).$(MINOR_VERSION).$(SUBLEVEL)
+ ABI_VERSION   := $(MAJOR_VERSION)
+ ifneq ($(EXTRAVERSION),)
+@@ -585,9 +585,6 @@ CFLAGS := -include $(top_srcdir)include/libc-symbols.h \
+ 	-nostdinc -I$(top_builddir)include -I$(top_srcdir)include -I. \
+ 	-I$(top_srcdir)libc/sysdeps/linux \
+ 	-I$(top_srcdir)libc/sysdeps/linux/$(TARGET_ARCH)
+-ifneq ($(strip $(UCLIBC_EXTRA_CFLAGS)),"")
+-CFLAGS += $(call qstrip,$(UCLIBC_EXTRA_CFLAGS))
+-endif
+ 
+ # We need this to be checked within libc-symbols.h
+ ifneq ($(HAVE_SHARED),y)
+@@ -633,6 +630,9 @@ LDFLAGS += -Wl,-s
+ else
+ STRIPTOOL := true -Stripping_disabled
+ endif
++ifneq ($(strip $(UCLIBC_EXTRA_CFLAGS)),"")
++CFLAGS += $(call qstrip,$(UCLIBC_EXTRA_CFLAGS))
++endif
+ 
+ ifeq ($(DOMULTI),y)
+ # we try to compile all sources at once into an object (IMA), but
+diff --git a/extra/Configs/Config.arm b/extra/Configs/Config.arm
+index eb27a33..dd63b80 100644
+--- a/extra/Configs/Config.arm
++++ b/extra/Configs/Config.arm
+@@ -30,13 +30,6 @@ config CONFIG_ARM_EABI
+ 
+ endchoice
+ 
+-config USE_BX
+-	bool "Use BX in function return"
+-	default y
+-	depends on !CONFIG_GENERIC_ARM && !CONFIG_ARM610 && !CONFIG_ARM710
+-	help
+-	  Use BX instruction for THUMB aware architectures.
+-
+ choice
+ 	prompt "Target Processor Type"
+ 	default CONFIG_GENERIC_ARM
+@@ -131,3 +124,10 @@ config CONFIG_ARM_IWMMXT
+ 	select ARCH_HAS_MMU
+ 
+ endchoice
++
++config USE_BX
++	bool "Use BX in function return"
++	default y
++	depends on !CONFIG_GENERIC_ARM && !CONFIG_ARM610 && !CONFIG_ARM710
++	help
++	  Use BX instruction for THUMB aware architectures.
+diff --git a/ldso/ldso/dl-tls.c b/ldso/ldso/dl-tls.c
+index 43dd5a0..362efbb 100644
+--- a/ldso/ldso/dl-tls.c
++++ b/ldso/ldso/dl-tls.c
+@@ -1025,7 +1025,7 @@ init_tls (void)
+ 
+ 	/* And finally install it for the main thread.  If ld.so itself uses
+ 	   TLS we know the thread pointer was initialized earlier.  */
+-	const char *lossage = TLS_INIT_TP (tcbp, USE___THREAD);
++	const char *lossage = (char *)TLS_INIT_TP (tcbp, USE___THREAD);
+ 	if(__builtin_expect (lossage != NULL, 0)) {
+ 		_dl_debug_early("cannot set up thread-local storage: %s\n", lossage);
+ 		_dl_exit(30);
+diff --git a/ldso/libdl/libdl.c b/ldso/libdl/libdl.c
+index 52c77b0..f59889c 100644
+--- a/ldso/libdl/libdl.c
++++ b/ldso/libdl/libdl.c
+@@ -667,7 +667,7 @@ void *dlsym(void *vhandle, const char *name)
+ 	tpnt = NULL;
+ 	if (handle == _dl_symbol_tables)
+ 		tpnt = handle->dyn; /* Only search RTLD_GLOBAL objs if global object */
+-	ret = _dl_find_hash(name2, handle, tpnt, 0, &sym_ref);
++	ret = _dl_find_hash(name2, handle, tpnt, ELF_RTYPE_CLASS_DLSYM, &sym_ref);
+ 
+ #if defined(USE_TLS) && USE_TLS && defined SHARED
+ 	if (sym_ref.tpnt) {
+diff --git a/libc/inet/getaddrinfo.c b/libc/inet/getaddrinfo.c
+index 1a77c51..e7511f6 100644
+--- a/libc/inet/getaddrinfo.c
++++ b/libc/inet/getaddrinfo.c
+@@ -820,13 +820,6 @@ getaddrinfo(const char *name, const char *service,
+ 			if (hints->ai_flags & AI_NUMERICSERV)
+ 				return EAI_NONAME;
+ 			gaih_service.num = -1;
+-		} else {
+-			/*
+-			 * Can't specify a numerical socket unless a protocol
+-			 * family was given.
+-			 */
+-			if (hints->ai_socktype == 0 && hints->ai_protocol == 0)
+-				return EAI_SERVICE;
+ 		}
+ 		pservice = &gaih_service;
+ 	} else
+diff --git a/libc/inet/resolv.c b/libc/inet/resolv.c
+index 021d5bf..dc8a752 100644
+--- a/libc/inet/resolv.c
++++ b/libc/inet/resolv.c
+@@ -1461,7 +1461,7 @@ int attribute_hidden __dns_lookup(const char *name,
+ 		/* bug 660 says we treat negative response as an error
+ 		 * and retry, which is, eh, an error. :)
+ 		 * We were incurring long delays because of this. */
+-		if (h.rcode == NXDOMAIN) {
++		if (h.rcode == NXDOMAIN || h.rcode == SERVFAIL) {
+ 			/* if possible, try next search domain */
+ 			if (!ends_with_dot) {
+ 				DPRINTF("variant:%d sdomains:%d\n", variant, sdomains);
+@@ -2964,7 +2964,7 @@ int res_init(void)
+ 		if (__nameserver[i].sa.sa_family == AF_INET6
+ 		 && m < ARRAY_SIZE(rp->_u._ext.nsaddrs)
+ 		) {
+-			struct sockaddr_in6 *sa6 = malloc(sizeof(sa6));
++			struct sockaddr_in6 *sa6 = malloc(sizeof(*sa6));
+ 			if (sa6) {
+ 				*sa6 = __nameserver[i].sa6; /* struct copy */
+ 				rp->_u._ext.nsaddrs[m] = sa6;
+@@ -2981,7 +2981,7 @@ int res_init(void)
+ 
+ #else /* IPv6 only */
+ 	while (m < ARRAY_SIZE(rp->_u._ext.nsaddrs) && i < __nameservers) {
+-		struct sockaddr_in6 *sa6 = malloc(sizeof(sa6));
++		struct sockaddr_in6 *sa6 = malloc(sizeof(*sa6));
+ 		if (sa6) {
+ 			*sa6 = __nameserver[i].sa6; /* struct copy */
+ 			rp->_u._ext.nsaddrs[m] = sa6;
+diff --git a/libc/misc/fts/fts.c b/libc/misc/fts/fts.c
+index ce5d158..deb8f4a 100644
+--- a/libc/misc/fts/fts.c
++++ b/libc/misc/fts/fts.c
+@@ -87,10 +87,8 @@ static int      fts_safe_changedir (FTS *, FTSENT *, int, const char *)
+ #define	BREAD		3		/* fts_read */
+ 
+ FTS *
+-fts_open(argv, options, compar)
+-	char * const *argv;
+-	register int options;
+-	int (*compar) (const FTSENT **, const FTSENT **);
++fts_open( char * const *argv, register int options,
++		int (*compar) (const FTSENT **, const FTSENT **))
+ {
+ 	register FTS *sp;
+ 	register FTSENT *p, *root;
+@@ -204,9 +202,7 @@ mem1:	free(sp);
+ 
+ static void
+ internal_function
+-fts_load(sp, p)
+-	FTS *sp;
+-	register FTSENT *p;
++fts_load(FTS *sp, register FTSENT *p)
+ {
+ 	register int len;
+ 	register char *cp;
+@@ -230,8 +226,7 @@ fts_load(sp, p)
+ }
+ 
+ int
+-fts_close(sp)
+-	FTS *sp;
++fts_close(FTS *sp)
+ {
+ 	register FTSENT *freep, *p;
+ 	int saved_errno;
+@@ -284,8 +279,7 @@ fts_close(sp)
+ 	    ? p->fts_pathlen - 1 : p->fts_pathlen)
+ 
+ FTSENT *
+-fts_read(sp)
+-	register FTS *sp;
++fts_read(register FTS *sp)
+ {
+ 	register FTSENT *p, *tmp;
+ 	register int instr;
+@@ -481,10 +475,7 @@ name:		t = sp->fts_path + NAPPEND(p->fts_parent);
+  */
+ /* ARGSUSED */
+ int
+-fts_set(sp, p, instr)
+-	FTS *sp;
+-	FTSENT *p;
+-	int instr;
++fts_set(FTS *sp, FTSENT *p, int instr)
+ {
+ 	if (instr != 0 && instr != FTS_AGAIN && instr != FTS_FOLLOW &&
+ 	    instr != FTS_NOINSTR && instr != FTS_SKIP) {
+@@ -496,9 +487,7 @@ fts_set(sp, p, instr)
+ }
+ 
+ FTSENT *
+-fts_children(sp, instr)
+-	register FTS *sp;
+-	int instr;
++fts_children(register FTS *sp, int instr)
+ {
+ 	register FTSENT *p;
+ 	int fd;
+@@ -579,9 +568,7 @@ fts_children(sp, instr)
+  */
+ static FTSENT *
+ internal_function
+-fts_build(sp, type)
+-	register FTS *sp;
+-	int type;
++fts_build(register FTS *sp, int type)
+ {
+ 	register struct dirent *dp;
+ 	register FTSENT *p, *head;
+@@ -851,10 +838,7 @@ mem1:				saved_errno = errno;
+ 
+ static u_short
+ internal_function
+-fts_stat(sp, p, follow)
+-	FTS *sp;
+-	register FTSENT *p;
+-	int follow;
++fts_stat(FTS *sp, register FTSENT *p, int follow)
+ {
+ 	register FTSENT *t;
+ 	register dev_t dev;
+@@ -935,10 +919,7 @@ err:		memset(sbp, 0, sizeof(struct stat));
+ 
+ static FTSENT *
+ internal_function
+-fts_sort(sp, head, nitems)
+-	FTS *sp;
+-	FTSENT *head;
+-	register int nitems;
++fts_sort(FTS *sp, FTSENT *head, register int nitems)
+ {
+ 	register FTSENT **ap, *p;
+ 
+@@ -973,10 +954,7 @@ fts_sort(sp, head, nitems)
+ 
+ static FTSENT *
+ internal_function
+-fts_alloc(sp, name, namelen)
+-	FTS *sp;
+-	const char *name;
+-	size_t namelen;
++fts_alloc(FTS *sp, const char *name, size_t namelen)
+ {
+ 	register FTSENT *p;
+ 	size_t len;
+@@ -1013,8 +991,7 @@ fts_alloc(sp, name, namelen)
+ 
+ static void
+ internal_function
+-fts_lfree(head)
+-	register FTSENT *head;
++fts_lfree(register FTSENT *head)
+ {
+ 	register FTSENT *p;
+ 
+@@ -1033,9 +1010,7 @@ fts_lfree(head)
+  */
+ static int
+ internal_function
+-fts_palloc(sp, more)
+-	FTS *sp;
+-	size_t more;
++fts_palloc(FTS *sp, size_t more)
+ {
+ 	char *p;
+ 
+@@ -1067,9 +1042,7 @@ fts_palloc(sp, more)
+  */
+ static void
+ internal_function
+-fts_padjust(sp, head)
+-	FTS *sp;
+-	FTSENT *head;
++fts_padjust(FTS *sp, FTSENT *head)
+ {
+ 	FTSENT *p;
+ 	char *addr = sp->fts_path;
+@@ -1094,8 +1067,7 @@ fts_padjust(sp, head)
+ 
+ static size_t
+ internal_function
+-fts_maxarglen(argv)
+-	char * const *argv;
++fts_maxarglen(char * const *argv)
+ {
+ 	size_t len, max;
+ 
+@@ -1112,11 +1084,7 @@ fts_maxarglen(argv)
+  */
+ static int
+ internal_function
+-fts_safe_changedir(sp, p, fd, path)
+-	FTS *sp;
+-	FTSENT *p;
+-	int fd;
+-	const char *path;
++fts_safe_changedir(FTS *sp, FTSENT *p, int fd, const char *path)
+ {
+ 	int ret, oerrno, newfd;
+ 	struct stat64 sb;
+diff --git a/libc/misc/time/time.c b/libc/misc/time/time.c
+index 19d68e1..8e2ebf1 100644
+--- a/libc/misc/time/time.c
++++ b/libc/misc/time/time.c
+@@ -689,7 +689,7 @@ static int tm_isdst(register const struct tm *__restrict ptm,
+ 					++day;
+ 				}
+ 				monlen = 31 + day_cor[r->month -1] - day_cor[r->month];
+-				if (isleap && (r->month > 1)) {
++				if (isleap && (r->month == 2)) {
+ 					++monlen;
+ 				}
+ 				/* Wweekday (0 is Sunday) of 1st of the month
+diff --git a/libc/stdio/vswprintf.c b/libc/stdio/vswprintf.c
+index e509216..2195248 100644
+--- a/libc/stdio/vswprintf.c
++++ b/libc/stdio/vswprintf.c
+@@ -39,6 +39,11 @@ int vswprintf(wchar_t *__restrict buf, size_t size,
+ 	__INIT_MBSTATE(&(f.__state));
+ #endif /* __STDIO_MBSTATE */
+ 
++#ifdef __UCLIBC_HAS_THREADS__
++	f.__user_locking = 1;		/* Set user locking. */
++	STDIO_INIT_MUTEX(f.__lock);
++#endif /* __UCLIBC_HAS_THREADS__ */
++
+ 	f.__nextopen = NULL;
+ 
+ 	if (size > ((SIZE_MAX - (size_t) buf)/sizeof(wchar_t))) {
+diff --git a/libc/sysdeps/linux/mips/crtn.S b/libc/sysdeps/linux/mips/crtn.S
+index cedd593..f3756a2 100644
+--- a/libc/sysdeps/linux/mips/crtn.S
++++ b/libc/sysdeps/linux/mips/crtn.S
+@@ -10,7 +10,6 @@
+ #NO_APP
+ 	.align	2
+ 	.globl	_init
+-	.ent	_init
+ 	.type	_init, @function
+ #NO_APP
+ 	lw	$31,28($sp)
+@@ -22,14 +21,12 @@
+ 	.set	macro
+ 	.set	reorder
+ 
+-	.end	_init
+ #APP
+ 	
+ 	.section .fini
+ #NO_APP
+ 	.align	2
+ 	.globl	_fini
+-	.ent	_fini
+ 	.type	_fini, @function
+ #NO_APP
+ 	lw	$31,28($sp)
+@@ -41,7 +38,6 @@
+ 	.set	macro
+ 	.set	reorder
+ 
+-	.end	_fini
+ #APP
+ 	
+ 	.ident	"GCC: (GNU) 3.3.2"
+@@ -54,10 +50,8 @@
+ 	
+ 	.section .init
+ #NO_APP
+-	.align	2
+ 	.align	3
+ 	.globl	_init
+-	.ent	_init
+ 	.type	_init, @function
+ #NO_APP
+ 	ld	$31,8($sp)
+@@ -68,16 +62,12 @@
+ 	addiu	$sp,$sp,16
+ 	.set	macro
+ 	.set	reorder
+-
+-	.end	_init
+ #APP
+ 	
+ 	.section .fini
+ #NO_APP
+-	.align	2
+ 	.align	3
+ 	.globl	_fini
+-	.ent	_fini
+ 	.type	_fini, @function
+ #NO_APP
+ 	ld	$31,8($sp)
+@@ -89,7 +79,6 @@
+ 	.set	macro
+ 	.set	reorder
+ 
+-	.end	_fini
+ #APP
+ 	
+ 	.ident	"GCC: (GNU) 3.4.3"
+@@ -105,7 +94,6 @@
+ #NO_APP
+ 	.align	2
+ 	.globl	_init
+-	.ent	_init
+ 	.type	_init, @function
+ #NO_APP
+ 	ld	$31,24($sp)
+@@ -118,14 +106,12 @@
+ 	.set	macro
+ 	.set	reorder
+ 
+-	.end	_init
+ #APP
+ 	
+ 	.section .fini
+ #NO_APP
+ 	.align	2
+ 	.globl	_fini
+-	.ent	_fini
+ 	.type	_fini, @function
+ #NO_APP
+ 	ld	$31,24($sp)
+@@ -138,7 +124,6 @@
+ 	.set	macro
+ 	.set	reorder
+ 
+-	.end	_fini
+ #APP
+ 	
+ 	.ident	"GCC: (GNU) 3.3.2"
+diff --git a/libc/sysdeps/linux/powerpc/clone.S b/libc/sysdeps/linux/powerpc/clone.S
+index 307053f..8583c66 100644
+--- a/libc/sysdeps/linux/powerpc/clone.S
++++ b/libc/sysdeps/linux/powerpc/clone.S
+@@ -51,7 +51,7 @@ __clone:
+ #ifdef RESET_PID
+ 	stmw	r28,16(r1)
+ #else
+-# ifdef __ASSUME_FIXED_CLONE_SYSCALL
++# ifndef __ASSUME_FIXED_CLONE_SYSCALL
+ 	stmw	r29,16(r1)
+ # else
+ 	stmw	r30,16(r1)
+diff --git a/libm/powerpc/e500/Makefile.arch b/libm/powerpc/e500/Makefile.arch
+index 912ce7f..febde67 100644
+--- a/libm/powerpc/e500/Makefile.arch
++++ b/libm/powerpc/e500/Makefile.arch
+@@ -6,5 +6,6 @@
+ #
+ 
+ libm_ARCH_fpu_DIR := $(libm_SUBARCH_DIR)/fpu
++libm_ARCH_fpu_OUT := $(libm_SUBARCH_OUT)/fpu
+ -include $(libm_ARCH_fpu_DIR)/Makefile.arch
+ 
+diff --git a/libm/powerpc/e500/fpu/Makefile.arch b/libm/powerpc/e500/fpu/Makefile.arch
+index 8f00e09..1bb4f3a 100644
+--- a/libm/powerpc/e500/fpu/Makefile.arch
++++ b/libm/powerpc/e500/fpu/Makefile.arch
+@@ -6,8 +6,12 @@
+ #
+ 
+ 
++ifeq ($(UCLIBC_HAS_FENV),y)
+ libm_ARCH_SRC:=$(wildcard $(libm_ARCH_fpu_DIR)/*.c)
+ libm_ARCH_OBJ:=$(patsubst $(libm_ARCH_fpu_DIR)/%.c,$(libm_ARCH_fpu_OUT)/%.o,$(libm_ARCH_SRC))
++endif
++
++CFLAGS-libm/$(TARGET_ARCH)/$(TARGET_SUBARCH)/fpu/ := $(CFLAGS-libm)
+ 
+ libm_ARCH_OBJS:=$(libm_ARCH_OBJ)
+ 
+diff --git a/libpthread/nptl/Makefile.in b/libpthread/nptl/Makefile.in
+index 70616a1..849bd59 100644
+--- a/libpthread/nptl/Makefile.in
++++ b/libpthread/nptl/Makefile.in
+@@ -64,8 +64,8 @@ endif
+ librt-so-y += $(librt_OBJS:.o=.oS) $(librt-pt-shared-only-routines-y:.o=.oS)
+ 
+ ifeq ($(UCLIBC_CTOR_DTOR),y)
+-START_FILE-libpthread.so := $(top_builddir)/libpthread/nptl/sysdeps/pthread/crti.o
+-END_FILE-libpthread.so := $(top_builddir)/libpthread/nptl/sysdeps/pthread/crtn.o
++START_FILE-libpthread.so := $(top_builddir)libpthread/nptl/sysdeps/pthread/pt-crti.o
++END_FILE-libpthread.so := $(top_builddir)libpthread/nptl/sysdeps/pthread/pt-crtn.o
+ LDFLAGS-libpthread.so += -nostartfiles
+ $(top_builddir)lib/libpthread.so: | $(START_FILE-libpthread.so) $(END_FILE-libpthread.so)
+ endif
+diff --git a/libpthread/nptl/sysdeps/pthread/Makefile.in b/libpthread/nptl/sysdeps/pthread/Makefile.in
+index d93b3a5..be5c022 100644
+--- a/libpthread/nptl/sysdeps/pthread/Makefile.in
++++ b/libpthread/nptl/sysdeps/pthread/Makefile.in
+@@ -73,23 +73,37 @@ CFLAGS-pt-initfini.c = -S -g0 $(PICFLAG) -fno-inline-functions	\
+ 			-finhibit-size-directive			\
+ 			-fno-asynchronous-unwind-tables -fno-unwind-tables \
+ 			$(patsubst -f%,-fno-%,$(call check_gcc,-fexceptions,))
+-ASFLAGS-crti.S = -g0
+-ASFLAGS-crtn.S = -g0
+ 
+-$(libpthread_pthread_OUT)/pt-initfini.s: $(libpthread_pthread_DIR)/pt-initfini.c
++#ASFLAGS += $(PICFLAG) -I$(top_srcdir)include -I$(top_srcdir)libc/sysdeps/linux/$(TARGET_ARCH)
++ifneq ($(wildcard $(libpthread_pthread_DIR)/../unix/sysv/linux/$(TARGET_ARCH)/pt-initfini.c),)
++PTHREAD_INITFINI := $(libpthread_pthread_DIR)/../unix/sysv/linux/$(TARGET_ARCH)/pt-initfini.c
++else
++PTHREAD_INITFINI := $(libpthread_pthread_DIR)/pt-initfini.c
++endif
++
++ASFLAGS-pt-crti.S =  $(PICFLAG)
++ASFLAGS-pt-crtn.S =  $(PICFLAG)
++
++$(libpthread_pthread_OUT)/pt-crti.o: $(libpthread_pthread_OUT)/pt-crti.S
++	$(compile.S)
++
++$(libpthread_pthread_OUT)/pt-crtn.o: $(libpthread_pthread_OUT)/pt-crtn.S
++	$(compile.S)
++
++$(libpthread_pthread_OUT)/pt-initfini.s: $(PTHREAD_INITFINI) | $(top_builddir)include/bits/uClibc_config.h
+ 	$(compile.c)
+-$(libpthread_pthread_OUT)/defs.h: $(libpthread_pthread_DIR)/pt-initfini.c
++$(libpthread_pthread_OUT)/defs.h: $(PTHREAD_INITFINI)
+ 	$(do_sed) -n -e '/@TESTS_BEGIN/,/@TESTS_END/p' $< | \
+ 		$(AWK) -f $(top_srcdir)extra/scripts/defs.awk > $@.tmp
+ 	$(Q)mv $@.tmp $@
+ 
+-$(libpthread_pthread_OUT)/crti.S: $(libpthread_pthread_OUT)/pt-initfini.s $(libpthread_pthread_OUT)/defs.h
++$(libpthread_pthread_OUT)/pt-crti.S: $(libpthread_pthread_OUT)/pt-initfini.s $(libpthread_pthread_OUT)/defs.h
+ 	$(do_sed) -n -e '/[ 	]*\.file/d' \
+ 		-e '1,/@HEADER_ENDS/p' \
+ 		-e '/@_.*_PROLOG_BEGINS/,/@_.*_PROLOG_ENDS/p' \
+ 		-e '/@TRAILER_BEGINS/,$$p' $< > $@.tmp
+ 	$(Q)mv $@.tmp $@
+-$(libpthread_pthread_OUT)/crtn.S: $(libpthread_pthread_OUT)/pt-initfini.s $(libpthread_pthread_OUT)/defs.h
++$(libpthread_pthread_OUT)/pt-crtn.S: $(libpthread_pthread_OUT)/pt-initfini.s $(libpthread_pthread_OUT)/defs.h
+ 	$(do_sed) -n -e '/[ 	]*\.file/d' \
+ 		-e '1,/@HEADER_ENDS/p' \
+ 		-e '/@_.*_EPILOG_BEGINS/,/@_.*_EPILOG_ENDS/p' \
+diff --git a/libubacktrace/Makefile.in b/libubacktrace/Makefile.in
+index f75f68b..fe1fb64 100644
+--- a/libubacktrace/Makefile.in
++++ b/libubacktrace/Makefile.in
+@@ -12,7 +12,7 @@ CFLAGS-libubacktrace := -DNOT_IN_libc -DIS_IN_libubacktrace $(SSP_ALL_CFLAGS)
+ 
+ LDFLAGS-libubacktrace.so := $(LDFLAGS) $(top_builddir)lib/libdl-$(VERSION).so
+ 
+-ifeq ($(CONFIG_ARM_EABI),y)
++ifeq ($(UCLIBC_HAS_BACKTRACE)$(CONFIG_ARM_EABI),yy)
+ LIBGCC += $(shell $(CC) -print-file-name=libgcc_eh.a)
+ endif
+ 
+@@ -71,5 +71,4 @@ $(top_builddir)lib/libubacktrace.a: $(libubacktrace-a-y)
+ 	$(do_ar)
+ 
+ CLEAN_libubacktrace:
+-	$(do_rm) $(addprefix $(libubacktrace_OUT)/*., o os oS a) \
+-	 $(addprefix $(libubacktrace_ARCH_OUT)/*., o os oS a)
++	$(do_rm) $(addprefix $(libubacktrace_OUT)/*., o os oS a)
