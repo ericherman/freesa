@@ -12,6 +12,7 @@ Description: Checks to see if libgcc_eh has been provided by gcc. If it has
              Rediffed for 2.12 by Brett Neumeier
              Rediffed for 2.12.2 by Brett Neumeier
              Rediffed for 2.14.1 by Brett Neumeier
+             Rediffed for 2.15 by Brett Neumeier
 
 ---
  Makeconfig     |   10 +++++++++-
@@ -21,10 +22,10 @@ Description: Checks to see if libgcc_eh has been provided by gcc. If it has
  4 files changed, 53 insertions(+), 1 deletions(-)
 
 diff --git a/Makeconfig b/Makeconfig
-index b34cacf..5b4d7b4 100644
+index 8195245..e4905f9 100644
 --- a/Makeconfig
 +++ b/Makeconfig
-@@ -553,12 +553,20 @@ else
+@@ -563,12 +563,20 @@ else
    libunwind = -lunwind
  endif
  ifneq ($(have-as-needed),yes)
@@ -47,7 +48,7 @@ index b34cacf..5b4d7b4 100644
  endif
  ifeq ($(elf),yes)
 diff --git a/config.make.in b/config.make.in
-index d722a8b..ba28f38 100644
+index d2baf6d..193393b 100644
 --- a/config.make.in
 +++ b/config.make.in
 @@ -66,6 +66,7 @@ have-selinux = @have_selinux@
@@ -59,10 +60,10 @@ index d722a8b..ba28f38 100644
  bind-now = @bindnow@
  have-hash-style = @libc_cv_hashstyle@
 diff --git a/configure b/configure
-index 6cf85e5..9d2343a 100755
+index c22ed38..5852fe8 100755
 --- a/configure
 +++ b/configure
-@@ -647,6 +647,7 @@ ASFLAGS_config
+@@ -656,6 +656,7 @@ ASFLAGS_config
  libc_cv_as_needed
  libc_cv_libgcc_s_suffix
  libc_cv_Bgroup
@@ -70,7 +71,7 @@ index 6cf85e5..9d2343a 100755
  libc_cv_cc_with_libunwind
  VERSIONING
  BISON
-@@ -6130,6 +6131,31 @@ $as_echo "$libc_cv_cc_with_libunwind" >&6; }
+@@ -6255,6 +6256,31 @@ $as_echo "$libc_cv_cc_with_libunwind" >&6; }
  
    fi
  
@@ -101,12 +102,12 @@ index 6cf85e5..9d2343a 100755
 +
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for -z nodelete option" >&5
  $as_echo_n "checking for -z nodelete option... " >&6; }
- if test "${libc_cv_z_nodelete+set}" = set; then :
+ if ${libc_cv_z_nodelete+:} false; then :
 diff --git a/configure.in b/configure.in
-index fbc64b9..8e50151 100644
+index 2c4fc97..debdf1a 100644
 --- a/configure.in
 +++ b/configure.in
-@@ -1500,6 +1500,23 @@ EOF
+@@ -1508,6 +1508,23 @@ EOF
      AC_DEFINE(HAVE_CC_WITH_LIBUNWIND)
    fi
  
@@ -131,5 +132,5 @@ index fbc64b9..8e50151 100644
  		 libc_cv_z_nodelete, [dnl
    cat > conftest.c <<EOF
 -- 
-1.7.3.2
+1.7.7.3
 
