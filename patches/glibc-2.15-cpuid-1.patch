@@ -5,10 +5,17 @@ Upstream Status:         Not Submitted
 Origin:                  Bryan Kadzban
 Description:             Fixes a build problem with GCC-4.5.0 and later
 
-diff -Naur glibc-2.14/sysdeps/i386/configure glibc-2.14-patched/sysdeps/i386/configure
---- glibc-2.14/sysdeps/i386/configure  2011-05-30 21:12:33.000000000 -0700
-+++ glibc-2.14-patched/sysdeps/i386/configure   2011-06-04 18:35:09.000000000 -0700
-@@ -632,7 +632,9 @@
+Respun by Brett Neumeier for 2.15
+
+---
+ sysdeps/i386/configure |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/sysdeps/i386/configure b/sysdeps/i386/configure
+index ae494e2..757f157 100644
+--- a/sysdeps/i386/configure
++++ b/sysdeps/i386/configure
+@@ -632,7 +632,9 @@ fi
  done
  
  
@@ -16,6 +23,9 @@ diff -Naur glibc-2.14/sysdeps/i386/configure glibc-2.14-patched/sysdeps/i386/con
 +ac_fn_c_check_header_compile "$LINENO" "cpuid.h" "ac_cv_header_cpuid_h" "
 +
 +"
- if test "x$ac_cv_header_cpuid_h" = x""yes; then :
+ if test "x$ac_cv_header_cpuid_h" = xyes; then :
  
  else
+-- 
+1.7.3.2
+
