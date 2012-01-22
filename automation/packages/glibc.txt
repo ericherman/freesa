@@ -71,6 +71,7 @@ configure-commands:
  - echo "libc_cv_forced_unwind=yes" > config.cache
  - echo "libc_cv_c_cleanup=yes" >> config.cache
  - echo "libc_cv_gnu89_inline=yes" >> config.cache
+ - echo "libc_cv_ctors_header=yes" >> config.cache
  - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc" AR="PARAM[TARGET]-ar" 
       RANLIB="PARAM[TARGET]-ranlib" CFLAGS="PARAM[GLIBCFLAG]"
       PARAM[SOURCE_DIR]/configure --prefix=/usr
