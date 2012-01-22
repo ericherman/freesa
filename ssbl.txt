@@ -19,7 +19,8 @@ kernel, which then expands its attached root filesystem archive
 into a ramfs and launches the init script from it.  The init
 script spins up the hard disk, mounts the root filesystem, and
 does the pivot-root mojo that you probably all remember from your
-rescue CDs.
+rescue CDs. (Technically it uses switch-root, as provided by
+busybox these days, but it's conceptually the same thing.)
 
 The components we need to build the SSBL are:
 

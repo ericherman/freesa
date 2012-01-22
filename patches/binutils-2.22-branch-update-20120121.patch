@@ -1,0 +1,3370 @@
+Index: bfd/ChangeLog
+===================================================================
+RCS file: /cvs/src/src/bfd/ChangeLog,v
+retrieving revision 1.5473.2.23
+retrieving revision 1.5473.2.33
+diff -r1.5473.2.23 -r1.5473.2.33
+0a1,126
+> 2012-01-10  H.J. Lu  <hongjiu.lu@intel.com>
+> 
+> 	Backport from mainline:
+> 	PR ld/13581
+> 	* elf64-x86-64.c (elf_x86_64_relocate_section): Remove ABI_64_P
+> 	check on R_X86_64_PCXX.
+> 
+> 2011-12-19  Chung-Lin Tang  <cltang@codesourcery.com>
+> 
+> 	Backport from mainline:
+> 
+> 	2011-12-19  Chung-Lin Tang  <cltang@codesourcery.com>
+> 
+> 	* reloc.c (BFD_RELOC_MIPS16_TLS_GD,BFD_RELOC_MIPS16_TLS_LDM,
+> 	BFD_RELOC_MIPS16_TLS_DTPREL_HI16,BFD_RELOC_MIPS16_TLS_DTPREL_LO16,
+> 	BFD_RELOC_MIPS16_TLS_GOTTPREL,BFD_RELOC_MIPS16_TLS_TPREL_HI16,
+> 	BFD_RELOC_MIPS16_TLS_TPREL_LO16): New relocations for MIPS16 TLS.
+> 	* bfd-in2.h (bfd_reloc_code_real): Regenerate.
+> 	* libbfd.h (bfd_reloc_code_real_names): Regenerate.
+> 	* elf32-mips.c (elf_mips16_howto_table_rel): Add R_MIPS16_TLS_*
+> 	entries.
+> 	(mips16_reloc_map): Add BFD_RELOC_MIPS16_TLS_* to R_MIPS16_TLS_*
+> 	mappings.
+> 	* elfn32-mips.c (elf_mips16_howto_table_rel,
+> 	elf_mips16_howto_table_rela): Add R_MIPS16_TLS_* entries.
+> 	(mips16_reloc_map): Add BFD_RELOC_MIPS16_TLS_* to R_MIPS16_TLS_*
+> 	mappings.
+> 	* elf64-mips.c (mips16_elf64_howto_table_rel,
+> 	mips16_elf64_howto_table_rela): Add R_MIPS16_TLS_* entries.
+> 	(mips16_reloc_map): Add BFD_RELOC_MIPS16_TLS_* to R_MIPS16_TLS_*
+> 	mappings.
+> 	* elfxx-mips.c (TLS_RELOC_P,mips16_reloc_p,
+> 	_bfd_mips_elf_check_relocs): Add cases for R_MIPS16_TLS_* relocations.
+> 	(tls_gd_reloc_p): Add R_MIPS16_TLS_GD case.
+> 	(tls_ldm_reloc_p): Add R_MIPS16_TLS_LDM case.
+> 	(tls_gottprel_reloc_p): Add R_MIPS16_TLS_GOTTPREL case.
+> 	(mips_elf_calculate_relocation): Add cases for R_MIPS16_TLS_*,
+> 	R_MIPS_TLS_DTPREL32/64, and R_MIPS_TLS_TPREL32/64 relocations.
+> 
+> 2011-12-19  Chung-Lin Tang  <cltang@codesourcery.com>
+> 
+> 	Backport from mainline:
+> 
+> 	2011-12-19  Chung-Lin Tang  <cltang@codesourcery.com>
+> 		    Catherine Moore  <clm@codesourcery.com>
+> 		    Sandra Loosemore  <sandra@codesourcery.com>
+> 		    Richard Sandiford  <rdsandiford@googlemail.com>
+> 
+> 	* elfxx-mips.c (mips_elf_local_pic_function_p): Return true when
+> 	H is a MIPS16 function with a kept 32-bit stub. Update comments.
+> 	(mips_elf_get_la25_target): New function.
+> 	(mips_elf_add_la25_intro): Change to use mips_elf_get_la25_target().
+> 	(mips_elf_add_la25_stub): Move compute of use_trampoline_p down,
+> 	change to use mips_elf_get_la25_target().
+> 	(mips_elf_relocation_needs_la25_stub): Add target_is_16_bit_code_p
+> 	parameter, add switch case for R_MIPS16_26.
+> 	(mips_elf_calculate_relocation): Redirect relocation to point to the
+> 	LA25 stub if it exists, instead of the MIPS16 stub. Update arguments
+> 	of call to mips_elf_relocation_needs_la25_stub(), don't use la25 stub
+> 	for mips16->mips16 calls.
+> 	(_bfd_mips_elf_check_relocs): Update arguments of call to
+> 	mips_elf_relocation_needs_la25_stub().
+> 	(mips_elf_create_la25_stub): Change to use mips_elf_get_la25_target().
+> 
+> 2011-12-19  Chung-Lin Tang  <cltang@codesourcery.com>
+> 
+> 	Backport from mainline:
+> 
+> 	2011-12-13  Chung-Lin Tang  <cltang@codesourcery.com>
+> 
+> 	* elfxx-mips.c (mips_elf_calculate_relocation): Correct
+> 	R_MIPS16_HI16/R_MIPS16_LO16 handling of two cleared lower bits,
+> 	update comments.
+> 
+> 2011-12-10  David Daney  <david.daney@cavium.com>
+> 
+> 	Backport from mainline:
+> 
+> 	2011-12-10  David Daney  <david.daney@cavium.com>
+> 
+> 	* elfxx-mips.c (mips_elf_link_hash_table.rld_value): Remove.
+> 	(mips_elf_link_hash_table.rld_symbol): New field;
+> 	(MIPS_ELF_RLD_MAP_SIZE): New macro.
+> 	(_bfd_mips_elf_add_symbol_hook): Remember __rld_obj_head symbol
+> 	in rld_symbol.
+> 	(_bfd_mips_elf_create_dynamic_sections): Remember __rld_map symbol
+> 	in rld_symbol.
+> 	(_bfd_mips_elf_size_dynamic_sections): Set correct size for .rld_map.
+> 	(_bfd_mips_elf_finish_dynamic_symbol): Remove .rld_map handling.
+> 	(_bfd_mips_elf_finish_dynamic_sections): Use rld_symbol to
+> 	calculate DT_MIPS_RLD_MAP value.
+> 	(_bfd_mips_elf_link_hash_table_create): Initialize rld_symbol,
+> 	quit initializing rld_value.
+> 
+> 2011-12-03  Alan Modra  <amodra@gmail.com>
+> 
+> 	PR ld/13468
+> 	* elflink.c (bfd_elf_final_link): Don't segfault when checking
+> 	for DT_TEXTREL and .dynamic does not exist.
+> 
+> 2011-12-03  Alan Modra  <amodra@gmail.com>
+> 
+> 	PR ld/13470
+> 	* elf32-ppc.c (ppc_elf_copy_indirect_symbol): Revert substantive
+> 	change in 2011-07-01 commit.  Comment.
+> 	* elf64-ppc.c (ppc64_elf_copy_indirect_symbol): Likewise.
+> 
+> 2011-12-01  Mikael Pettersson  <mikpe@it.uu.se>
+> 
+> 	Apply mainline patches
+> 	* elf32-m68k.c (elf_m68k_check_relocs) <R_68K_8, R68K_16, R_68K_32>: For
+> 	non-SEC_ALLOC sections break before GOT and PLT accounting.
+> 
+> 2011-12-01  Hans-Peter Nilsson  <hp@axis.com>
+> 
+> 	Apply mainline patches
+> 	* elf32-cris.c (cris_elf_check_relocs) <plt accounting for
+> 	R_CRIS_8, R_CRIS_16, and R_CRIS_32>: Move early break for
+> 	non-SEC_ALLOC sections before GOT and PLT accounting.
+> 
+> 2011-11-21  Tristan Gingold  <gingold@adacore.com>
+> 
+> 	* configure.in: Bump version to 2.22.0
+> 	* Makefile.am (RELEASE): Unset.
+> 	* configure, Makefile.in: Regenerate.
+> 
+Index: bfd/Makefile.am
+===================================================================
+RCS file: /cvs/src/src/bfd/Makefile.am,v
+retrieving revision 1.258.2.1
+retrieving revision 1.258.2.2
+diff -r1.258.2.1 -r1.258.2.2
+7c7
+< RELEASE=y
+---
+> # RELEASE=y
+Index: bfd/Makefile.in
+===================================================================
+RCS file: /cvs/src/src/bfd/Makefile.in,v
+retrieving revision 1.286.2.1
+retrieving revision 1.286.2.2
+diff -r1.286.2.1 -r1.286.2.2
+323c323
+< RELEASE = y
+---
+> # RELEASE=y
+Index: bfd/bfd-in2.h
+===================================================================
+RCS file: /cvs/src/src/bfd/bfd-in2.h,v
+retrieving revision 1.549
+retrieving revision 1.549.2.1
+diff -r1.549 -r1.549.2.1
+2782a2783,2791
+> /* MIPS16 TLS relocations  */
+>   BFD_RELOC_MIPS16_TLS_GD,
+>   BFD_RELOC_MIPS16_TLS_LDM,
+>   BFD_RELOC_MIPS16_TLS_DTPREL_HI16,
+>   BFD_RELOC_MIPS16_TLS_DTPREL_LO16,
+>   BFD_RELOC_MIPS16_TLS_GOTTPREL,
+>   BFD_RELOC_MIPS16_TLS_TPREL_HI16,
+>   BFD_RELOC_MIPS16_TLS_TPREL_LO16,
+> 
+Index: bfd/configure
+===================================================================
+RCS file: /cvs/src/src/bfd/configure,v
+retrieving revision 1.353.2.2
+retrieving revision 1.353.2.3
+diff -r1.353.2.2 -r1.353.2.3
+3991c3991
+<  VERSION=2.22
+---
+>  VERSION=2.22.0
+Index: bfd/configure.in
+===================================================================
+RCS file: /cvs/src/src/bfd/configure.in,v
+retrieving revision 1.301.2.2
+retrieving revision 1.301.2.3
+diff -r1.301.2.2 -r1.301.2.3
+11c11
+< AM_INIT_AUTOMAKE(bfd, 2.22)
+---
+> AM_INIT_AUTOMAKE(bfd, 2.22.0)
+Index: bfd/elf32-cris.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elf32-cris.c,v
+retrieving revision 1.115.2.1
+retrieving revision 1.115.2.2
+diff -r1.115.2.1 -r1.115.2.2
+3581a3582,3587
+> 
+> 	  /* We don't need to handle relocs into sections not going into
+> 	     the "real" output.  */
+> 	  if ((sec->flags & SEC_ALLOC) == 0)
+> 	    break;
+> 
+3611,3615d3616
+< 	  /* We don't need to handle relocs into sections not going into
+< 	     the "real" output.  */
+< 	  if ((sec->flags & SEC_ALLOC) == 0)
+< 	    break;
+< 
+Index: bfd/elf32-m68k.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elf32-m68k.c,v
+retrieving revision 1.126
+retrieving revision 1.126.2.1
+diff -r1.126 -r1.126.2.1
+2818a2819,2823
+> 	  /* We don't need to handle relocs into sections not going into
+> 	     the "real" output.  */
+> 	  if ((sec->flags & SEC_ALLOC) == 0)
+> 	      break;
+> 
+2832,2833c2837
+< 	  if (info->shared
+< 	      && (sec->flags & SEC_ALLOC) != 0)
+---
+> 	  if (info->shared)
+Index: bfd/elf32-mips.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elf32-mips.c,v
+retrieving revision 1.211
+retrieving revision 1.211.2.1
+diff -r1.211 -r1.211.2.1
+832a833,937
+> 
+>   /* MIPS16 TLS general dynamic variable reference.  */
+>   HOWTO (R_MIPS16_TLS_GD,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_GD",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic variable reference.  */
+>   HOWTO (R_MIPS16_TLS_LDM,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_LDM",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic offset.  */
+>   HOWTO (R_MIPS16_TLS_DTPREL_HI16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_DTPREL_HI16",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic offset.  */
+>   HOWTO (R_MIPS16_TLS_DTPREL_LO16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_DTPREL_LO16",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_GOTTPREL,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_GOTTPREL",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_TPREL_HI16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_TPREL_HI16", /* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_TPREL_LO16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_TPREL_LO16", /* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+1798a1904,1912
+>   { BFD_RELOC_MIPS16_TLS_GD, R_MIPS16_TLS_GD - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_LDM, R_MIPS16_TLS_LDM - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_DTPREL_HI16,
+>     R_MIPS16_TLS_DTPREL_HI16 - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_DTPREL_LO16,
+>     R_MIPS16_TLS_DTPREL_LO16 - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_GOTTPREL, R_MIPS16_TLS_GOTTPREL - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_TPREL_HI16, R_MIPS16_TLS_TPREL_HI16 - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_TPREL_LO16, R_MIPS16_TLS_TPREL_LO16 - R_MIPS16_min }
+Index: bfd/elf32-ppc.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elf32-ppc.c,v
+retrieving revision 1.302.2.1
+retrieving revision 1.302.2.2
+diff -r1.302.2.1 -r1.302.2.2
+2990,2993d2989
+<   /* If we were called to copy over info for a weak sym, that's all.  */
+<   if (eind->elf.root.type != bfd_link_hash_indirect)
+<     return;
+< 
+3024a3021,3030
+>   /* If we were called to copy over info for a weak sym, that's all.
+>      You might think dyn_relocs need not be copied over;  After all,
+>      both syms will be dynamic or both non-dynamic so we're just
+>      moving reloc accounting around.  However, ELIMINATE_COPY_RELOCS 
+>      code in ppc_elf_adjust_dynamic_symbol needs to check for
+>      dyn_relocs in read-only sections, and it does so on what is the
+>      DIR sym here.  */
+>   if (eind->elf.root.type != bfd_link_hash_indirect)
+>     return;
+> 
+Index: bfd/elf64-mips.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elf64-mips.c,v
+retrieving revision 1.100
+retrieving revision 1.100.2.1
+diff -r1.100 -r1.100.2.1
+1592a1593,1697
+> 
+>   /* MIPS16 TLS general dynamic variable reference.  */
+>   HOWTO (R_MIPS16_TLS_GD,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_GD",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic variable reference.  */
+>   HOWTO (R_MIPS16_TLS_LDM,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_LDM",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic offset.  */
+>   HOWTO (R_MIPS16_TLS_DTPREL_HI16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_DTPREL_HI16",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic offset.  */
+>   HOWTO (R_MIPS16_TLS_DTPREL_LO16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_DTPREL_LO16",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_GOTTPREL,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_GOTTPREL",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_TPREL_HI16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_TPREL_HI16", /* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_TPREL_LO16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_TPREL_LO16", /* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+1688a1794,1898
+> 
+>   /* MIPS16 TLS general dynamic variable reference.  */
+>   HOWTO (R_MIPS16_TLS_GD,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_GD",	/* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic variable reference.  */
+>   HOWTO (R_MIPS16_TLS_LDM,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_LDM",	/* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic offset.  */
+>   HOWTO (R_MIPS16_TLS_DTPREL_HI16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_DTPREL_HI16",	/* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic offset.  */
+>   HOWTO (R_MIPS16_TLS_DTPREL_LO16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_DTPREL_LO16",	/* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_GOTTPREL,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_GOTTPREL",	/* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_TPREL_HI16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_TPREL_HI16", /* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_TPREL_LO16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_TPREL_LO16", /* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+2910a3121,3129
+>   { BFD_RELOC_MIPS16_TLS_GD, R_MIPS16_TLS_GD - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_LDM, R_MIPS16_TLS_LDM - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_DTPREL_HI16,
+>     R_MIPS16_TLS_DTPREL_HI16 - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_DTPREL_LO16,
+>     R_MIPS16_TLS_DTPREL_LO16 - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_GOTTPREL, R_MIPS16_TLS_GOTTPREL - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_TPREL_HI16, R_MIPS16_TLS_TPREL_HI16 - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_TPREL_LO16, R_MIPS16_TLS_TPREL_LO16 - R_MIPS16_min }
+Index: bfd/elf64-ppc.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elf64-ppc.c,v
+retrieving revision 1.363.2.4
+retrieving revision 1.363.2.5
+diff -r1.363.2.4 -r1.363.2.5
+4438,4441d4437
+<   /* If we were called to copy over info for a weak sym, that's all.  */
+<   if (eind->elf.root.type != bfd_link_hash_indirect)
+<     return;
+< 
+4473a4470,4479
+>   /* If we were called to copy over info for a weak sym, that's all.
+>      You might think dyn_relocs need not be copied over;  After all,
+>      both syms will be dynamic or both non-dynamic so we're just
+>      moving reloc accounting around.  However, ELIMINATE_COPY_RELOCS 
+>      code in ppc64_elf_adjust_dynamic_symbol needs to check for
+>      dyn_relocs in read-only sections, and it does so on what is the
+>      DIR sym here.  */
+>   if (eind->elf.root.type != bfd_link_hash_indirect)
+>     return;
+> 
+Index: bfd/elf64-x86-64.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elf64-x86-64.c,v
+retrieving revision 1.239.2.1
+retrieving revision 1.239.2.2
+diff -r1.239.2.1 -r1.239.2.2
+3463d3462
+< 	      && ABI_64_P (output_bfd)
+Index: bfd/elflink.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elflink.c,v
+retrieving revision 1.420.2.10
+retrieving revision 1.420.2.11
+diff -r1.420.2.10 -r1.420.2.11
+11191,11192c11191,11193
+<       if ((info->warn_shared_textrel && info->shared)
+< 	  || info->error_textrel)
+---
+>       if (((info->warn_shared_textrel && info->shared)
+> 	   || info->error_textrel)
+> 	  && (o = bfd_get_section_by_name (dynobj, ".dynamic")) != NULL)
+11196,11199d11196
+< 	  /* Fix up .dynamic entries.  */
+< 	  o = bfd_get_section_by_name (dynobj, ".dynamic");
+< 	  BFD_ASSERT (o != NULL);
+< 
+Index: bfd/elfn32-mips.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elfn32-mips.c,v
+retrieving revision 1.52
+retrieving revision 1.52.2.1
+diff -r1.52 -r1.52.2.1
+1557a1558,1662
+> 
+>   /* MIPS16 TLS general dynamic variable reference.  */
+>   HOWTO (R_MIPS16_TLS_GD,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_GD",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic variable reference.  */
+>   HOWTO (R_MIPS16_TLS_LDM,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_LDM",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic offset.  */
+>   HOWTO (R_MIPS16_TLS_DTPREL_HI16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_DTPREL_HI16",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic offset.  */
+>   HOWTO (R_MIPS16_TLS_DTPREL_LO16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_DTPREL_LO16",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_GOTTPREL,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_GOTTPREL",	/* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_TPREL_HI16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_TPREL_HI16", /* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_TPREL_LO16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_TPREL_LO16", /* name */
+> 	 TRUE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+1653a1759,1863
+> 
+>   /* MIPS16 TLS general dynamic variable reference.  */
+>   HOWTO (R_MIPS16_TLS_GD,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_GD",	/* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic variable reference.  */
+>   HOWTO (R_MIPS16_TLS_LDM,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_LDM",	/* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic offset.  */
+>   HOWTO (R_MIPS16_TLS_DTPREL_HI16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_DTPREL_HI16",	/* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS local dynamic offset.  */
+>   HOWTO (R_MIPS16_TLS_DTPREL_LO16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_DTPREL_LO16",	/* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_GOTTPREL,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_GOTTPREL",	/* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_TPREL_HI16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_TPREL_HI16", /* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+> 
+>   /* MIPS16 TLS thread pointer offset.  */
+>   HOWTO (R_MIPS16_TLS_TPREL_LO16,	/* type */
+> 	 0,			/* rightshift */
+> 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+> 	 16,			/* bitsize */
+> 	 FALSE,			/* pc_relative */
+> 	 0,			/* bitpos */
+> 	 complain_overflow_signed, /* complain_on_overflow */
+> 	 _bfd_mips_elf_generic_reloc, /* special_function */
+> 	 "R_MIPS16_TLS_TPREL_LO16", /* name */
+> 	 FALSE,			/* partial_inplace */
+> 	 0x0000ffff,		/* src_mask */
+> 	 0x0000ffff,		/* dst_mask */
+> 	 FALSE),		/* pcrel_offset */
+2726a2937,2945
+>   { BFD_RELOC_MIPS16_TLS_GD, R_MIPS16_TLS_GD - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_LDM, R_MIPS16_TLS_LDM - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_DTPREL_HI16,
+>     R_MIPS16_TLS_DTPREL_HI16 - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_DTPREL_LO16,
+>     R_MIPS16_TLS_DTPREL_LO16 - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_GOTTPREL, R_MIPS16_TLS_GOTTPREL - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_TPREL_HI16, R_MIPS16_TLS_TPREL_HI16 - R_MIPS16_min },
+>   { BFD_RELOC_MIPS16_TLS_TPREL_LO16, R_MIPS16_TLS_TPREL_LO16 - R_MIPS16_min }
+Index: bfd/elfxx-mips.c
+===================================================================
+RCS file: /cvs/src/src/bfd/elfxx-mips.c,v
+retrieving revision 1.292.2.1
+retrieving revision 1.292.2.5
+diff -r1.292.2.1 -r1.292.2.5
+439,440c439,440
+<   /* This is the value of the __rld_map or __rld_obj_head symbol.  */
+<   bfd_vma rld_value;
+---
+>   /* The  __rld_map or __rld_obj_head symbol. */
+>   struct elf_link_hash_entry *rld_symbol;
+531a532,538
+>    || r_type == R_MIPS16_TLS_GD			\
+>    || r_type == R_MIPS16_TLS_LDM		\
+>    || r_type == R_MIPS16_TLS_DTPREL_HI16	\
+>    || r_type == R_MIPS16_TLS_DTPREL_LO16	\
+>    || r_type == R_MIPS16_TLS_GOTTPREL		\
+>    || r_type == R_MIPS16_TLS_TPREL_HI16		\
+>    || r_type == R_MIPS16_TLS_TPREL_LO16		\
+770a778,781
+> /* The size of the .rld_map section. */
+> #define MIPS_ELF_RLD_MAP_SIZE(abfd) \
+>   (get_elf_backend_data (abfd)->s->arch_size / 8)
+> 
+1574,1576c1585,1588
+<    that it might need $25 to be valid on entry.  Note that MIPS16
+<    functions never need $25 to be valid on entry; they set up $gp
+<    using PC-relative instructions instead.  */
+---
+>    that it or its fn_stub might need $25 to be valid on entry.
+>    Note that MIPS16 functions set up $gp using PC-relative instructions,
+>    so they themselves never need $25 to be valid.  Only non-MIPS16
+>    entry points are of interest here.  */
+1585c1597,1598
+< 	  && !ELF_ST_IS_MIPS16 (h->root.other)
+---
+> 	  && (!ELF_ST_IS_MIPS16 (h->root.other)
+> 	      || (h->fn_stub && h->need_fn_stub))
+1589a1603,1622
+> /* Set *SEC to the input section that contains the target of STUB.
+>    Return the offset of the target from the start of that section.  */
+> 
+> static bfd_vma
+> mips_elf_get_la25_target (struct mips_elf_la25_stub *stub,
+> 			  asection **sec)
+> {
+>   if (ELF_ST_IS_MIPS16 (stub->h->root.other))
+>     {
+>       BFD_ASSERT (stub->h->need_fn_stub);
+>       *sec = stub->h->fn_stub;
+>       return 0;
+>     }
+>   else
+>     {
+>       *sec = stub->h->root.root.u.def.section;
+>       return stub->h->root.root.u.def.value;
+>     }
+> }
+> 
+1614c1647
+<   input_section = stub->h->root.root.u.def.section;
+---
+>   mips_elf_get_la25_target (stub, &input_section);
+1688,1693d1720
+<   /* Prefer to use LUI/ADDIU stubs if the function is at the beginning
+<      of the section and if we would need no more than 2 nops.  */
+<   s = h->root.root.u.def.section;
+<   value = h->root.root.u.def.value;
+<   use_trampoline_p = (value != 0 || s->alignment_power > 4);
+< 
+1722a1750,1754
+>   /* Prefer to use LUI/ADDIU stubs if the function is at the beginning
+>      of the section and if we would need no more than 2 nops.  */
+>   value = mips_elf_get_la25_target (stub, &s);
+>   use_trampoline_p = (value != 0 || s->alignment_power > 4);
+> 
+1862a1895,1901
+>     case R_MIPS16_TLS_GD:
+>     case R_MIPS16_TLS_LDM:
+>     case R_MIPS16_TLS_DTPREL_HI16:
+>     case R_MIPS16_TLS_DTPREL_LO16:
+>     case R_MIPS16_TLS_GOTTPREL:
+>     case R_MIPS16_TLS_TPREL_HI16:
+>     case R_MIPS16_TLS_TPREL_LO16:
+1990c2029,2031
+<   return r_type == R_MIPS_TLS_GD || r_type == R_MICROMIPS_TLS_GD;
+---
+>   return (r_type == R_MIPS_TLS_GD
+> 	  || r_type == R_MIPS16_TLS_GD
+> 	  || r_type == R_MICROMIPS_TLS_GD);
+1996c2037,2039
+<   return r_type == R_MIPS_TLS_LDM || r_type == R_MICROMIPS_TLS_LDM;
+---
+>   return (r_type == R_MIPS_TLS_LDM
+> 	  || r_type == R_MIPS16_TLS_LDM
+> 	  || r_type == R_MICROMIPS_TLS_LDM);
+2002c2045,2047
+<   return r_type == R_MIPS_TLS_GOTTPREL || r_type == R_MICROMIPS_TLS_GOTTPREL;
+---
+>   return (r_type == R_MIPS_TLS_GOTTPREL
+> 	  || r_type == R_MIPS16_TLS_GOTTPREL
+> 	  || r_type == R_MICROMIPS_TLS_GOTTPREL);
+4910c4955,4956
+< mips_elf_relocation_needs_la25_stub (bfd *input_bfd, int r_type)
+---
+> mips_elf_relocation_needs_la25_stub (bfd *input_bfd, int r_type,
+> 				     bfd_boolean target_is_16_bit_code_p)
+4924d4969
+<     case R_MIPS16_26:
+4931a4977,4979
+>     case R_MIPS16_26:
+>       return !target_is_16_bit_code_p;
+> 
+5192c5240,5243
+< 	sec = elf_tdata (input_bfd)->local_stubs[r_symndx];
+---
+> 	{
+> 	  sec = elf_tdata (input_bfd)->local_stubs[r_symndx];
+> 	  value = 0;
+> 	}
+5196c5247,5258
+< 	  sec = h->fn_stub;
+---
+> 	  if (h->la25_stub)
+> 	    {
+> 	      /* If a LA25 header for the stub itself exists, point to the
+> 		 prepended LUI/ADDIU sequence.  */
+> 	      sec = h->la25_stub->stub_section;
+> 	      value = h->la25_stub->offset;
+> 	    }
+> 	  else
+> 	    {
+> 	      sec = h->fn_stub;
+> 	      value = 0;
+> 	    }
+5199c5261
+<       symbol = sec->output_section->vma + sec->output_offset;
+---
+>       symbol = sec->output_section->vma + sec->output_offset + value;
+5249c5311,5312
+< 	   && mips_elf_relocation_needs_la25_stub (input_bfd, r_type))
+---
+> 	   && mips_elf_relocation_needs_la25_stub (input_bfd, r_type,
+> 						   target_is_16_bit_code_p))
+5320a5384,5386
+>     case R_MIPS16_TLS_GD:
+>     case R_MIPS16_TLS_GOTTPREL:
+>     case R_MIPS16_TLS_LDM:
+5489a5556
+>     case R_MIPS16_TLS_DTPREL_HI16:
+5497a5565
+>     case R_MIPS16_TLS_DTPREL_LO16:
+5502a5571
+>     case R_MIPS16_TLS_TPREL_HI16:
+5508a5578,5580
+>     case R_MIPS_TLS_TPREL32:
+>     case R_MIPS_TLS_TPREL64:
+>     case R_MIPS16_TLS_TPREL_LO16:
+5530,5531c5602,5604
+< 	     $pc is four higher than $t9 would be, so reduce
+< 	     both reloc addends by 4. */
+---
+> 	     base $pc is that used by the ADDIUPC instruction at $t9 + 4.
+> 	     ADDIUPC clears the low two bits of the instruction address,
+> 	     so the base is ($t9 + 4) & ~3.  */
+5533c5606
+< 	    value = mips_elf_high (addend + gp - p - 4);
+---
+> 	    value = mips_elf_high (addend + gp - ((p + 4) & ~(bfd_vma) 0x3));
+5556c5629
+< 	    value = addend + gp - p;
+---
+> 	    value = addend + gp - (p & ~(bfd_vma) 0x3);
+5639a5713,5715
+>     case R_MIPS16_TLS_GD:
+>     case R_MIPS16_TLS_GOTTPREL:
+>     case R_MIPS16_TLS_LDM:
+7083a7160
+>       mips_elf_hash_table (info)->rld_symbol = h;
+7268a7346
+> 	  mips_elf_hash_table (info)->rld_symbol = h;
+7770,7771d7847
+< 	case R_MIPS16_GOT16:
+< 	case R_MIPS16_CALL16:
+7783a7860,7864
+> 	case R_MIPS16_GOT16:
+> 	case R_MIPS16_CALL16:
+> 	case R_MIPS16_TLS_GOTTPREL:
+> 	case R_MIPS16_TLS_GD:
+> 	case R_MIPS16_TLS_LDM:
+7921c8002,8004
+<       if (h != NULL && mips_elf_relocation_needs_la25_stub (abfd, r_type))
+---
+>       if (h != NULL
+> 	  && mips_elf_relocation_needs_la25_stub (abfd, r_type,
+> 						  ELF_ST_IS_MIPS16 (h->other)))
+8017a8101
+> 	case R_MIPS16_TLS_GOTTPREL:
+8023a8108
+> 	case R_MIPS16_TLS_LDM:
+8032a8118
+> 	case R_MIPS16_TLS_GD:
+9030c9116
+< 	  s->size += 4;
+---
+> 	  s->size += MIPS_ELF_RLD_MAP_SIZE (output_bfd);
+9618,9620c9704,9706
+<   target = (stub->h->root.root.u.def.section->output_section->vma
+< 	    + stub->h->root.root.u.def.section->output_offset
+< 	    + stub->h->root.root.u.def.value);
+---
+>   target = mips_elf_get_la25_target (stub, &s);
+>   target += s->output_section->vma + s->output_offset;
+> 
+10033,10057d10118
+<   if (! info->shared)
+<     {
+<       if (! mips_elf_hash_table (info)->use_rld_obj_head
+< 	  && (strcmp (name, "__rld_map") == 0
+< 	      || strcmp (name, "__RLD_MAP") == 0))
+< 	{
+< 	  asection *s = bfd_get_section_by_name (dynobj, ".rld_map");
+< 	  BFD_ASSERT (s != NULL);
+< 	  sym->st_value = s->output_section->vma + s->output_offset;
+< 	  bfd_put_32 (output_bfd, 0, s->contents);
+< 	  if (mips_elf_hash_table (info)->rld_value == 0)
+< 	    mips_elf_hash_table (info)->rld_value = sym->st_value;
+< 	}
+<       else if (mips_elf_hash_table (info)->use_rld_obj_head
+< 	       && strcmp (name, "__rld_obj_head") == 0)
+< 	{
+< 	  /* IRIX6 does not use a .rld_map section.  */
+< 	  if (IRIX_COMPAT (output_bfd) == ict_irix5
+<               || IRIX_COMPAT (output_bfd) == ict_none)
+< 	    BFD_ASSERT (bfd_get_section_by_name (dynobj, ".rld_map")
+< 			!= NULL);
+< 	  mips_elf_hash_table (info)->rld_value = sym->st_value;
+< 	}
+<     }
+< 
+10520c10581,10593
+< 	      dyn.d_un.d_ptr = mips_elf_hash_table (info)->rld_value;
+---
+> 	      {
+> 		struct elf_link_hash_entry *h;
+> 		h = mips_elf_hash_table (info)->rld_symbol;
+> 		if (!h)
+> 		  {
+> 		    dyn_to_skip = MIPS_ELF_DYN_SIZE (dynobj);
+> 		    swap_out_p = FALSE;
+> 		    break;
+> 		  }
+> 		s = h->root.u.def.section;
+> 		dyn.d_un.d_ptr = (s->output_section->vma + s->output_offset
+> 				  + h->root.u.def.value);
+> 	      }
+12797c12870
+<   ret->rld_value = 0;
+---
+>   ret->rld_symbol = NULL;
+Index: bfd/libbfd.h
+===================================================================
+RCS file: /cvs/src/src/bfd/libbfd.h,v
+retrieving revision 1.259
+retrieving revision 1.259.2.1
+diff -r1.259 -r1.259.2.1
+1088a1089,1095
+>   "BFD_RELOC_MIPS16_TLS_GD",
+>   "BFD_RELOC_MIPS16_TLS_LDM",
+>   "BFD_RELOC_MIPS16_TLS_DTPREL_HI16",
+>   "BFD_RELOC_MIPS16_TLS_DTPREL_LO16",
+>   "BFD_RELOC_MIPS16_TLS_GOTTPREL",
+>   "BFD_RELOC_MIPS16_TLS_TPREL_HI16",
+>   "BFD_RELOC_MIPS16_TLS_TPREL_LO16",
+Index: bfd/reloc.c
+===================================================================
+RCS file: /cvs/src/src/bfd/reloc.c,v
+retrieving revision 1.216
+retrieving revision 1.216.2.1
+diff -r1.216 -r1.216.2.1
+2249a2250,2266
+>   BFD_RELOC_MIPS16_TLS_GD
+> ENUMX
+>   BFD_RELOC_MIPS16_TLS_LDM
+> ENUMX
+>   BFD_RELOC_MIPS16_TLS_DTPREL_HI16
+> ENUMX
+>   BFD_RELOC_MIPS16_TLS_DTPREL_LO16
+> ENUMX
+>   BFD_RELOC_MIPS16_TLS_GOTTPREL
+> ENUMX
+>   BFD_RELOC_MIPS16_TLS_TPREL_HI16
+> ENUMX
+>   BFD_RELOC_MIPS16_TLS_TPREL_LO16
+> ENUMDOC
+>   MIPS16 TLS relocations
+> 
+> ENUM
+Index: bfd/version.h
+===================================================================
+RCS file: /cvs/src/src/bfd/version.h,v
+retrieving revision 1.3530.2.58
+retrieving revision 1.3530.2.110
+diff -r1.3530.2.58 -r1.3530.2.110
+1c1
+< #define BFD_VERSION_DATE 20111121
+---
+> #define BFD_VERSION_DATE 20120122
+Index: gas/ChangeLog
+===================================================================
+RCS file: /cvs/src/src/gas/ChangeLog,v
+retrieving revision 1.4583.2.4
+retrieving revision 1.4583.2.6
+diff -r1.4583.2.4 -r1.4583.2.6
+0a1,20
+> 2012-01-08  Richard Sandiford  <rdsandiford@googlemail.com>
+> 
+> 	* config/tc-mips.c (s_tls_rel_directive): Call mips_clear_insn_labels.
+> 
+> 2011-12-19  Chung-Lin Tang  <cltang@codesourcery.com>
+> 
+> 	Backport from mainline:
+> 
+> 	2011-12-19  Chung-Lin Tang  <cltang@codesourcery.com>
+> 
+> 	* config/tc-mips.c (mips_pseudo_table): Add tprelword/tpreldword
+> 	entries.
+> 	(mips16_percent_op): Add MIPS16 TLS relocation ops.
+> 	(md_apply_fix): Add BFD_RELOC_MIPS16_TLS_* switch cases.
+> 	(s_tls_rel_directive): Rename from s_dtprel_internal(). Abstract out
+> 	directive string and reloc type as function parameters. Update
+> 	comments.
+> 	(s_dtprelword,s_dtpreldword): Change to use s_tls_rel_directive().
+> 	(s_tprelword,s_tpreldword): New functions.
+> 
+Index: gas/config/tc-mips.c
+===================================================================
+RCS file: /cvs/src/src/gas/config/tc-mips.c,v
+retrieving revision 1.488.2.1
+retrieving revision 1.488.2.3
+diff -r1.488.2.1 -r1.488.2.3
+1354a1355,1356
+> static void s_tprelword (int);
+> static void s_tpreldword (int);
+1433a1436,1437
+>   {"tprelword", s_tprelword, 0},
+>   {"tpreldword", s_tpreldword, 0},
+14043c14047,14054
+<   {"%hi", BFD_RELOC_MIPS16_HI16_S}
+---
+>   {"%hi", BFD_RELOC_MIPS16_HI16_S},
+>   {"%tlsgd", BFD_RELOC_MIPS16_TLS_GD},
+>   {"%tlsldm", BFD_RELOC_MIPS16_TLS_LDM},
+>   {"%dtprel_hi", BFD_RELOC_MIPS16_TLS_DTPREL_HI16},
+>   {"%dtprel_lo", BFD_RELOC_MIPS16_TLS_DTPREL_LO16},
+>   {"%tprel_hi", BFD_RELOC_MIPS16_TLS_TPREL_HI16},
+>   {"%tprel_lo", BFD_RELOC_MIPS16_TLS_TPREL_LO16},
+>   {"%gottprel", BFD_RELOC_MIPS16_TLS_GOTTPREL}
+15371a15383,15384
+>     case BFD_RELOC_MIPS_TLS_TPREL32:
+>     case BFD_RELOC_MIPS_TLS_TPREL64:
+15380a15394,15400
+>     case BFD_RELOC_MIPS16_TLS_GD:
+>     case BFD_RELOC_MIPS16_TLS_LDM:
+>     case BFD_RELOC_MIPS16_TLS_DTPREL_HI16:
+>     case BFD_RELOC_MIPS16_TLS_DTPREL_LO16:
+>     case BFD_RELOC_MIPS16_TLS_GOTTPREL:
+>     case BFD_RELOC_MIPS16_TLS_TPREL_HI16:
+>     case BFD_RELOC_MIPS16_TLS_TPREL_LO16:
+16550,16552c16570,16573
+< /* Handle the .dtprelword and .dtpreldword pseudo-ops.  They generate
+<    a 32-bit or 64-bit DTP-relative relocation (BYTES says which) for
+<    use in DWARF debug information.  */
+---
+> /* Handle a .dtprelword, .dtpreldword, .tprelword, or .tpreldword
+>    pseudo-op; DIRSTR says which. The pseudo-op generates a BYTES-size
+>    DTP- or TP-relative relocation of type RTYPE, for use in either DWARF
+>    debug information or MIPS16 TLS.  */
+16555c16576,16577
+< s_dtprel_internal (size_t bytes)
+---
+> s_tls_rel_directive (const size_t bytes, const char *dirstr,
+> 		     bfd_reloc_code_real_type rtype)
+16564,16566c16586
+<       as_bad (_("Unsupported use of %s"), (bytes == 8
+< 					   ? ".dtpreldword"
+< 					   : ".dtprelword"));
+---
+>       as_bad (_("Unsupported use of %s"), dirstr);
+16572,16576c16592
+<   fix_new_exp (frag_now, p - frag_now->fr_literal, bytes, &ex, FALSE,
+< 	       (bytes == 8
+< 		? BFD_RELOC_MIPS_TLS_DTPREL64
+< 		: BFD_RELOC_MIPS_TLS_DTPREL32));
+< 
+---
+>   fix_new_exp (frag_now, p - frag_now->fr_literal, bytes, &ex, FALSE, rtype);
+16577a16594
+>   mips_clear_insn_labels ();
+16585c16602
+<   s_dtprel_internal (4);
+---
+>   s_tls_rel_directive (4, ".dtprelword", BFD_RELOC_MIPS_TLS_DTPREL32);
+16593c16610,16626
+<   s_dtprel_internal (8);
+---
+>   s_tls_rel_directive (8, ".dtpreldword", BFD_RELOC_MIPS_TLS_DTPREL64);
+> }
+> 
+> /* Handle .tprelword.  */
+> 
+> static void
+> s_tprelword (int ignore ATTRIBUTE_UNUSED)
+> {
+>   s_tls_rel_directive (4, ".tprelword", BFD_RELOC_MIPS_TLS_TPREL32);
+> }
+> 
+> /* Handle .tpreldword.  */
+> 
+> static void
+> s_tpreldword (int ignore ATTRIBUTE_UNUSED)
+> {
+>   s_tls_rel_directive (8, ".tpreldword", BFD_RELOC_MIPS_TLS_TPREL64);
+Index: gas/testsuite/ChangeLog
+===================================================================
+RCS file: /cvs/src/src/gas/testsuite/ChangeLog,v
+retrieving revision 1.1956.2.2
+retrieving revision 1.1956.2.3
+diff -r1.1956.2.2 -r1.1956.2.3
+0a1,5
+> 2012-01-08  Richard Sandiford  <rdsandiford@googlemail.com>
+> 
+> 	* gas/mips/tls-relw.s, gas/mips/tls-relw.d: New test.
+> 	* gas/mips/mips.exp: Run it.
+> 
+Index: gas/testsuite/gas/mips/mips.exp
+===================================================================
+RCS file: /cvs/src/src/gas/testsuite/gas/mips/mips.exp,v
+retrieving revision 1.192.2.1
+retrieving revision 1.192.2.2
+diff -r1.192.2.1 -r1.192.2.2
+880a881
+> 	run_dump_test "tls-relw"
+Index: gold/ChangeLog
+===================================================================
+RCS file: /cvs/src/src/gold/ChangeLog,v
+retrieving revision 1.824.2.6
+retrieving revision 1.824.2.7
+diff -r1.824.2.6 -r1.824.2.7
+0a1,163
+> 2011-12-19  Ian Lance Taylor  <iant@google.com>
+> 
+> 	Copy from mainline to binutils 2.22 branch:
+> 
+> 	2011-12-17  Cary Coutant  <ccoutant@google.com>
+> 
+> 	* dwarf_reader.cc (Sized_dwarf_line_info::read_lines): Add casts.
+> 	* resolve.cc (Symbol_table::resolve): Likewise.
+> 	* i386.cc (Target_i386::do_code_fill): Use char constants for nop
+> 	arrays.
+> 	* x86_64.cc (Target_x86_64::do_code_fill): Likewise.
+> 
+> 	2011-10-31  Cary Coutant  <ccoutant@google.com>
+> 
+> 	PR gold/13023
+> 	* expression.cc (Expression::eval_with_dot): Add
+> 	is_section_dot_assignment parameter.
+> 	(Expression::eval_maybe_dot): Likewise.  Adjust value when rhs is
+> 	absolute and assigning to dot within a section.
+> 	* script-sections.cc
+> 	(Output_section_element_assignment::set_section_addresses): Pass
+> 	dot_section to set_if_absolute.
+> 	(Output_section_element_dot_assignment::finalize_symbols): Pass TRUE
+> 	as is_section_dot_assignment flag to eval_with_dot.
+> 	(Output_section_element_dot_assignment::set_section_addresses):
+> 	Likewise.
+> 	* script.cc (Symbol_assignment::set_if_absolute): Add dot_section
+> 	parameter.  Also set value if relative to dot_section; set the
+> 	symbol's output_section.
+> 	* script.h (Expression::eval_with_dot): Add is_section_dot_assignment
+> 	parameter.  Adjust all callers.
+> 	(Expression::eval_maybe_dot): Likewise.
+> 	(Symbol_assignment::set_if_absolute): Add dot_section parameter.
+> 	Adjust all callers.
+> 	* testsuite/script_test_2.t: Test assignment of an absolute value
+> 	to dot within an output section element.
+> 
+> 	2011-10-31  Cary Coutant  <ccoutant@google.com>
+> 
+> 	* options.h (class General_options): Add --[no-]gnu-unique options.
+> 	* symtab.cc (Symbol_table::sized_write_globals): Convert
+> 	STB_GNU_UNIQUE to STB_GLOBAL if --no-gnu-unique.
+> 
+> 	2011-10-31  Cary Coutant  <ccoutant@google.com>
+> 
+> 	PR gold/13359
+> 	* i386.cc (Target_i386::Relocate::relocate_tls): Remove
+> 	unnecessary assertion.
+> 	* x86_64.cc (Target_x86_64::Relocate::relocate_tls): Likewise.
+> 
+> 	2011-10-31 Sriraman Tallam  <tmsriram@google.com>
+> 
+> 	* symtab.h (Symbol_table::gc_mark_symbol_for_shlib): Rename to
+> 	gc_mark_symbol.
+> 	* symtab.cc (Symbol_table::gc_mark_symbol_for_shlib): Rename to
+> 	gc_mark_symbol.
+> 	Change to just keep the section associated with symbol.
+> 	(Symbol_table::add_from_relobj): Mark symbols as not garbage when
+> 	they are externally visible and --export-dynamic is turned on.
+> 	(Symbol_table::gc_mark_dyn_syms): Call gc_mark_symbol.
+> 
+> 	2011-10-19  Ian Lance Taylor  <iant@google.com>
+> 
+> 	PR gold/13163
+> 	* script-sections.cc
+> 	(Output_section_element_dot_assignment::needs_output_section): New
+> 	function.
+> 
+> 	2011-10-19  Ian Lance Taylor  <iant@google.com>
+> 
+> 	PR gold/13204
+> 	* layout.cc (Layout::segment_precedes): Don't assert failure if a
+> 	--section-start option was seen.
+> 	* options.h (General_options::any_section_start): New function.
+> 
+> 	2011-10-18  Cary Coutant  <ccoutant@google.com>
+> 
+> 	* output.cc (posix_fallocate): Return 0 on success, errno on failure.
+> 	(Output_file::map_no_anonymous): Check for non-zero
+> 	return code from posix_fallocate.
+> 
+> 	2011-10-17  Cary Coutant  <ccoutant@google.com>
+> 
+> 	PR gold/13245
+> 	* plugin.cc (is_visible_from_outside): Check for symbols
+> 	referenced from dynamic objects.
+> 	* resolve.cc (Symbol_table::resolve): Don't count references
+> 	from dynamic objects as references from real ELF files.
+> 	* testsuite/plugin_test_2.sh: Adjust expected result.
+> 
+> 	2011-10-17  Cary Coutant  <ccoutant@google.com>
+> 
+> 	* readsyms.cc (Read_symbols::run): Don't queue an unblocker
+> 	task for members of lib groups.
+> 
+> 	2011-10-17  Cary Coutant  <ccoutant@google.com>
+> 
+> 	PR gold/13288
+> 	* fileread.cc (File_read::find_view): Add assert.
+> 	(File_read::make_view): Move bounds check (replace with assert)...
+> 	(File_read::find_or_make_view): ... to here.
+> 
+> 	2011-10-12  Cary Coutant  <ccoutant@google.com>
+> 
+> 	* output.cc (Output_file::open_base_file): Handle case where
+> 	::read returns less than requested size.
+> 
+> 	2011-10-10  Cary Coutant  <ccoutant@google.com>
+> 
+> 	* incremental.cc (Sized_relobj_incr::Sized_relobj_incr):
+> 	Initialize defined_count_.
+> 	(Sized_relobj_incr::do_add_symbols): Count defined symbols.
+> 	(Sized_relobj_incr::do_get_global_symbol_counts): Rewrite.
+> 	(Sized_incr_dynobj::Sized_incr_dynobj): Initialize defined_count_.
+> 	(Sized_incr_dynobj::do_add_symbols): Count defined symbols.
+> 	(Sized_incr_dynobj::do_get_global_symbol_counts): Rewrite.
+> 	* incremental.h (Sized_relobj_incr::defined_count_): New data
+> 	member.
+> 	(Sized_incr_dynobj::defined_count_): New data member.
+> 	* plugin.cc (Sized_pluginobj::do_get_global_symbol_counts):
+> 	Return zeroes instead of internal error.
+> 
+> 	2011-10-10  Cary Coutant  <ccoutant@google.com>
+> 
+> 	PR gold/13249
+> 	* output.cc (Output_reloc::Output_reloc): Add use_plt_offset flag.
+> 	(Output_reloc::symbol_value): Return PLT offset if flag is set.
+> 	* output.h (class Output_reloc): Add use_plt_offset flag.
+> 	(Output_reloc::type_): Adjust size of bit field.
+> 	(Output_reloc::use_plt_offset_): New bit field.
+> 	(class Output_data_reloc): Adjust all calls to Output_reloc_type.
+> 	(Output_data_reloc::add_local_relative): (RELA only) Add use_plt_offset
+> 	flag.  Adjust all callers.
+> 	* x86_64.cc (Target_x86_64::Scan::local): Check for IFUNC when
+> 	creating RELATIVE relocations.
+> 
+> 	2011-10-03   Diego Novillo  <dnovillo@google.com>
+> 
+> 	* options.cc (parse_uint): Fix dereference of RETVAL.
+> 
+> 	2011-09-29  Cary Coutant  <ccoutant@google.com>
+> 
+> 	* incremental.cc (Sized_incremental_binary::do_process_got_plt):
+> 	Check for NULL.
+> 	* symtab.cc (Symbol_table::add_from_relobj): Ignore version
+> 	symbols during incremental update.
+> 	(Symbol_table::add_from_dynobj): Likewise.
+> 
+> 	2011-09-26  Cary Coutant  <ccoutant@google.com>
+> 
+> 	* gold.cc (queue_initial_tasks): Move option checks ...
+> 	* options.cc (General_options::finalize): ... to here. Disable
+> 	some options; make others fatal.
+> 
+> 	2011-09-23  Simon Baldwin  <simonb@google.com>
+> 
+> 	* configure.ac: Add new --with-gold-ldadd and --with-gold-ldflags
+> 	configuration options.
+> 	* configure: Regenerate.
+> 	* Makefile.am: Handle GOLD_LDADD and GOLD_LDFLAGS.
+> 	* Makefile.in: Regenerate.
+> 	* testsuite/Makefile.in: Regenerate.
+> 
+Index: gold/Makefile.am
+===================================================================
+RCS file: /cvs/src/src/gold/Makefile.am,v
+retrieving revision 1.62
+retrieving revision 1.62.4.1
+diff -r1.62 -r1.62.4.1
+154c154
+< ldadd_var = $(TARGETOBJS) libgold.a $(LIBIBERTY) $(LIBINTL) \
+---
+> ldadd_var = $(TARGETOBJS) libgold.a $(LIBIBERTY) $(GOLD_LDADD) $(LIBINTL) \
+155a156
+> ldflags_var = $(GOLD_LDFLAGS)
+159a161
+> ld_new_LDFLAGS = $(ldflags_var)
+Index: gold/Makefile.in
+===================================================================
+RCS file: /cvs/src/src/gold/Makefile.in,v
+retrieving revision 1.89
+retrieving revision 1.89.2.1
+diff -r1.89 -r1.89.2.1
+104c104,106
+< 	$(am__DEPENDENCIES_1)
+---
+> 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+> ld_new_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(ld_new_LDFLAGS) \
+> 	$(LDFLAGS) -o $@
+253a256,257
+> GOLD_LDADD = @GOLD_LDADD@
+> GOLD_LDFLAGS = @GOLD_LDFLAGS@
+491c495
+< ldadd_var = $(TARGETOBJS) libgold.a $(LIBIBERTY) $(LIBINTL) \
+---
+> ldadd_var = $(TARGETOBJS) libgold.a $(LIBIBERTY) $(GOLD_LDADD) $(LIBINTL) \
+493a498
+> ldflags_var = $(GOLD_LDFLAGS)
+496a502
+> ld_new_LDFLAGS = $(ldflags_var)
+604c610
+< 	$(CXXLINK) $(ld_new_OBJECTS) $(ld_new_LDADD) $(LIBS)
+---
+> 	$(ld_new_LINK) $(ld_new_OBJECTS) $(ld_new_LDADD) $(LIBS)
+Index: gold/configure
+===================================================================
+RCS file: /cvs/src/src/gold/configure,v
+retrieving revision 1.69
+retrieving revision 1.69.2.1
+diff -r1.69 -r1.69.2.1
+601a602,603
+> GOLD_LDADD
+> GOLD_LDFLAGS
+779a782,783
+> with_gold_ldflags
+> with_gold_ldadd
+1433a1438,1439
+>   --with-gold-ldflags=FLAGS  additional link flags for gold
+>   --with-gold-ldadd=LIBS     additional libraries for gold
+6621a6628,6655
+> 
+> # Check whether --with-gold-ldflags was given.
+> if test "${with_gold_ldflags+set}" = set; then :
+>   withval=$with_gold_ldflags; if test "$withval" = "no" -o "$withval" = "yes"; then
+>    GOLD_LDFLAGS=
+>  else
+>    GOLD_LDFLAGS=$withval
+>  fi
+> else
+>   GOLD_LDFLAGS=
+> fi
+> 
+> 
+> 
+> 
+> # Check whether --with-gold-ldadd was given.
+> if test "${with_gold_ldadd+set}" = set; then :
+>   withval=$with_gold_ldadd; if test "$withval" = "no" -o "$withval" = "yes"; then
+>    GOLD_LDADD=
+>  else
+>    GOLD_LDADD=$withval
+>  fi
+> else
+>   GOLD_LDADD=
+> fi
+> 
+> 
+> 
+Index: gold/configure.ac
+===================================================================
+RCS file: /cvs/src/src/gold/configure.ac,v
+retrieving revision 1.66
+retrieving revision 1.66.2.1
+diff -r1.66 -r1.66.2.1
+411a412,431
+> AC_ARG_WITH(gold-ldflags,
+> [  --with-gold-ldflags=FLAGS  additional link flags for gold],
+> [if test "$withval" = "no" -o "$withval" = "yes"; then
+>    GOLD_LDFLAGS=
+>  else
+>    GOLD_LDFLAGS=$withval
+>  fi],
+> [GOLD_LDFLAGS=])
+> AC_SUBST(GOLD_LDFLAGS)
+> 
+> AC_ARG_WITH(gold-ldadd,
+> [  --with-gold-ldadd=LIBS     additional libraries for gold],
+> [if test "$withval" = "no" -o "$withval" = "yes"; then
+>    GOLD_LDADD=
+>  else
+>    GOLD_LDADD=$withval
+>  fi],
+> [GOLD_LDADD=])
+> AC_SUBST(GOLD_LDADD)
+> 
+Index: gold/dwarf_reader.cc
+===================================================================
+RCS file: /cvs/src/src/gold/dwarf_reader.cc,v
+retrieving revision 1.33
+retrieving revision 1.33.2.1
+diff -r1.33 -r1.33.2.1
+3c3
+< // Copyright 2007, 2008, 2009, 2010 Free Software Foundation, Inc.
+---
+> // Copyright 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+494,495c494,497
+<                   = { lsm.address, this->current_header_index_,
+<                       lsm.file_num, true, lsm.line_num };
+---
+>                   = { static_cast<off_t>(lsm.address),
+> 		      this->current_header_index_,
+> 		      static_cast<unsigned int>(lsm.file_num),
+> 		      true, lsm.line_num };
+Index: gold/expression.cc
+===================================================================
+RCS file: /cvs/src/src/gold/expression.cc,v
+retrieving revision 1.18
+retrieving revision 1.18.2.1
+diff -r1.18 -r1.18.2.1
+3c3
+< // Copyright 2006, 2007, 2008 Free Software Foundation, Inc.
+---
+> // Copyright 2006, 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+80c80
+< 			      false, 0, NULL, NULL, NULL);
+---
+> 			      false, 0, NULL, NULL, NULL, false);
+90c90,91
+< 			  uint64_t* result_alignment_pointer)
+---
+> 			  uint64_t* result_alignment_pointer,
+> 			  bool is_section_dot_assignment)
+94c95,96
+< 			      result_alignment_pointer);
+---
+> 			      result_alignment_pointer,
+> 			      is_section_dot_assignment);
+105c107,108
+< 			   uint64_t* result_alignment_pointer)
+---
+> 			   uint64_t* result_alignment_pointer,
+> 			   bool is_section_dot_assignment)
+116c119
+<   // if we find a section relative reference.
+---
+>   // if we find a section-relative reference.
+123c126,136
+<   return this->value(&eei);
+---
+>   uint64_t val = this->value(&eei);
+> 
+>   // If this is an assignment to dot within a section, and the value
+>   // is absolute, treat it as a section-relative offset.
+>   if (is_section_dot_assignment && *result_section_pointer == NULL)
+>     {
+>       gold_assert(dot_section != NULL);
+>       val += dot_section->address();
+>       *result_section_pointer = dot_section;
+>     }
+>   return val;
+260c273,274
+< 				      eei->result_alignment_pointer);
+---
+> 				      eei->result_alignment_pointer,
+> 				      false);
+339c353,354
+< 				       alignment_pointer);
+---
+> 				       alignment_pointer,
+> 				       false);
+353c368,369
+< 					alignment_pointer);
+---
+> 					alignment_pointer,
+> 					false);
+503c519,520
+< 				       NULL);
+---
+> 				       NULL,
+> 				       false);
+517c534,535
+< 				       alignment_pointer);
+---
+> 				       alignment_pointer,
+> 				       false);
+531c549,550
+< 				       alignment_pointer);
+---
+> 				       alignment_pointer,
+> 				       false);
+Index: gold/fileread.cc
+===================================================================
+RCS file: /cvs/src/src/gold/fileread.cc,v
+retrieving revision 1.74
+retrieving revision 1.74.2.1
+diff -r1.74 -r1.74.2.1
+331a332,335
+>   gold_assert(start <= this->size_
+> 	      && (static_cast<unsigned long long>(size)
+> 		  <= static_cast<unsigned long long>(this->size_ - start)));
+> 
+459,468c463,465
+< 
+<   // Check that start and end of the view are within the file.
+<   if (start > this->size_
+<       || (static_cast<unsigned long long>(size)
+<           > static_cast<unsigned long long>(this->size_ - start)))
+<     gold_fatal(_("%s: attempt to map %lld bytes at offset %lld exceeds "
+<                  "size of file; the file may be corrupt"),
+< 		   this->filename().c_str(),
+< 		   static_cast<long long>(size),
+< 		   static_cast<long long>(start));
+---
+>   gold_assert(start <= this->size_
+> 	      && (static_cast<unsigned long long>(size)
+> 		  <= static_cast<unsigned long long>(this->size_ - start)));
+525a523,532
+>   // Check that start and end of the view are within the file.
+>   if (start > this->size_
+>       || (static_cast<unsigned long long>(size)
+>           > static_cast<unsigned long long>(this->size_ - start)))
+>     gold_fatal(_("%s: attempt to map %lld bytes at offset %lld exceeds "
+>                  "size of file; the file may be corrupt"),
+> 		   this->filename().c_str(),
+> 		   static_cast<long long>(size),
+> 		   static_cast<long long>(start));
+> 
+Index: gold/gold.cc
+===================================================================
+RCS file: /cvs/src/src/gold/gold.cc,v
+retrieving revision 1.94
+retrieving revision 1.94.2.1
+diff -r1.94 -r1.94.2.1
+200c200
+<   if (parameters->incremental())
+---
+>   if (parameters->incremental_update())
+202,216c202,203
+<       if (options.relocatable())
+< 	gold_error(_("incremental linking is incompatible with -r"));
+<       if (options.emit_relocs())
+< 	gold_error(_("incremental linking is incompatible with --emit-relocs"));
+<       if (options.gc_sections())
+< 	gold_error(_("incremental linking is incompatible with --gc-sections"));
+<       if (options.icf_enabled())
+< 	gold_error(_("incremental linking is incompatible with --icf"));
+<       if (options.has_plugins())
+< 	gold_error(_("incremental linking is incompatible with --plugin"));
+<       if (strcmp(options.compress_debug_sections(), "none") != 0)
+< 	gold_error(_("incremental linking is incompatible with "
+< 		     "--compress-debug-sections"));
+< 
+<       if (parameters->incremental_update())
+---
+>       Output_file* of = new Output_file(options.output_file_name());
+>       if (of->open_base_file(options.incremental_base(), true))
+218,232c205,209
+< 	  Output_file* of = new Output_file(options.output_file_name());
+< 	  if (of->open_base_file(options.incremental_base(), true))
+< 	    {
+< 	      ibase = open_incremental_binary(of);
+< 	      if (ibase != NULL
+< 		  && ibase->check_inputs(cmdline, layout->incremental_inputs()))
+< 		ibase->init_layout(layout);
+< 	      else
+< 		{
+< 		  delete ibase;
+< 		  ibase = NULL;
+< 		  of->close();
+< 		}
+< 	    }
+< 	  if (ibase == NULL)
+---
+> 	  ibase = open_incremental_binary(of);
+> 	  if (ibase != NULL
+> 	      && ibase->check_inputs(cmdline, layout->incremental_inputs()))
+> 	    ibase->init_layout(layout);
+> 	  else
+234,237c211,213
+< 	      if (set_parameters_incremental_full())
+< 		gold_info(_("linking with --incremental-full"));
+< 	      else
+< 		gold_fallback(_("restart link with --incremental-full"));
+---
+> 	      delete ibase;
+> 	      ibase = NULL;
+> 	      of->close();
+239a216,222
+>       if (ibase == NULL)
+> 	{
+> 	  if (set_parameters_incremental_full())
+> 	    gold_info(_("linking with --incremental-full"));
+> 	  else
+> 	    gold_fallback(_("restart link with --incremental-full"));
+> 	}
+Index: gold/i386.cc
+===================================================================
+RCS file: /cvs/src/src/gold/i386.cc,v
+retrieving revision 1.141
+retrieving revision 1.141.2.1
+diff -r1.141 -r1.141.2.1
+2712,2717d2711
+< 	      if (tls_segment == NULL)
+< 		{
+< 		  gold_assert(parameters->errors()->error_count() > 0
+< 			      || issue_undefined_symbol_error(gsym));
+< 		  return;
+< 		}
+3483,3518c3477,3521
+<   const char nop1[1] = { 0x90 };                   // nop
+<   const char nop2[2] = { 0x66, 0x90 };             // xchg %ax %ax
+<   const char nop3[3] = { 0x8d, 0x76, 0x00 };       // leal 0(%esi),%esi
+<   const char nop4[4] = { 0x8d, 0x74, 0x26, 0x00};  // leal 0(%esi,1),%esi
+<   const char nop5[5] = { 0x90, 0x8d, 0x74, 0x26,   // nop
+<                          0x00 };                   // leal 0(%esi,1),%esi
+<   const char nop6[6] = { 0x8d, 0xb6, 0x00, 0x00,   // leal 0L(%esi),%esi
+<                          0x00, 0x00 };
+<   const char nop7[7] = { 0x8d, 0xb4, 0x26, 0x00,   // leal 0L(%esi,1),%esi
+<                          0x00, 0x00, 0x00 };
+<   const char nop8[8] = { 0x90, 0x8d, 0xb4, 0x26,   // nop
+<                          0x00, 0x00, 0x00, 0x00 }; // leal 0L(%esi,1),%esi
+<   const char nop9[9] = { 0x89, 0xf6, 0x8d, 0xbc,   // movl %esi,%esi
+<                          0x27, 0x00, 0x00, 0x00,   // leal 0L(%edi,1),%edi
+<                          0x00 };
+<   const char nop10[10] = { 0x8d, 0x76, 0x00, 0x8d, // leal 0(%esi),%esi
+<                            0xbc, 0x27, 0x00, 0x00, // leal 0L(%edi,1),%edi
+<                            0x00, 0x00 };
+<   const char nop11[11] = { 0x8d, 0x74, 0x26, 0x00, // leal 0(%esi,1),%esi
+<                            0x8d, 0xbc, 0x27, 0x00, // leal 0L(%edi,1),%edi
+<                            0x00, 0x00, 0x00 };
+<   const char nop12[12] = { 0x8d, 0xb6, 0x00, 0x00, // leal 0L(%esi),%esi
+<                            0x00, 0x00, 0x8d, 0xbf, // leal 0L(%edi),%edi
+<                            0x00, 0x00, 0x00, 0x00 };
+<   const char nop13[13] = { 0x8d, 0xb6, 0x00, 0x00, // leal 0L(%esi),%esi
+<                            0x00, 0x00, 0x8d, 0xbc, // leal 0L(%edi,1),%edi
+<                            0x27, 0x00, 0x00, 0x00,
+<                            0x00 };
+<   const char nop14[14] = { 0x8d, 0xb4, 0x26, 0x00, // leal 0L(%esi,1),%esi
+<                            0x00, 0x00, 0x00, 0x8d, // leal 0L(%edi,1),%edi
+<                            0xbc, 0x27, 0x00, 0x00,
+<                            0x00, 0x00 };
+<   const char nop15[15] = { 0xeb, 0x0d, 0x90, 0x90, // jmp .+15
+<                            0x90, 0x90, 0x90, 0x90, // nop,nop,nop,...
+<                            0x90, 0x90, 0x90, 0x90,
+<                            0x90, 0x90, 0x90 };
+---
+>   const char nop1[1] = { '\x90' };                   // nop
+>   const char nop2[2] = { '\x66', '\x90' };           // xchg %ax %ax
+>   const char nop3[3] = { '\x8d', '\x76', '\x00' };   // leal 0(%esi),%esi
+>   const char nop4[4] = { '\x8d', '\x74', '\x26',     // leal 0(%esi,1),%esi
+> 			 '\x00'};
+>   const char nop5[5] = { '\x90', '\x8d', '\x74',     // nop
+>   			 '\x26', '\x00' };           // leal 0(%esi,1),%esi
+>   const char nop6[6] = { '\x8d', '\xb6', '\x00',     // leal 0L(%esi),%esi
+>   			 '\x00', '\x00', '\x00' };
+>   const char nop7[7] = { '\x8d', '\xb4', '\x26',     // leal 0L(%esi,1),%esi
+>   			 '\x00', '\x00', '\x00',
+> 			 '\x00' };
+>   const char nop8[8] = { '\x90', '\x8d', '\xb4',     // nop
+>   			 '\x26', '\x00', '\x00',     // leal 0L(%esi,1),%esi
+> 			 '\x00', '\x00' };
+>   const char nop9[9] = { '\x89', '\xf6', '\x8d',     // movl %esi,%esi
+>   			 '\xbc', '\x27', '\x00',     // leal 0L(%edi,1),%edi
+> 			 '\x00', '\x00', '\x00' };
+>   const char nop10[10] = { '\x8d', '\x76', '\x00',   // leal 0(%esi),%esi
+>   			   '\x8d', '\xbc', '\x27',   // leal 0L(%edi,1),%edi
+> 			   '\x00', '\x00', '\x00',
+> 			   '\x00' };
+>   const char nop11[11] = { '\x8d', '\x74', '\x26',   // leal 0(%esi,1),%esi
+>   			   '\x00', '\x8d', '\xbc',   // leal 0L(%edi,1),%edi
+> 			   '\x27', '\x00', '\x00',
+> 			   '\x00', '\x00' };
+>   const char nop12[12] = { '\x8d', '\xb6', '\x00',   // leal 0L(%esi),%esi
+>   			   '\x00', '\x00', '\x00',   // leal 0L(%edi),%edi
+> 			   '\x8d', '\xbf', '\x00',
+> 			   '\x00', '\x00', '\x00' };
+>   const char nop13[13] = { '\x8d', '\xb6', '\x00',   // leal 0L(%esi),%esi
+>   			   '\x00', '\x00', '\x00',   // leal 0L(%edi,1),%edi
+> 			   '\x8d', '\xbc', '\x27',
+> 			   '\x00', '\x00', '\x00',
+>                            '\x00' };
+>   const char nop14[14] = { '\x8d', '\xb4', '\x26',   // leal 0L(%esi,1),%esi
+>   			   '\x00', '\x00', '\x00',   // leal 0L(%edi,1),%edi
+> 			   '\x00', '\x8d', '\xbc',
+> 			   '\x27', '\x00', '\x00',
+>                            '\x00', '\x00' };
+>   const char nop15[15] = { '\xeb', '\x0d', '\x90',   // jmp .+15
+>   			   '\x90', '\x90', '\x90',   // nop,nop,nop,...
+> 			   '\x90', '\x90', '\x90',
+> 			   '\x90', '\x90', '\x90',
+>                            '\x90', '\x90', '\x90' };
+Index: gold/incremental.cc
+===================================================================
+RCS file: /cvs/src/src/gold/incremental.cc,v
+retrieving revision 1.47
+retrieving revision 1.47.2.1
+diff -r1.47 -r1.47.2.1
+688c688
+<       if (sym->in_reg())
+---
+>       if (sym != NULL && sym->in_reg())
+1969,1970c1969,1971
+<     symbols_(), incr_reloc_offset_(-1U), incr_reloc_count_(0),
+<     incr_reloc_output_index_(0), incr_relocs_(NULL), local_symbols_()
+---
+>     symbols_(), defined_count_(0), incr_reloc_offset_(-1U),
+>     incr_reloc_count_(0), incr_reloc_output_index_(0), incr_relocs_(NULL),
+>     local_symbols_()
+2122a2124,2126
+>       if (shndx != elfcpp::SHN_UNDEF)
+>         ++this->defined_count_;
+> 
+2286,2288c2290,2304
+<     const Symbol_table*, size_t*, size_t*) const
+< {
+<   gold_unreachable();
+---
+>     const Symbol_table*,
+>     size_t* defined,
+>     size_t* used) const
+> {
+>   *defined = this->defined_count_;
+>   size_t count = 0;
+>   for (typename Symbols::const_iterator p = this->symbols_.begin();
+>        p != this->symbols_.end();
+>        ++p)
+>     if (*p != NULL
+> 	&& (*p)->source() == Symbol::FROM_OBJECT
+> 	&& (*p)->object() == this
+> 	&& (*p)->is_defined())
+>       ++count;
+>   *used = count;
+2582c2598
+<     symbols_()
+---
+>     symbols_(), defined_count_(0)
+2679a2696
+> 	  ++this->defined_count_;
+2848,2850c2865,2880
+<     const Symbol_table*, size_t*, size_t*) const
+< {
+<   gold_unreachable();
+---
+>     const Symbol_table*,
+>     size_t* defined,
+>     size_t* used) const
+> {
+>   *defined = this->defined_count_;
+>   size_t count = 0;
+>   for (typename Symbols::const_iterator p = this->symbols_.begin();
+>        p != this->symbols_.end();
+>        ++p)
+>     if (*p != NULL
+> 	&& (*p)->source() == Symbol::FROM_OBJECT
+> 	&& (*p)->object() == this
+> 	&& (*p)->is_defined()
+> 	&& (*p)->dynsym_index() != -1U)
+>       ++count;
+>   *used = count;
+Index: gold/incremental.h
+===================================================================
+RCS file: /cvs/src/src/gold/incremental.h,v
+retrieving revision 1.28
+retrieving revision 1.28.2.1
+diff -r1.28 -r1.28.2.1
+1998a1999,2000
+>   // Number of symbols defined in object file itself.
+>   size_t defined_count_;
+2129a2132,2133
+>   // Number of symbols defined in object file itself.
+>   size_t defined_count_;
+Index: gold/layout.cc
+===================================================================
+RCS file: /cvs/src/src/gold/layout.cc,v
+retrieving revision 1.220
+retrieving revision 1.220.2.1
+diff -r1.220 -r1.220.2.1
+2978,2979c2978,2980
+<   // script.
+<   gold_assert(this->script_options_->saw_phdrs_clause());
+---
+>   // script or overlapping --section-start options.
+>   gold_assert(this->script_options_->saw_phdrs_clause()
+> 	      || parameters->options().any_section_start());
+Index: gold/options.cc
+===================================================================
+RCS file: /cvs/src/src/gold/options.cc,v
+retrieving revision 1.114
+retrieving revision 1.114.2.1
+diff -r1.114 -r1.114.2.1
+201c201
+<   if (*endptr != '\0' || retval < 0)
+---
+>   if (*endptr != '\0' || *retval < 0)
+1226a1227,1257
+>   // Check for options that are not compatible with incremental linking.
+>   // Where an option can be disabled without seriously changing the semantics
+>   // of the link, we turn the option off; otherwise, we issue a fatal error.
+> 
+>   if (this->incremental_mode_ != INCREMENTAL_OFF)
+>     {
+>       if (this->relocatable())
+> 	gold_fatal(_("incremental linking is not compatible with -r"));
+>       if (this->emit_relocs())
+> 	gold_fatal(_("incremental linking is not compatible with "
+> 		     "--emit-relocs"));
+>       if (this->has_plugins())
+> 	gold_fatal(_("incremental linking is not compatible with --plugin"));
+>       if (this->gc_sections())
+> 	{
+> 	  gold_warning(_("ignoring --gc-sections for an incremental link"));
+> 	  this->set_gc_sections(false);
+> 	}
+>       if (this->icf_enabled())
+> 	{
+> 	  gold_warning(_("ignoring --icf for an incremental link"));
+> 	  this->set_icf_status(ICF_NONE);
+> 	}
+>       if (strcmp(this->compress_debug_sections(), "none") != 0)
+> 	{
+> 	  gold_warning(_("ignoring --compress-debug-sections for an "
+> 			 "incremental link"));
+> 	  this->set_compress_debug_sections("none");
+> 	}
+>     }
+> 
+Index: gold/options.h
+===================================================================
+RCS file: /cvs/src/src/gold/options.h,v
+retrieving revision 1.169.2.1
+retrieving revision 1.169.2.2
+diff -r1.169.2.1 -r1.169.2.2
+793a794,797
+>   DEFINE_bool(gnu_unique, options::TWO_DASHES, '\0', true,
+> 	      N_("Enable STB_GNU_UNIQUE symbol binding (default)"),
+> 	      N_("Disable STB_GNU_UNIQUE symbol binding"));
+> 
+1387a1392,1396
+>   // Return whether any --section-start option was used.
+>   bool
+>   any_section_start() const
+>   { return !this->section_starts_.empty(); }
+> 
+Index: gold/output.cc
+===================================================================
+RCS file: /cvs/src/src/gold/output.cc,v
+retrieving revision 1.159
+retrieving revision 1.159.2.1
+diff -r1.159 -r1.159.2.1
+122c122,124
+<   return ftruncate(o, offset + len);
+---
+>   if (ftruncate(o, offset + len) < 0)
+>     return errno;
+>   return 0;
+709c711
+<     is_section_symbol_(false), shndx_(INVALID_CODE)
+---
+>     is_section_symbol_(false), use_plt_offset_(false), shndx_(INVALID_CODE)
+730c732
+<     is_section_symbol_(false), shndx_(shndx)
+---
+>     is_section_symbol_(false), use_plt_offset_(false), shndx_(shndx)
+752c754,755
+<     bool is_section_symbol)
+---
+>     bool is_section_symbol,
+>     bool use_plt_offset)
+755c758,759
+<     is_section_symbol_(is_section_symbol), shndx_(INVALID_CODE)
+---
+>     is_section_symbol_(is_section_symbol), use_plt_offset_(use_plt_offset),
+>     shndx_(INVALID_CODE)
+776c780,781
+<     bool is_section_symbol)
+---
+>     bool is_section_symbol,
+>     bool use_plt_offset)
+779c784,785
+<     is_section_symbol_(is_section_symbol), shndx_(shndx)
+---
+>     is_section_symbol_(is_section_symbol), use_plt_offset_(use_plt_offset),
+>     shndx_(shndx)
+802c808
+<     is_section_symbol_(true), shndx_(INVALID_CODE)
+---
+>     is_section_symbol_(true), use_plt_offset_(false), shndx_(INVALID_CODE)
+823c829
+<     is_section_symbol_(true), shndx_(shndx)
+---
+>     is_section_symbol_(true), use_plt_offset_(false), shndx_(shndx)
+845c851
+<     is_section_symbol_(false), shndx_(INVALID_CODE)
+---
+>     is_section_symbol_(false), use_plt_offset_(false), shndx_(INVALID_CODE)
+861c867
+<     is_section_symbol_(false), shndx_(shndx)
+---
+>     is_section_symbol_(false), use_plt_offset_(false), shndx_(shndx)
+880c886
+<     is_section_symbol_(false), shndx_(INVALID_CODE)
+---
+>     is_section_symbol_(false), use_plt_offset_(false), shndx_(INVALID_CODE)
+897c903
+<     is_section_symbol_(false), shndx_(shndx)
+---
+>     is_section_symbol_(false), use_plt_offset_(false), shndx_(shndx)
+1123a1130,1135
+>   if (this->use_plt_offset_)
+>     {
+>       uint64_t plt_address =
+> 	  parameters->target().plt_address_for_local(relobj, lsi);
+>       return plt_address + relobj->local_plt_offset(lsi);
+>     }
+4883,4893c4895,4915
+<       ssize_t len = ::read(o, this->base_, s.st_size);
+<       if (len < 0)
+<         {
+< 	  gold_info(_("%s: read failed: %s"), base_name, strerror(errno));
+< 	  return false;
+<         }
+<       if (len < s.st_size)
+<         {
+< 	  gold_info(_("%s: file too short"), base_name);
+< 	  return false;
+<         }
+---
+>       ssize_t bytes_to_read = s.st_size;
+>       unsigned char* p = this->base_;
+>       while (bytes_to_read > 0)
+> 	{
+> 	  ssize_t len = ::read(o, p, bytes_to_read);
+> 	  if (len < 0)
+> 	    {
+> 	      gold_info(_("%s: read failed: %s"), base_name, strerror(errno));
+> 	      return false;
+> 	    }
+> 	  if (len == 0)
+> 	    {
+> 	      gold_info(_("%s: file too short: read only %lld of %lld bytes"),
+> 			base_name,
+> 			static_cast<long long>(s.st_size - bytes_to_read),
+> 			static_cast<long long>(s.st_size));
+> 	      return false;
+> 	    }
+> 	  p += len;
+> 	  bytes_to_read -= len;
+> 	}
+5055,5056c5077,5082
+<   if (writable && ::posix_fallocate(o, 0, this->file_size_) < 0)
+<     gold_fatal(_("%s: %s"), this->name_, strerror(errno));
+---
+>   if (writable)
+>     {
+>       int err = ::posix_fallocate(o, 0, this->file_size_);
+>       if (err != 0)
+>        gold_fatal(_("%s: %s"), this->name_, strerror(err));
+>     }
+Index: gold/output.h
+===================================================================
+RCS file: /cvs/src/src/gold/output.h,v
+retrieving revision 1.128
+retrieving revision 1.128.2.1
+diff -r1.128 -r1.128.2.1
+1036c1036,1037
+<                bool is_symbolless, bool is_section_symbol);
+---
+>                bool is_symbolless, bool is_section_symbol,
+>                bool use_plt_offset);
+1041c1042,1043
+<                bool is_symbolless, bool is_section_symbol);
+---
+>                bool is_symbolless, bool is_section_symbol,
+>                bool use_plt_offset);
+1219c1221
+<   unsigned int type_ : 29;
+---
+>   unsigned int type_ : 28;
+1226a1229,1232
+>   // True if the addend should be the PLT offset.  This is used only
+>   // for RELATIVE relocations to local symbols.
+>   // (Used only for RELA, but stored here for space.)
+>   bool use_plt_offset_ : 1;
+1271c1277,1278
+< 	       bool is_symbolless, bool is_section_symbol)
+---
+> 	       bool is_symbolless, bool is_section_symbol,
+> 	       bool use_plt_offset)
+1273c1280
+<            is_symbolless, is_section_symbol),
+---
+>            is_symbolless, is_section_symbol, use_plt_offset),
+1281c1288,1289
+< 	       bool is_symbolless, bool is_section_symbol)
+---
+> 	       bool is_symbolless, bool is_section_symbol,
+> 	       bool use_plt_offset)
+1283c1291
+<            is_symbolless, is_section_symbol),
+---
+>            is_symbolless, is_section_symbol, use_plt_offset),
+1574c1582
+<                                     address, false, false, false));
+---
+>                                     address, false, false, false, false));
+1583c1591
+< 				    address, false, false, false));
+---
+> 				    address, false, false, false, false));
+1594c1602
+<                                     address, true, true, false));
+---
+>                                     address, true, true, false, false));
+1603c1611
+< 				    address, true, true, false));
+---
+> 				    address, true, true, false, false));
+1615c1623
+<                                     address, false, true, false));
+---
+>                                     address, false, true, false, false));
+1625c1633
+< 				    address, false, true, false));
+---
+> 				    address, false, true, false, false));
+1638c1646
+<                                     address, false, false, true));
+---
+>                                     address, false, false, true, false));
+1647c1655
+<                                     address, false, false, true));
+---
+>                                     address, false, false, true, false));
+1770c1778
+< 				    addend, false, false, false));
+---
+> 				    addend, false, false, false, false));
+1780c1788,1789
+<                                     address, addend, false, false, false));
+---
+>                                     address, addend, false, false, false,
+>                                     false));
+1788c1797,1798
+< 	             Output_data* od, Address address, Addend addend)
+---
+> 	             Output_data* od, Address address, Addend addend,
+> 	             bool use_plt_offset)
+1791c1801,1802
+< 				    addend, true, true, false));
+---
+> 				    addend, true, true, false,
+> 				    use_plt_offset));
+1798c1809
+< 	             Addend addend)
+---
+> 	             Addend addend, bool use_plt_offset)
+1801c1812,1813
+<                                     address, addend, true, true, false));
+---
+>                                     address, addend, true, true, false,
+>                                     use_plt_offset));
+1813c1825
+< 				    addend, false, true, false));
+---
+> 				    addend, false, true, false, false));
+1823c1835,1836
+<                                     address, addend, false, true, false));
+---
+>                                     address, addend, false, true, false,
+>                                     false));
+1836c1849
+< 				    addend, false, false, true));
+---
+> 				    addend, false, false, true, false));
+1846c1859,1860
+<                                     address, addend, false, false, true));
+---
+>                                     address, addend, false, false, true,
+>                                     false));
+Index: gold/plugin.cc
+===================================================================
+RCS file: /cvs/src/src/gold/plugin.cc,v
+retrieving revision 1.48.2.1
+retrieving revision 1.48.2.2
+diff -r1.48.2.1 -r1.48.2.2
+821c821,823
+< // universe of claimed objects.
+---
+> // universe of claimed objects.  Only references from relocatable,
+> // non-IR (unclaimed) objects count as a reference.  References from
+> // dynamic objects count only as "visible".
+840a843,844
+>   if (lsym->in_dyn())
+>     return true;
+1247c1251,1252
+< // Get symbol counts.  Not used for plugin objects.
+---
+> // Get symbol counts.  Don't count plugin objects; the replacement
+> // files will provide the counts.
+1251,1252c1256,1259
+< Sized_pluginobj<size, big_endian>::do_get_global_symbol_counts(const Symbol_table*,
+<                                                    size_t*, size_t*) const
+---
+> Sized_pluginobj<size, big_endian>::do_get_global_symbol_counts(
+>     const Symbol_table*,
+>     size_t* defined,
+>     size_t* used) const
+1254c1261,1262
+<   gold_unreachable();
+---
+>   *defined = 0;
+>   *used = 0;
+Index: gold/powerpc.cc
+===================================================================
+RCS file: /cvs/src/src/gold/powerpc.cc,v
+retrieving revision 1.39
+retrieving revision 1.39.2.1
+diff -r1.39 -r1.39.2.1
+1332c1332
+< 					   reloc.get_r_addend());
+---
+> 					   reloc.get_r_addend(), false);
+1375c1375
+< 					     got, off, 0);
+---
+> 					     got, off, 0, false);
+Index: gold/readsyms.cc
+===================================================================
+RCS file: /cvs/src/src/gold/readsyms.cc,v
+retrieving revision 1.51
+retrieving revision 1.51.2.1
+diff -r1.51 -r1.51.2.1
+164,165c164,167
+<   // the token.
+<   if (!this->do_read_symbols(workqueue))
+---
+>   // the token. If the object is a member of a lib group, however,
+>   // the token was already added to the list of locks for the task,
+>   // and it will be unblocked automatically at the end of the task.
+>   if (!this->do_read_symbols(workqueue) && this->member_ == NULL)
+Index: gold/resolve.cc
+===================================================================
+RCS file: /cvs/src/src/gold/resolve.cc,v
+retrieving revision 1.63
+retrieving revision 1.63.2.1
+diff -r1.63 -r1.63.2.1
+299c299
+<   if (object->pluginobj() == NULL)
+---
+>   if (object->pluginobj() == NULL && !object->is_dynamic())
+339c339
+<           = { object, orig_st_shndx, sym.get_st_value() };
+---
+>           = { object, orig_st_shndx, static_cast<off_t>(sym.get_st_value()) };
+341c341
+< 				to->value() };
+---
+> 				static_cast<off_t>(to->value()) };
+Index: gold/script-sections.cc
+===================================================================
+RCS file: /cvs/src/src/gold/script-sections.cc,v
+retrieving revision 1.53
+retrieving revision 1.53.2.1
+diff -r1.53 -r1.53.2.1
+683c683
+<     this->assignment_.set_if_absolute(symtab, layout, true, *dot_value);
+---
+>     this->assignment_.set_if_absolute(symtab, layout, true, *dot_value, NULL);
+717c717
+< 					   NULL, NULL, NULL);
+---
+> 					   NULL, NULL, NULL, false);
+727c727
+< 					   NULL, NULL, dot_alignment);
+---
+> 					   NULL, NULL, dot_alignment, false);
+869c869,870
+< 			Output_section**, std::string*, Input_section_list*)
+---
+> 			Output_section** dot_section, std::string*,
+> 			Input_section_list*)
+871c872,873
+<     this->assignment_.set_if_absolute(symtab, layout, true, *dot_value);
+---
+>     this->assignment_.set_if_absolute(symtab, layout, true, *dot_value,
+> 				      *dot_section);
+894a897,902
+>   // An assignment to dot within an output section is enough to force
+>   // the output section to exist.
+>   bool
+>   needs_output_section() const
+>   { return true; }
+> 
+901c909,910
+< 					   *dot_section, dot_section, NULL);
+---
+> 					   *dot_section, dot_section, NULL,
+> 					   true);
+908c917,918
+< 			Output_section**, std::string*, Input_section_list*);
+---
+> 			Output_section** dot_section, std::string*,
+> 			Input_section_list*);
+939c949,950
+< 						dot_section, dot_alignment);
+---
+> 						dot_section, dot_alignment,
+> 						true);
+1040c1051,1052
+< 					   this->dot_section_, NULL, NULL);
+---
+> 					   this->dot_section_, NULL, NULL,
+> 					   false);
+1190c1202
+< 						  &fill_section, NULL);
+---
+> 						  &fill_section, NULL, false);
+2111c2123
+< 						  NULL, NULL);
+---
+> 						  NULL, NULL, false);
+2117c2129
+< 						       NULL, NULL);
+---
+> 						       NULL, NULL, false);
+2306c2318
+< 					    dot_alignment);
+---
+> 					    dot_alignment, false);
+2319c2331
+< 					  NULL, &align_section, NULL);
+---
+> 					  NULL, &align_section, NULL, false);
+2404c2416
+< 						 NULL, NULL);
+---
+> 						 NULL, NULL, false);
+2419c2431,2432
+< 						&subalign_section, NULL);
+---
+> 						&subalign_section, NULL,
+> 						false);
+2434c2447
+< 						     NULL);
+---
+> 						     NULL, false);
+Index: gold/script.cc
+===================================================================
+RCS file: /cvs/src/src/gold/script.cc,v
+retrieving revision 1.84
+retrieving revision 1.84.2.1
+diff -r1.84 -r1.84.2.1
+986c986
+< 						  &section, NULL);
+---
+> 						  &section, NULL, false);
+993c993,994
+< // Set the symbol value if the expression yields an absolute value.
+---
+> // Set the symbol value if the expression yields an absolute value or
+> // a value relative to DOT_SECTION.
+997c998,999
+< 				   bool is_dot_available, uint64_t dot_value)
+---
+> 				   bool is_dot_available, uint64_t dot_value,
+> 				   Output_section* dot_section)
+1005,1006c1007,1009
+< 					    NULL, &val_section, NULL);
+<   if (val_section != NULL)
+---
+> 					    dot_section, &val_section, NULL,
+> 					    false);
+>   if (val_section != NULL && val_section != dot_section)
+1028a1032,1033
+>   if (val_section != NULL)
+>     this->sym_->set_output_section(val_section);
+1218c1223
+<     (*p)->set_if_absolute(symtab, layout, false, 0);
+---
+>     (*p)->set_if_absolute(symtab, layout, false, 0, NULL);
+Index: gold/script.h
+===================================================================
+RCS file: /cvs/src/src/gold/script.h,v
+retrieving revision 1.37
+retrieving revision 1.37.2.1
+diff -r1.37 -r1.37.2.1
+93c93,96
+<   // this is an ALIGN expression.
+---
+>   // this is an ALIGN expression.  If IS_SECTION_DOT_ASSIGMENT is true,
+>   // we are evaluating an assignment to dot within an output section,
+>   // and an absolute value should be interpreted as an offset within
+>   // the section.
+97c100,101
+< 		Output_section** result_section, uint64_t* result_alignment);
+---
+> 		Output_section** result_section, uint64_t* result_alignment,
+> 		bool is_section_dot_assignment);
+101c105,108
+<   // is_dot_available.
+---
+>   // is_dot_available.  If IS_SECTION_DOT_ASSIGMENT is true,
+>   // we are evaluating an assignment to dot within an output section,
+>   // and an absolute value should be interpreted as an offset within
+>   // the section.
+106c113,114
+< 		 Output_section** result_section, uint64_t* result_alignment);
+---
+> 		 Output_section** result_section, uint64_t* result_alignment,
+> 		 bool is_section_dot_assignment);
+342,344c350,352
+<   // Set the symbol value, but only if the value is absolute.  This is
+<   // used while processing a SECTIONS clause.  We assume that dot is
+<   // an absolute value here.  We do not check assertions.
+---
+>   // Set the symbol value, but only if the value is absolute or relative to
+>   // DOT_SECTION.  This is used while processing a SECTIONS clause.
+>   // We assume that dot is an absolute value here.  We do not check assertions.
+347c355
+< 		  uint64_t dot_value);
+---
+> 		  uint64_t dot_value, Output_section* dot_section);
+Index: gold/sparc.cc
+===================================================================
+RCS file: /cvs/src/src/gold/sparc.cc,v
+retrieving revision 1.48.2.1
+retrieving revision 1.48.2.2
+diff -r1.48.2.1 -r1.48.2.2
+1858c1858
+< 				       reloc.get_r_addend());
+---
+> 				       reloc.get_r_addend(), false);
+1949c1949
+< 					     got, off, 0);
+---
+> 					     got, off, 0, false);
+Index: gold/symtab.cc
+===================================================================
+RCS file: /cvs/src/src/gold/symtab.cc,v
+retrieving revision 1.159.2.1
+retrieving revision 1.159.2.2
+diff -r1.159.2.1 -r1.159.2.2
+605c605
+< Symbol_table::gc_mark_symbol_for_shlib(Symbol* sym)
+---
+> Symbol_table::gc_mark_symbol(Symbol* sym)
+607,608c607,611
+<   if (!sym->is_from_dynobj() 
+<       && sym->is_externally_visible())
+---
+>   // Add the object and section to the work list.
+>   Relobj* obj = static_cast<Relobj*>(sym->object());
+>   bool is_ordinary;
+>   unsigned int shndx = sym->shndx(&is_ordinary);
+>   if (is_ordinary && shndx != elfcpp::SHN_UNDEF)
+610,618c613,614
+<       //Add the object and section to the work list.
+<       Relobj* obj = static_cast<Relobj*>(sym->object());
+<       bool is_ordinary;
+<       unsigned int shndx = sym->shndx(&is_ordinary);
+<       if (is_ordinary && shndx != elfcpp::SHN_UNDEF)
+<         {
+<           gold_assert(this->gc_!= NULL);
+<           this->gc_->worklist().push(Section_id(obj, shndx));
+<         }
+---
+>       gold_assert(this->gc_!= NULL);
+>       this->gc_->worklist().push(Section_id(obj, shndx));
+629,638c625
+<     {
+<       Relobj* obj = static_cast<Relobj*>(sym->object()); 
+<       bool is_ordinary;
+<       unsigned int shndx = sym->shndx(&is_ordinary);
+<       if (is_ordinary && shndx != elfcpp::SHN_UNDEF)
+<         {
+<           gold_assert(this->gc_ != NULL);
+<           this->gc_->worklist().push(Section_id(obj, shndx));
+<         }
+<     }
+---
+>     this->gc_mark_symbol(sym);
+1145a1133,1140
+>       // FIXME: For incremental links, we don't store version information,
+>       // so we need to ignore version symbols for now.
+>       if (parameters->incremental_update() && ver != NULL)
+> 	{
+> 	  namelen = ver - name;
+> 	  ver = NULL;
+> 	}
+> 
+1246,1250c1241,1250
+<       // If building a shared library using garbage collection, do not 
+<       // treat externally visible symbols as garbage.
+<       if (parameters->options().gc_sections() 
+<           && parameters->options().shared())
+<         this->gc_mark_symbol_for_shlib(res);
+---
+>       // Do not treat this symbol as garbage if this symbol will be
+>       // exported to the dynamic symbol table.  This is true when
+>       // building a shared library or using --export-dynamic and
+>       // the symbol is externally visible.
+>       if (parameters->options().gc_sections()
+> 	  && res->is_externally_visible()
+> 	  && !res->is_from_dynobj()
+>           && (parameters->options().shared()
+> 	      || parameters->options().export_dynamic()))
+>         this->gc_mark_symbol(res);
+1348a1349,1353
+>   // FIXME: For incremental links, we don't store version information,
+>   // so we need to ignore version symbols for now.
+>   if (parameters->incremental_update())
+>     versym = NULL;
+> 
+2811a2817,2822
+> 
+>       // If --no-gnu-unique is set, change STB_GNU_UNIQUE to STB_GLOBAL.
+>       if (binding == elfcpp::STB_GNU_UNIQUE
+> 	  && !parameters->options().gnu_unique())
+> 	binding = elfcpp::STB_GLOBAL;
+> 
+Index: gold/symtab.h
+===================================================================
+RCS file: /cvs/src/src/gold/symtab.h,v
+retrieving revision 1.125
+retrieving revision 1.125.2.1
+diff -r1.125 -r1.125.2.1
+1311,1312c1311
+<   // During garbage collection, this ensures externally visible symbols
+<   // are not treated as garbage while building shared objects.
+---
+>   // This tells garbage collection that this symbol is referenced.
+1314c1313
+<   gc_mark_symbol_for_shlib(Symbol* sym);
+---
+>   gc_mark_symbol(Symbol* sym);
+Index: gold/x86_64.cc
+===================================================================
+RCS file: /cvs/src/src/gold/x86_64.cc,v
+retrieving revision 1.139
+retrieving revision 1.139.2.1
+diff -r1.139 -r1.139.2.1
+1552c1552
+< 				     this->got_, got_offset, 0);
+---
+> 				     this->got_, got_offset, 0, false);
+1956,1957c1956,1957
+<   if (lsym.get_st_type() == elfcpp::STT_GNU_IFUNC
+<       && this->reloc_needs_plt_for_ifunc(object, r_type))
+---
+>   bool is_ifunc = lsym.get_st_type() == elfcpp::STT_GNU_IFUNC;
+>   if (is_ifunc && this->reloc_needs_plt_for_ifunc(object, r_type))
+1985c1985
+< 				       reloc.get_r_addend());
+---
+> 				       reloc.get_r_addend(), is_ifunc);
+2061c2061
+< 	if (lsym.get_st_type() == elfcpp::STT_GNU_IFUNC)
+---
+> 	if (is_ifunc)
+2079c2079
+< 						 got, got_offset, 0);
+---
+> 						 got, got_offset, 0, is_ifunc);
+3184,3189d3183
+< 	      if (tls_segment == NULL)
+< 		{
+< 		  gold_assert(parameters->errors()->error_count() > 0
+< 			      || issue_undefined_symbol_error(gsym));
+< 		  return;
+< 		}
+3870,3905c3864,3908
+<   const char nop1[1] = { 0x90 };                   // nop
+<   const char nop2[2] = { 0x66, 0x90 };             // xchg %ax %ax
+<   const char nop3[3] = { 0x0f, 0x1f, 0x00 };       // nop (%rax)
+<   const char nop4[4] = { 0x0f, 0x1f, 0x40, 0x00};  // nop 0(%rax)
+<   const char nop5[5] = { 0x0f, 0x1f, 0x44, 0x00,   // nop 0(%rax,%rax,1)
+<                          0x00 };
+<   const char nop6[6] = { 0x66, 0x0f, 0x1f, 0x44,   // nopw 0(%rax,%rax,1)
+<                          0x00, 0x00 };
+<   const char nop7[7] = { 0x0f, 0x1f, 0x80, 0x00,   // nopl 0L(%rax)
+<                          0x00, 0x00, 0x00 };
+<   const char nop8[8] = { 0x0f, 0x1f, 0x84, 0x00,   // nopl 0L(%rax,%rax,1)
+<                          0x00, 0x00, 0x00, 0x00 };
+<   const char nop9[9] = { 0x66, 0x0f, 0x1f, 0x84,   // nopw 0L(%rax,%rax,1)
+<                          0x00, 0x00, 0x00, 0x00,
+<                          0x00 };
+<   const char nop10[10] = { 0x66, 0x2e, 0x0f, 0x1f, // nopw %cs:0L(%rax,%rax,1)
+<                            0x84, 0x00, 0x00, 0x00,
+<                            0x00, 0x00 };
+<   const char nop11[11] = { 0x66, 0x66, 0x2e, 0x0f, // data16
+<                            0x1f, 0x84, 0x00, 0x00, // nopw %cs:0L(%rax,%rax,1)
+<                            0x00, 0x00, 0x00 };
+<   const char nop12[12] = { 0x66, 0x66, 0x66, 0x2e, // data16; data16
+<                            0x0f, 0x1f, 0x84, 0x00, // nopw %cs:0L(%rax,%rax,1)
+<                            0x00, 0x00, 0x00, 0x00 };
+<   const char nop13[13] = { 0x66, 0x66, 0x66, 0x66, // data16; data16; data16
+<                            0x2e, 0x0f, 0x1f, 0x84, // nopw %cs:0L(%rax,%rax,1)
+<                            0x00, 0x00, 0x00, 0x00,
+<                            0x00 };
+<   const char nop14[14] = { 0x66, 0x66, 0x66, 0x66, // data16; data16; data16
+<                            0x66, 0x2e, 0x0f, 0x1f, // data16
+<                            0x84, 0x00, 0x00, 0x00, // nopw %cs:0L(%rax,%rax,1)
+<                            0x00, 0x00 };
+<   const char nop15[15] = { 0x66, 0x66, 0x66, 0x66, // data16; data16; data16
+<                            0x66, 0x66, 0x2e, 0x0f, // data16; data16
+<                            0x1f, 0x84, 0x00, 0x00, // nopw %cs:0L(%rax,%rax,1)
+<                            0x00, 0x00, 0x00 };
+---
+>   const char nop1[1] = { '\x90' };                 // nop
+>   const char nop2[2] = { '\x66', '\x90' };         // xchg %ax %ax
+>   const char nop3[3] = { '\x0f', '\x1f', '\x00' }; // nop (%rax)
+>   const char nop4[4] = { '\x0f', '\x1f', '\x40',   // nop 0(%rax)
+>   			 '\x00'};
+>   const char nop5[5] = { '\x0f', '\x1f', '\x44',   // nop 0(%rax,%rax,1)
+> 			 '\x00', '\x00' };
+>   const char nop6[6] = { '\x66', '\x0f', '\x1f',   // nopw 0(%rax,%rax,1)
+>   			 '\x44', '\x00', '\x00' };
+>   const char nop7[7] = { '\x0f', '\x1f', '\x80',   // nopl 0L(%rax)
+>   			 '\x00', '\x00', '\x00',
+> 			 '\x00' };
+>   const char nop8[8] = { '\x0f', '\x1f', '\x84',   // nopl 0L(%rax,%rax,1)
+>   			 '\x00', '\x00', '\x00',
+> 			 '\x00', '\x00' };
+>   const char nop9[9] = { '\x66', '\x0f', '\x1f',   // nopw 0L(%rax,%rax,1)
+>   			 '\x84', '\x00', '\x00',
+> 			 '\x00', '\x00', '\x00' };
+>   const char nop10[10] = { '\x66', '\x2e', '\x0f', // nopw %cs:0L(%rax,%rax,1)
+>   			   '\x1f', '\x84', '\x00',
+> 			   '\x00', '\x00', '\x00',
+> 			   '\x00' };
+>   const char nop11[11] = { '\x66', '\x66', '\x2e', // data16
+>   			   '\x0f', '\x1f', '\x84', // nopw %cs:0L(%rax,%rax,1)
+> 			   '\x00', '\x00', '\x00',
+> 			   '\x00', '\x00' };
+>   const char nop12[12] = { '\x66', '\x66', '\x66', // data16; data16
+>   			   '\x2e', '\x0f', '\x1f', // nopw %cs:0L(%rax,%rax,1)
+> 			   '\x84', '\x00', '\x00',
+> 			   '\x00', '\x00', '\x00' };
+>   const char nop13[13] = { '\x66', '\x66', '\x66', // data16; data16; data16
+>   			   '\x66', '\x2e', '\x0f', // nopw %cs:0L(%rax,%rax,1)
+> 			   '\x1f', '\x84', '\x00',
+> 			   '\x00', '\x00', '\x00',
+>                            '\x00' };
+>   const char nop14[14] = { '\x66', '\x66', '\x66', // data16; data16; data16
+>   			   '\x66', '\x66', '\x2e', // data16
+> 			   '\x0f', '\x1f', '\x84', // nopw %cs:0L(%rax,%rax,1)
+> 			   '\x00', '\x00', '\x00',
+>                            '\x00', '\x00' };
+>   const char nop15[15] = { '\x66', '\x66', '\x66', // data16; data16; data16
+>   			   '\x66', '\x66', '\x66', // data16; data16
+> 			   '\x2e', '\x0f', '\x1f', // nopw %cs:0L(%rax,%rax,1)
+> 			   '\x84', '\x00', '\x00',
+>                            '\x00', '\x00', '\x00' };
+Index: gold/testsuite/Makefile.in
+===================================================================
+RCS file: /cvs/src/src/gold/testsuite/Makefile.in,v
+retrieving revision 1.191.2.2
+retrieving revision 1.191.2.3
+diff -r1.191.2.2 -r1.191.2.3
+1846a1847,1848
+> GOLD_LDADD = @GOLD_LDADD@
+> GOLD_LDFLAGS = @GOLD_LDFLAGS@
+Index: gold/testsuite/plugin_test_2.sh
+===================================================================
+RCS file: /cvs/src/src/gold/testsuite/plugin_test_2.sh,v
+retrieving revision 1.2
+retrieving revision 1.2.8.1
+diff -r1.2 -r1.2.8.1
+48c48
+< check plugin_test_2.err "two_file_test_1.syms: _Z4f13iv: PREVAILING_DEF_REG"
+---
+> check plugin_test_2.err "two_file_test_1.syms: _Z4f13iv: PREVAILING_DEF_IRONLY_EXP"
+Index: gold/testsuite/script_test_2.t
+===================================================================
+RCS file: /cvs/src/src/gold/testsuite/script_test_2.t,v
+retrieving revision 1.3
+retrieving revision 1.3.14.1
+diff -r1.3 -r1.3.14.1
+52c52
+<     . = . + 4;
+---
+>     . = 60;
+Index: include/ChangeLog
+===================================================================
+RCS file: /cvs/src/src/include/ChangeLog,v
+retrieving revision 1.549.2.2
+retrieving revision 1.549.2.3
+diff -r1.549.2.2 -r1.549.2.3
+0a1,8
+> 2011-12-19  Chung-Lin Tang  <cltang@codesourcery.com>
+> 
+> 	Backport from mainline:
+> 
+> 	2011-12-19  Chung-Lin Tang  <cltang@codesourcery.com>
+> 
+> 	* elf/mips.h (elf_mips_reloc_type): Add R_MIPS16_TLS_* entries.
+> 
+Index: include/elf/mips.h
+===================================================================
+RCS file: /cvs/src/src/include/elf/mips.h,v
+retrieving revision 1.45
+retrieving revision 1.45.2.1
+diff -r1.45 -r1.45.2.1
+101c101,108
+<   FAKE_RELOC (R_MIPS16_max, 106)
+---
+>   RELOC_NUMBER (R_MIPS16_TLS_GD, 106)
+>   RELOC_NUMBER (R_MIPS16_TLS_LDM, 107)
+>   RELOC_NUMBER (R_MIPS16_TLS_DTPREL_HI16, 108)
+>   RELOC_NUMBER (R_MIPS16_TLS_DTPREL_LO16, 109)
+>   RELOC_NUMBER (R_MIPS16_TLS_GOTTPREL, 110)
+>   RELOC_NUMBER (R_MIPS16_TLS_TPREL_HI16, 111)
+>   RELOC_NUMBER (R_MIPS16_TLS_TPREL_LO16, 112)
+>   FAKE_RELOC (R_MIPS16_max, 113)
+Index: ld/ChangeLog
+===================================================================
+RCS file: /cvs/src/src/ld/ChangeLog,v
+retrieving revision 1.2373.2.8
+retrieving revision 1.2373.2.9
+diff -r1.2373.2.8 -r1.2373.2.9
+0a1,5
+> 2011-12-20  Joseph Myers  <joseph@codesourcery.com>
+> 
+> 	* emulparams/elf32bmip.sh (OTHER_SECTIONS): Put .mdebug.* and
+> 	.gcc_compiled_long* sections at address 0.
+> 
+Index: ld/emulparams/elf32bmip.sh
+===================================================================
+RCS file: /cvs/src/src/ld/emulparams/elf32bmip.sh,v
+retrieving revision 1.17
+retrieving revision 1.17.14.1
+diff -r1.17 -r1.17.14.1
+67,74c67,74
+<   .mdebug.abi32 : { KEEP(*(.mdebug.abi32)) }
+<   .mdebug.abiN32 : { KEEP(*(.mdebug.abiN32)) }
+<   .mdebug.abi64 : { KEEP(*(.mdebug.abi64)) }
+<   .mdebug.abiO64 : { KEEP(*(.mdebug.abiO64)) }
+<   .mdebug.eabi32 : { KEEP(*(.mdebug.eabi32)) }
+<   .mdebug.eabi64 : { KEEP(*(.mdebug.eabi64)) }
+<   .gcc_compiled_long32 : { KEEP(*(.gcc_compiled_long32)) }
+<   .gcc_compiled_long64 : { KEEP(*(.gcc_compiled_long64)) }
+---
+>   .mdebug.abi32 0 : { KEEP(*(.mdebug.abi32)) }
+>   .mdebug.abiN32 0 : { KEEP(*(.mdebug.abiN32)) }
+>   .mdebug.abi64 0 : { KEEP(*(.mdebug.abi64)) }
+>   .mdebug.abiO64 0 : { KEEP(*(.mdebug.abiO64)) }
+>   .mdebug.eabi32 0 : { KEEP(*(.mdebug.eabi32)) }
+>   .mdebug.eabi64 0 : { KEEP(*(.mdebug.eabi64)) }
+>   .gcc_compiled_long32 0 : { KEEP(*(.gcc_compiled_long32)) }
+>   .gcc_compiled_long64 0 : { KEEP(*(.gcc_compiled_long64)) }
+Index: ld/testsuite/ChangeLog
+===================================================================
+RCS file: /cvs/src/src/ld/testsuite/ChangeLog,v
+retrieving revision 1.1460.2.10
+retrieving revision 1.1460.2.12
+diff -r1.1460.2.10 -r1.1460.2.12
+0a1,19
+> 2012-01-10  H.J. Lu  <hongjiu.lu@intel.com>
+> 
+> 	Backport from mainline:
+> 	PR ld/13581
+> 	* ld-x86-64/ilp32-4.s: New.
+> 	* ld-x86-64/ilp32-10.d: Likewise.
+> 	* ld-x86-64/ilp32-10.s: Likewise.
+> 
+> 	* ld-x86-64/ilp32-4.d: Adjusted.
+> 	* ld-x86-64/ilp32-5.d: Likewise.
+> 	* ld-x86-64/ilp32-5.s: Likewise.
+> 
+> 	* ld-x86-64/x86-64.exp: Run ilp32-10.
+> 
+> 2011-12-01  Hans-Peter Nilsson  <hp@axis.com>
+> 
+> 	* ld-cris/pic-gc-72.d: Revert last change to adjust for reverted
+> 	cause for last change.
+> 
+Index: ld/testsuite/ld-cris/pic-gc-72.d
+===================================================================
+RCS file: /cvs/src/src/ld/testsuite/ld-cris/pic-gc-72.d,v
+retrieving revision 1.1.8.1
+retrieving revision 1.1.8.2
+diff -r1.1.8.1 -r1.1.8.2
+22c22
+<  016e 0f050f05                             .*
+---
+>  0188 0f050f05                             .*
+24d23
+<  2174 .*
+27c26
+<  21cc 74210000 00000000 00000000           .*
+---
+>  21e4 8c210000 00000000 00000000           .*
+29c28
+<  21d8 00000000                             .*
+---
+>  21f0 00000000                             .*
+Index: ld/testsuite/ld-x86-64/ilp32-4.d
+===================================================================
+RCS file: /cvs/src/src/ld/testsuite/ld-x86-64/ilp32-4.d,v
+retrieving revision 1.4
+retrieving revision 1.4.2.1
+diff -r1.4 -r1.4.2.1
+1d0
+< #source: start.s
+6c5
+< There are 10 section headers, starting at offset 0x22c:
+---
+> There are 9 section headers, starting at offset 0x1d8:
+11,19c10,17
+<   \[ 1\] .hash             HASH            00000094 000094 000030 04   A  2   0  4
+<   \[ 2\] .dynsym           DYNSYM          000000c4 0000c4 000070 10   A  3   2  4
+<   \[ 3\] .dynstr           STRTAB          00000134 000134 00001d 00   A  0   0  1
+<   \[ 4\] .rela.dyn         RELA            00000154 000154 00000c 0c   A  2   0  4
+<   \[ 5\] .text             PROGBITS        00000160 000160 000005 00  AX  0   0  4
+<   \[ 6\] .dynamic          DYNAMIC         00200168 000168 000078 08  WA  3   0  4
+<   \[ 7\] .shstrtab         STRTAB          00000000 0001e0 00004a 00      0   0  1
+<   \[ 8\] .symtab           SYMTAB          00000000 0003bc 0000e0 10      9   9  4
+<   \[ 9\] .strtab           STRTAB          00000000 00049c 000043 00      0   0  1
+---
+>   \[ 1\] .hash             HASH            00000094 000094 00002c 04   A  2   0  4
+>   \[ 2\] .dynsym           DYNSYM          000000c0 0000c0 000060 10   A  3   2  4
+>   \[ 3\] .dynstr           STRTAB          00000120 000120 000019 00   A  0   0  1
+>   \[ 4\] .text             PROGBITS        0000013c 00013c 000001 00  AX  0   0  4
+>   \[ 5\] .dynamic          DYNAMIC         00200140 000140 000058 08  WA  3   0  4
+>   \[ 6\] .shstrtab         STRTAB          00000000 000198 000040 00      0   0  1
+>   \[ 7\] .symtab           SYMTAB          00000000 000340 0000c0 10      8   8  4
+>   \[ 8\] .strtab           STRTAB          00000000 000400 00003f 00      0   0  1
+25c23
+< Dynamic section at offset 0x168 contains 10 entries:
+---
+> Dynamic section at offset 0x140 contains 6 entries:
+28,30c26,28
+<  0x00000005 \(STRTAB\)                     0x134
+<  0x00000006 \(SYMTAB\)                     0xc4
+<  0x0000000a \(STRSZ\)                      29 \(bytes\)
+---
+>  0x00000005 \(STRTAB\)                     0x120
+>  0x00000006 \(SYMTAB\)                     0xc0
+>  0x0000000a \(STRSZ\)                      25 \(bytes\)
+32,35d29
+<  0x00000007 \(RELA\)                       0x154
+<  0x00000008 \(RELASZ\)                     12 \(bytes\)
+<  0x00000009 \(RELAENT\)                    12 \(bytes\)
+<  0x00000016 \(TEXTREL\)                    0x0
+Index: ld/testsuite/ld-x86-64/ilp32-5.d
+===================================================================
+RCS file: /cvs/src/src/ld/testsuite/ld-x86-64/ilp32-5.d,v
+retrieving revision 1.2
+retrieving revision 1.2.2.1
+diff -r1.2 -r1.2.2.1
+7c7
+< [0-9a-f]+ +[0-9a-f]+ +R_X86_64_PC32 +[0-9a-f]+ +foo - 4
+---
+> [0-9a-f]+ +[0-9a-f]+ +R_X86_64_GLOB_DAT +[0-9a-f]+ +foo \+ 0
+Index: ld/testsuite/ld-x86-64/ilp32-5.s
+===================================================================
+RCS file: /cvs/src/src/ld/testsuite/ld-x86-64/ilp32-5.s,v
+retrieving revision 1.1
+retrieving revision 1.1.2.1
+diff -r1.1 -r1.1.2.1
+3c3
+< 	mov foo(%rip), %rax
+---
+> 	mov foo@GOTPCREL(%rip), %rax
+Index: ld/testsuite/ld-x86-64/x86-64.exp
+===================================================================
+RCS file: /cvs/src/src/ld/testsuite/ld-x86-64/x86-64.exp,v
+retrieving revision 1.37
+retrieving revision 1.37.2.1
+diff -r1.37 -r1.37.2.1
+209a210
+> run_dump_test "ilp32-10"
+Index: opcodes/ChangeLog
+===================================================================
+RCS file: /cvs/src/src/opcodes/ChangeLog,v
+retrieving revision 1.1759.2.2
+retrieving revision 1.1759.2.3
+diff -r1.1759.2.2 -r1.1759.2.3
+0a1,5
+> 2011-11-25  Pierre Muller  <muller@ics.u-strasbg.fr>
+> 
+> 	* mips-dis.c (print_insn_micromips): Rename local variable iprintf
+> 	to infprintf to avoid shadow warning.
+> 
+Index: opcodes/mips-dis.c
+===================================================================
+RCS file: /cvs/src/src/opcodes/mips-dis.c,v
+retrieving revision 1.86
+retrieving revision 1.86.2.1
+diff -r1.86 -r1.86.2.1
+2263c2263
+<   const fprintf_ftype iprintf = info->fprintf_func;
+---
+>   const fprintf_ftype infprintf = info->fprintf_func;
+2310c2310
+< 	  iprintf (is, "micromips 0x%x", higher);
+---
+> 	  infprintf (is, "micromips 0x%x", higher);
+2323c2323
+< 	  iprintf (is, "micromips 0x%x", higher);
+---
+> 	  infprintf (is, "micromips 0x%x", higher);
+2331c2331
+<       iprintf (is, "0x%x%04x (48-bit insn)", higher, insn);
+---
+>       infprintf (is, "0x%x%04x (48-bit insn)", higher, insn);
+2344c2344
+< 	  iprintf (is, "micromips 0x%x", higher);
+---
+> 	  infprintf (is, "micromips 0x%x", higher);
+2374c2374
+< 	  iprintf (is, "%s", op->name);
+---
+> 	  infprintf (is, "%s", op->name);
+2376c2376
+< 	    iprintf (is, "\t");
+---
+> 	    infprintf (is, "\t");
+2385c2385
+< 		  iprintf (is, "%c", *s);
+---
+> 		  infprintf (is, "%c", *s);
+2392c2392
+< 		  iprintf (is, "%d", delta);
+---
+> 		  infprintf (is, "%d", delta);
+2396c2396
+< 		  iprintf (is, "0x%lx", GET_OP (insn, STYPE));
+---
+> 		  infprintf (is, "0x%lx", GET_OP (insn, STYPE));
+2400c2400
+< 		  iprintf (is, "0x%lx", GET_OP (insn, SHAMT));
+---
+> 		  infprintf (is, "0x%lx", GET_OP (insn, SHAMT));
+2404c2404
+< 		  iprintf (is, "0x%lx", GET_OP (insn, 3BITPOS));
+---
+> 		  infprintf (is, "0x%lx", GET_OP (insn, 3BITPOS));
+2408c2408
+< 		  iprintf (is, "0x%lx", GET_OP (insn, TRAP));
+---
+> 		  infprintf (is, "0x%lx", GET_OP (insn, TRAP));
+2415c2415
+< 		  iprintf (is, "%d", delta);
+---
+> 		  infprintf (is, "%d", delta);
+2436c2436
+< 		  iprintf (is, "%s", mips_gpr_names[GET_OP (insn, RS)]);
+---
+> 		  infprintf (is, "%s", mips_gpr_names[GET_OP (insn, RS)]);
+2440c2440
+< 		  iprintf (is, "0x%lx", GET_OP (insn, CODE));
+---
+> 		  infprintf (is, "0x%lx", GET_OP (insn, CODE));
+2444c2444
+< 		  iprintf (is, "%s", mips_gpr_names[GET_OP (insn, RD)]);
+---
+> 		  infprintf (is, "%s", mips_gpr_names[GET_OP (insn, RD)]);
+2448c2448
+< 		  iprintf (is, "0x%lx", GET_OP (insn, PREFX));
+---
+> 		  infprintf (is, "0x%lx", GET_OP (insn, PREFX));
+2453c2453
+< 		  iprintf (is, "0x%lx", GET_OP (insn, IMMEDIATE));
+---
+> 		  infprintf (is, "0x%lx", GET_OP (insn, IMMEDIATE));
+2459c2459
+< 		  iprintf (is, "%d", delta);
+---
+> 		  infprintf (is, "%d", delta);
+2463c2463
+< 		  iprintf (is, "0x%x", GET_OP (insn, CACHE));
+---
+> 		  infprintf (is, "0x%x", GET_OP (insn, CACHE));
+2475c2475
+< 			  iprintf (is, "%s", mips_gpr_names[16]);
+---
+> 			  infprintf (is, "%s", mips_gpr_names[16]);
+2477c2477
+< 			  iprintf (is, "%s-%s",
+---
+> 			  infprintf (is, "%s-%s",
+2481c2481
+< 			  iprintf (is, "%s-%s,%s",
+---
+> 			  infprintf (is, "%s-%s,%s",
+2486c2486
+< 			  iprintf (is, "UNKNOWN");
+---
+> 			  infprintf (is, "UNKNOWN");
+2492c2492
+< 			  iprintf (is, "%s", mips_gpr_names[31]);
+---
+> 			  infprintf (is, "%s", mips_gpr_names[31]);
+2494c2494
+< 			  iprintf (is, ",%s", mips_gpr_names[31]);
+---
+> 			  infprintf (is, ",%s", mips_gpr_names[31]);
+2507c2507
+< 		  iprintf (is, "0x%lx", GET_OP (insn, CODE2));
+---
+> 		  infprintf (is, "0x%lx", GET_OP (insn, CODE2));
+2512c2512
+< 		  iprintf (is, "%s", mips_gpr_names[GET_OP (insn, RT)]);
+---
+> 		  infprintf (is, "%s", mips_gpr_names[GET_OP (insn, RT)]);
+2516c2516
+< 		  iprintf (is, "%s", mips_gpr_names[GET_OP (insn, RS3)]);
+---
+> 		  infprintf (is, "%s", mips_gpr_names[GET_OP (insn, RS3)]);
+2520c2520
+< 		  iprintf (is, "%s", mips_gpr_names[0]);
+---
+> 		  infprintf (is, "%s", mips_gpr_names[0]);
+2524c2524
+< 		  iprintf (is, "0x%lx", GET_OP (insn, CODE10));
+---
+> 		  infprintf (is, "0x%lx", GET_OP (insn, CODE10));
+2528c2528
+< 		  iprintf (is, "0x%lx", GET_OP (insn, COPZ));
+---
+> 		  infprintf (is, "0x%lx", GET_OP (insn, COPZ));
+2532c2532
+< 		  iprintf (is, "%s", mips_fpr_names[GET_OP (insn, FD)]);
+---
+> 		  infprintf (is, "%s", mips_fpr_names[GET_OP (insn, FD)]);
+2543c2543
+< 		  iprintf (is, "$%ld", GET_OP (insn, RT));
+---
+> 		  infprintf (is, "$%ld", GET_OP (insn, RT));
+2562c2562
+< 		      iprintf (is, "%s", mips_cp0_names[GET_OP (insn, RS)]);
+---
+> 		      infprintf (is, "%s", mips_cp0_names[GET_OP (insn, RS)]);
+2565c2565
+< 		      iprintf (is, "$%ld", GET_OP (insn, RS));
+---
+> 		      infprintf (is, "$%ld", GET_OP (insn, RS));
+2571c2571
+< 		  iprintf (is, "%ld", GET_OP (insn, SEL));
+---
+> 		  infprintf (is, "%ld", GET_OP (insn, SEL));
+2575c2575
+< 		  iprintf (is, "%s", mips_hwr_names[GET_OP (insn, RS)]);
+---
+> 		  infprintf (is, "%s", mips_hwr_names[GET_OP (insn, RS)]);
+2579c2579
+< 		  iprintf (is, "$fcc%ld", GET_OP (insn, CCC));
+---
+> 		  infprintf (is, "$fcc%ld", GET_OP (insn, CCC));
+2583c2583
+< 		  iprintf (is,
+---
+> 		  infprintf (is,
+2590c2590
+< 		  iprintf (is, "%s", mips_fpr_names[GET_OP (insn, FR)]);
+---
+> 		  infprintf (is, "%s", mips_fpr_names[GET_OP (insn, FR)]);
+2595c2595
+< 		  iprintf (is, "%s", mips_fpr_names[GET_OP (insn, FS)]);
+---
+> 		  infprintf (is, "%s", mips_fpr_names[GET_OP (insn, FS)]);
+2599c2599
+< 		  iprintf (is, "%s", mips_fpr_names[GET_OP (insn, FT)]);
+---
+> 		  infprintf (is, "%s", mips_fpr_names[GET_OP (insn, FT)]);
+2609c2609
+< 		      iprintf (is, "0x%x", lsb);
+---
+> 		      infprintf (is, "0x%x", lsb);
+2614c2614
+< 		      iprintf (is, "0x%x", msb - lsb + 1);
+---
+> 		      infprintf (is, "0x%x", msb - lsb + 1);
+2620c2620
+< 		      iprintf (is, "0x%x", msbd + 1);
+---
+> 		      infprintf (is, "0x%x", msbd + 1);
+2640c2640
+< 			  iprintf (is, "%s", n->name);
+---
+> 			  infprintf (is, "%s", n->name);
+2642c2642
+< 			  iprintf (is, "$%d,%d", cp0reg, sel);
+---
+> 			  infprintf (is, "$%d,%d", cp0reg, sel);
+2648c2648
+< 		      iprintf (is, "0x%x", lsb);
+---
+> 		      infprintf (is, "0x%x", lsb);
+2653c2653
+< 		      iprintf (is, "0x%x", msb - lsb + 1);
+---
+> 		      infprintf (is, "0x%x", msb - lsb + 1);
+2658c2658
+< 		      iprintf (is, "0x%x", msbd + 1);
+---
+> 		      infprintf (is, "0x%x", msbd + 1);
+2663c2663
+< 		      iprintf (is,
+---
+> 		      infprintf (is,
+2677c2677
+< 		      iprintf (is, "%s", mips_gpr_names[28]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[28]);
+2682c2682
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2687c2687
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2692c2692
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2697c2697
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2703c2703
+< 		      iprintf (is, "%s", mips_gpr_names[lastregno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[lastregno]);
+2708c2708
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2713c2713
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2718c2718
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2722c2722
+< 		      iprintf (is, "%s", mips_gpr_names[GET_OP (insn, MJ)]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[GET_OP (insn, MJ)]);
+2727c2727
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2732c2732
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2737c2737
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2743c2743
+< 		      iprintf (is, "%s", mips_gpr_names[lastregno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[lastregno]);
+2748c2748
+< 		      iprintf (is, "%s", mips_gpr_names[regno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[regno]);
+2752c2752
+< 		      iprintf (is, "$pc");
+---
+> 		      infprintf (is, "$pc");
+2757c2757
+< 		      iprintf (is, "%s", mips_gpr_names[29]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[29]);
+2761c2761
+< 		      iprintf (is, "%s", mips_gpr_names[lastregno]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[lastregno]);
+2765c2765
+< 		      iprintf (is, "%s", mips_gpr_names[0]);
+---
+> 		      infprintf (is, "%s", mips_gpr_names[0]);
+2771c2771
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2776c2776
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2781c2781
+< 		      iprintf (is, "0x%lx", immed);
+---
+> 		      infprintf (is, "0x%lx", immed);
+2800c2800
+< 		      iprintf (is, "0x%x", immed);
+---
+> 		      infprintf (is, "0x%x", immed);
+2806c2806
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2811c2811
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2817c2817
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2822c2822
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2827c2827
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2833c2833
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2839c2839
+< 			iprintf (is, "%s,%s",
+---
+> 			infprintf (is, "%s,%s",
+2843c2843
+< 			iprintf (is, "%s-%s,%s",
+---
+> 			infprintf (is, "%s-%s,%s",
+2851c2851
+< 		      iprintf (is, "0x%x", immed);
+---
+> 		      infprintf (is, "0x%x", immed);
+2856c2856
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2863c2863
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2868c2868
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2873c2873
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2879c2879
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2888c2888
+< 		      iprintf (is, "%d", immed);
+---
+> 		      infprintf (is, "%d", immed);
+2893c2893
+< 		      iprintf (is,
+---
+> 		      infprintf (is,
+2903c2903
+< 		  iprintf (is,
+---
+> 		  infprintf (is,
+2940c2940
+<   iprintf (is, "0x%x", insn);
+---
+>   infprintf (is, "0x%x", insn);
