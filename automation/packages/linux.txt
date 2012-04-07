@@ -1,6 +1,6 @@
 name: linux
 full-name: Linux kernel
-version: "3.2"
+version: "3.2.13"
 project-url: http://www.kernel.org/
 
 The kernel is Linux _per se_ -- the core of the operating system.
