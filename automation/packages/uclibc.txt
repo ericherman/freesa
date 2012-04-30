@@ -1,5 +1,5 @@
 name: uclibc
-version: "0.9.33"
+version: "0.9.33.1"
 
 uClibc is a small C library designed expressly for situations in
 which glibc is too large.  That's the case when building tools
@@ -11,16 +11,6 @@ application code changes.  However, some of the features provided
 by uClibc are not fully implemented -- which means that even if a
 program compiles cleanly against uClibc, it may not work
 properly.
-
-The current 0.9.32 branch of uClibc contains several bugfixes,
-some of which are necessary to get it to build properly, so we
-apply the updates as a branch-update patch.  There's also a
-compilation problem that affects x86, so we backport the fix for
-that one as well.
-
-patches:
- - branch-update-20110611
- - fix-epoll-pwait-failure-1
 
 phase: full library
 
@@ -50,8 +40,6 @@ configure-commands:
  - echo 'RUNTIME_PREFIX="/"' >> .config
  - echo 'DEVEL_PREFIX="/usr"' >> .config
  - echo "ARCH_PARAM[ENDIANNESS]_ENDIAN=y" >> .config
- - echo "# ARCH_WANTS_PARAM[NOT_ENDIANNESS]_ENDIAN is not set" >> .config
- - echo "ARCH_WANTS_PARAM[ENDIANNESS]_ENDIAN=y" >> .config
  - make oldconfig
  - sed -i '/UCLIBC_EXTRA_CFLAGS/d' .config
  - bash -c 'echo UCLIBC_EXTRA_CFLAGS=\"-isystem 

@@ -24,7 +24,7 @@ all releases.  It's always a good idea to use all the updates
 from the maintenance branch.
 
 patches:
- - branch-update-20111210
+ - branch-update-20120420
 
 GNU binutils, like many toolchain components,  must be
 constructed from a directory outside the source directory.
