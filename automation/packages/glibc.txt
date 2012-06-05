@@ -139,7 +139,10 @@ test-commands:
 The +install_root+ is specified as +/+ for this installation
 because that causes the installation to occur directly in the
 prefix specified in configure, rather than a subdirectory of it.
-This winds up doing the right thing.
+This winds up doing the right thing.  In glibc 2.15, this got a
+little more complicated:  the installation winds up trying to
+clobber a system file when +install_root+ is set to +/+, so it's
+also necessary to specify +inst_vardbdir+.
 
 install-commands:
- - make install_root=/ install
+ - make install_root=/ inst_vardbdir=PARAM[TMPTOOLS]/var/db install
