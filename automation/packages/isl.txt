@@ -1,0 +1,20 @@
+name: Integer Set Library
+version: "0.10"
+project-url: http://www.kotnet.org/~skimo/isl/
+
+configuration-defaults:
+ - INSTALL_ISL: true
+ - ISL_PREFIX: /usr/local
+
+The project homepage describes isl as a library for manipulating
+sets and relations of integer points bounded by linear
+constraints.  The important thing for our purposes is that it is
+required in order to enable the Graphite loop optimizations in
+GCC.  It's also required for the CLooG library, and an older
+version (which cannot be used by GCC) is bundled with CLooG.
+
+If your system already has the correct version of isl installed,
+this step can be skipped.
+
+configure-commands:
+ - ./configure --with-gmp=PARAM[GMP_PREFIX] --prefix=PARAM[PPL_PREFIX]

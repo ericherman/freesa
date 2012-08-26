@@ -1,5 +1,5 @@
 name: Multiple Precision Complex library
-version: "0.9"
+version: "1.0"
 project-url: http://www.multiprecision.org/
 
 configuration-defaults:
@@ -19,4 +19,5 @@ If your system already has MPC installed, this step can be
 skipped.
 
 configure-commands:
- - ./configure --prefix=PARAM[MPC_PREFIX]
+ - ./configure --with-gmp=PARAM[GMP_PREFIX] --with-mpfr=PARAM[MPFR_PREFIX] 
+   --prefix=PARAM[MPC_PREFIX]
