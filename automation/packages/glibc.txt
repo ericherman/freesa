@@ -61,7 +61,7 @@ patches:
 
 phase: sysroot glibc
 
-This builds a compeltely standard sysroot libc.
+This builds a completely standard sysroot libc.
 
 build-dir: ../build-glibc-1
 
@@ -70,6 +70,7 @@ configure-commands:
  - echo "libc_cv_c_cleanup=yes" >> config.cache
  - echo "libc_cv_gnu89_inline=yes" >> config.cache
  - echo "libc_cv_ctors_header=yes" >> config.cache
+ - echo "libc_cv_ssp=no" >> config.cache
  - BUILD_CC="gcc" CC="PARAM[TARGET]-gcc" AR="PARAM[TARGET]-ar" 
       RANLIB="PARAM[TARGET]-ranlib" CFLAGS="PARAM[GLIBCFLAG]"
       PARAM[SOURCE_DIR]/configure --prefix=/usr
