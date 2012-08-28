@@ -1,6 +1,6 @@
 full-name: GNU libc
 name: glibc
-version: "2.15"
+version: "2.16"
 
 glibc is the standard C library produced as part of the GNU
 project.  It contains the implementation for all of the functions
@@ -58,8 +58,6 @@ script reports that cpuid.h exists but cannot be used.
 patches:
  - libgcc_eh-1
  - localedef_segfault-1
- - cflag-march-fix-1        ???
- - cpuid-1                  ???
 
 phase: sysroot glibc
 

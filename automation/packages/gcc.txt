@@ -1,6 +1,6 @@
 full-name: GNU Compiler Collection
 name: gcc
-version: "4.7.0"
+version: "4.7.1"
 project-url: http://gcc.gnu.org/
 
 GCC is the GNU Compiler Collection.  The most important compiler
@@ -65,6 +65,13 @@ clear to us whether or not those optimizations are particularly
 valuable, but we're certainly not worried about them for a
 cross-toolchain build.)
 
+Previous versions of PPL, probably before 0.12, included a
+separate "watchdog" library called PWL, and the gcc configure
+script has a check for that library.  In the 1.0 release of PPL,
+PWL has been integrated into the main library so no separate
+check is necessary.  The disable-pwl-check patch eliminates that
+check.
+
 Sources for the required libraries can be included in the GCC
 sources in directories named gmp, mpfr, and mpc; if they are,
 then they'll be built automatically along with gcc.  (We haven't
@@ -78,7 +85,13 @@ support.  For our cross-toolchain purposes, it's difficult to see
 how that kind of high-precision math would be useful. We just
 disable the libquadmath library altogether.
 
-No patches are strictly required for gcc.
+GCC's version checks for PPL and CLooG try to ensure that old
+versions of those libraries are in use.  Since we want to use the
+latest stable version of everything, we disable those version
+checks with a patch.
+
+patches:
+ - disable-pwl-check-1
 
 phase: static compiler
 
@@ -106,7 +119,8 @@ configure-commands:
      --disable-decimal-float --disable-libquadmath --disable-libgomp
      --disable-libmudflap --disable-libssp --disable-multilib
      --disable-nls --disable-shared --disable-threads --enable-languages=c
-     --with-newlib --without-headers 
+     --with-newlib --without-headers --disable-ppl-version-check
+     --enable-cloog-backend=isl --disable-cloog-version-check
 
 make-commands:
  - make all-gcc all-target-libgcc
@@ -137,6 +151,8 @@ configure-commands:
     --disable-multilib --disable-nls --enable-shared --disable-libquadmath
     --enable-languages=c,c++ --enable-__cxa_atexit
     --enable-c99 --enable-long-long --enable-threads=posix
+    --disable-ppl-version-check --enable-cloog-backend=isl
+    --disable-cloog-version-check
 
 make-commands:
  - make AS_FOR_TARGET="PARAM[TARGET]-as" LD_FOR_TARGET="PARAM[TARGET]-ld"
