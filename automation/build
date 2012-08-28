@@ -1,6 +1,7 @@
 #!/bin/bash
 
-export PATH=/tmp/cross-tools/bin:/opt/gcc440/bin:$PATH
+export LD_LIBRARY_PATH=/opt/gcc471/lib
+export PATH=/tmp/cross-tools/bin:/opt/gcc471/bin:$PATH
 export LC_ALL=POSIX
 unset CFLAGS
 unset CXXFLAGS
