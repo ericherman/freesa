@@ -57,6 +57,7 @@ script reports that cpuid.h exists but cannot be used.
 
 patches:
  - libgcc_eh-1
+ - libgcc_s-1
  - localedef_segfault-1
 
 phase: sysroot glibc
