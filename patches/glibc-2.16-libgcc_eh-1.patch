@@ -13,30 +13,22 @@ Description: Checks to see if libgcc_eh has been provided by gcc. If it has
              Rediffed for 2.12.2 by Brett Neumeier
              Rediffed for 2.14.1 by Brett Neumeier
              Rediffed for 2.15 by Brett Neumeier
+             Rediffed for 2.16 by Brett Neumeier
 
 ---
- Makeconfig     |   10 +++++++++-
+ Makeconfig     |    6 +++++-
  config.make.in |    1 +
- configure      |   26 ++++++++++++++++++++++++++
- configure.in   |   17 +++++++++++++++++
+ configure      |   28 ++++++++++++++++++++++++++++
+ configure.in   |   19 +++++++++++++++++++
  4 files changed, 53 insertions(+), 1 deletions(-)
 
 diff --git a/Makeconfig b/Makeconfig
-index 8195245..e4905f9 100644
+index 417fa50..06f24e5 100644
 --- a/Makeconfig
 +++ b/Makeconfig
-@@ -563,12 +563,20 @@ else
-   libunwind = -lunwind
+@@ -523,7 +523,11 @@ else
  endif
- ifneq ($(have-as-needed),yes)
-+ifneq ($(have-cc-with-libgcc_eh),yes)
-+ libgcc_eh := $(libunwind)
-+else
-  libgcc_eh := -lgcc_eh $(libunwind)
-+endif
- else
-  libgcc_eh := -Wl,--as-needed -lgcc_s$(libgcc_s_suffix) $(libunwind) -Wl,--no-as-needed
- endif
+ libgcc_eh := -Wl,--as-needed -lgcc_s $(libunwind) -Wl,--no-as-needed
  gnulib := -lgcc $(libgcc_eh)
 -static-gnulib := -lgcc -lgcc_eh $(libunwind)
 +ifneq ($(have-cc-with-libgcc_eh),yes)
@@ -46,12 +38,12 @@ index 8195245..e4905f9 100644
 +endif
  libc.so-gnulib := -lgcc
  endif
- ifeq ($(elf),yes)
+ +preinit = $(addprefix $(csu-objpfx),crti.o)
 diff --git a/config.make.in b/config.make.in
-index d2baf6d..193393b 100644
+index 65410ab..764e5f0 100644
 --- a/config.make.in
 +++ b/config.make.in
-@@ -66,6 +66,7 @@ have-selinux = @have_selinux@
+@@ -65,6 +65,7 @@ have-selinux = @have_selinux@
  have-libaudit = @have_libaudit@
  have-libcap = @have_libcap@
  have-cc-with-libunwind = @libc_cv_cc_with_libunwind@
@@ -60,24 +52,24 @@ index d2baf6d..193393b 100644
  bind-now = @bindnow@
  have-hash-style = @libc_cv_hashstyle@
 diff --git a/configure b/configure
-index c22ed38..5852fe8 100755
+index aa7869f..40b621b 100755
 --- a/configure
 +++ b/configure
-@@ -656,6 +656,7 @@ ASFLAGS_config
- libc_cv_as_needed
- libc_cv_libgcc_s_suffix
+@@ -617,6 +617,7 @@ libc_cv_z_execstack
+ libc_cv_z_combreloc
+ ASFLAGS_config
  libc_cv_Bgroup
 +libc_cv_cc_with_libgcc_eh
  libc_cv_cc_with_libunwind
  VERSIONING
  BISON
-@@ -6255,6 +6256,31 @@ $as_echo "$libc_cv_cc_with_libunwind" >&6; }
+@@ -6182,6 +6183,33 @@ if test $libc_cv_cc_with_libunwind = yes; then
  
-   fi
+ fi
  
 +  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to link against libgcc_eh" >&5
 +$as_echo_n "checking whether to link against libgcc_eh... " >&6; }
-+if test "${libc_cv_cc_with_libgcc_eh+set}" = set; then :
++if ${libc_cv_cc_with_libgcc_eh+:} false; then :
 +  $as_echo_n "(cached) " >&6
 +else
 +
@@ -100,16 +92,18 @@ index c22ed38..5852fe8 100755
 +
 +  fi
 +
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for -z nodelete option" >&5
++
++
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for -z nodelete option" >&5
  $as_echo_n "checking for -z nodelete option... " >&6; }
  if ${libc_cv_z_nodelete+:} false; then :
 diff --git a/configure.in b/configure.in
-index 2c4fc97..debdf1a 100644
+index 5028e64..a4a5277 100644
 --- a/configure.in
 +++ b/configure.in
-@@ -1508,6 +1508,23 @@ EOF
-     AC_DEFINE(HAVE_CC_WITH_LIBUNWIND)
-   fi
+@@ -1416,6 +1416,25 @@ if test $libc_cv_cc_with_libunwind = yes; then
+   AC_DEFINE(HAVE_CC_WITH_LIBUNWIND)
+ fi
  
 +  AC_CACHE_CHECK(whether to link against libgcc_eh,
 +                 libc_cv_cc_with_libgcc_eh, [
@@ -128,9 +122,11 @@ index 2c4fc97..debdf1a 100644
 +    AC_DEFINE(HAVE_CC_WITH_LIBGCC_EH)
 +  fi
 +
-   AC_CACHE_CHECK(for -z nodelete option,
- 		 libc_cv_z_nodelete, [dnl
-   cat > conftest.c <<EOF
++
++
+ AC_CACHE_CHECK(for -z nodelete option,
+ 	       libc_cv_z_nodelete, [dnl
+ cat > conftest.c <<EOF
 -- 
-1.7.7.3
+1.7.3.2
 

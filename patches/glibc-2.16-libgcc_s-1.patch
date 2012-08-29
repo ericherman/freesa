@@ -1,0 +1,119 @@
+Submitted By: Brett Neumeier
+Date: 2012-08-28
+Initial Package Version: 2.16
+Origin: Brett Neumeier
+Upstream Status: Not submitted
+Description: Checks to see if libgcc_s has been provided by gcc. If it has
+             the glibc will attempt to link to it.
+
+---
+ Makeconfig     |    7 ++++++-
+ config.make.in |    1 +
+ configure      |   24 ++++++++++++++++++++++++
+ configure.in   |   17 ++++++++++++++++-
+ 4 files changed, 47 insertions(+), 2 deletions(-)
+
+diff --git a/Makeconfig b/Makeconfig
+index 06f24e5..2f1d01c 100644
+--- a/Makeconfig
++++ b/Makeconfig
+@@ -521,7 +521,12 @@ ifneq ($(have-cc-with-libunwind),yes)
+ else
+   libunwind = -lunwind
+ endif
+-libgcc_eh := -Wl,--as-needed -lgcc_s $(libunwind) -Wl,--no-as-needed
++ifneq ($(have-cc-with-libgcc_s),yes)
++  libgccs =
++else
++  libgccs = -lgcc_s
++endif
++libgcc_eh := -Wl,--as-needed $(libgccs) $(libunwind) -Wl,--no-as-needed
+ gnulib := -lgcc $(libgcc_eh)
+ ifneq ($(have-cc-with-libgcc_eh),yes)
+  static-gnulib := -lgcc $(libunwind)
+diff --git a/config.make.in b/config.make.in
+index 764e5f0..7e5b386 100644
+--- a/config.make.in
++++ b/config.make.in
+@@ -66,6 +66,7 @@ have-libaudit = @have_libaudit@
+ have-libcap = @have_libcap@
+ have-cc-with-libunwind = @libc_cv_cc_with_libunwind@
+ have-cc-with-libgcc_eh = @libc_cv_cc_with_libgcc_eh@
++have-cc-with-libgcc_s = @libc_cv_cc_with_libgcc_s@
+ fno-unit-at-a-time = @fno_unit_at_a_time@
+ bind-now = @bindnow@
+ have-hash-style = @libc_cv_hashstyle@
+diff --git a/configure b/configure
+index 40b621b..768f8cf 100755
+--- a/configure
++++ b/configure
+@@ -617,6 +617,7 @@ libc_cv_z_execstack
+ libc_cv_z_combreloc
+ ASFLAGS_config
+ libc_cv_Bgroup
++libc_cv_cc_with_libgcc_s
+ libc_cv_cc_with_libgcc_eh
+ libc_cv_cc_with_libunwind
+ VERSIONING
+@@ -6208,7 +6209,30 @@ $as_echo "$libc_cv_cc_with_libgcc_eh" >&6; }
+ 
+   fi
+ 
++  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to link against libgcc_s" >&5
++$as_echo_n "checking whether to link against libgcc_s... " >&6; }
++if ${libc_cv_cc_with_libgcc_s+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
+ 
++    cat > conftest.c <<EOF
++int main (void) { return 0; }
++EOF
++    if ${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -static -o conftest \
++       conftest.c -v 2>&1 >/dev/null | grep -q " -lgcc_s "; then
++      libc_cv_cc_with_libgcc_s=yes
++    else
++      libc_cv_cc_with_libgcc_s=no
++    fi
++    rm -f conftest*
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_cc_with_libgcc_s" >&5
++$as_echo "$libc_cv_cc_with_libgcc_s" >&6; }
++
++  if test $libc_cv_cc_with_libgcc_s = yes; then
++    $as_echo "#define HAVE_CC_WITH_LIBGCC_S 1" >>confdefs.h
++
++  fi
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for -z nodelete option" >&5
+ $as_echo_n "checking for -z nodelete option... " >&6; }
+diff --git a/configure.in b/configure.in
+index a4a5277..b855468 100644
+--- a/configure.in
++++ b/configure.in
+@@ -1433,7 +1433,22 @@ EOF
+     AC_DEFINE(HAVE_CC_WITH_LIBGCC_EH)
+   fi
+ 
+-
++  AC_CACHE_CHECK(whether to link against libgcc_s,
++                 libc_cv_cc_with_libgcc_s, [
++    cat > conftest.c <<EOF
++int main (void) { return 0; }
++EOF
++    if ${CC-cc} $CFLAGS $CPPFLAGS $LDFLAGS -static -o conftest \
++       conftest.c -v 2>&1 >/dev/null | grep -q " -lgcc_s "; then
++      libc_cv_cc_with_libgcc_s=yes
++    else
++      libc_cv_cc_with_libgcc_s=no
++    fi
++    rm -f conftest*])
++  AC_SUBST(libc_cv_cc_with_libgcc_s)
++  if test $libc_cv_cc_with_libgcc_s = yes; then
++    AC_DEFINE(HAVE_CC_WITH_LIBGCC_S)
++  fi
+ 
+ AC_CACHE_CHECK(for -z nodelete option,
+ 	       libc_cv_z_nodelete, [dnl
+-- 
+1.7.3.2
+

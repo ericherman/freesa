@@ -14,16 +14,17 @@ Description: Fixes Segfault when using localdef.
              Respun for 2.12.2 by Brett Neumeier
              Respun for 2.14.1 by Brett Neumeier
              Respun for 2.15 by Brett Neumeier
+             Respun for 2.16 by Brett Neumeier
 
 ---
  locale/programs/3level.h |   36 ++++++++++++++++++++++++++++++++++++
  1 files changed, 36 insertions(+), 0 deletions(-)
 
 diff --git a/locale/programs/3level.h b/locale/programs/3level.h
-index cce925e..6bf8b84 100644
+index 6297720..4c6f4e1 100644
 --- a/locale/programs/3level.h
 +++ b/locale/programs/3level.h
-@@ -203,6 +203,42 @@ CONCAT(TABLE,_iterate) (struct TABLE *t,
+@@ -202,6 +202,42 @@ CONCAT(TABLE,_iterate) (struct TABLE *t,
  	}
      }
  }
