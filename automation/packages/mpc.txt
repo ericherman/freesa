@@ -1,5 +1,5 @@
 name: Multiple Precision Complex library
-version: "1.0"
+version: "1.0.1"
 project-url: http://www.multiprecision.org/
 
 configuration-defaults:

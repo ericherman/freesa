@@ -1,6 +1,6 @@
 full-name: GNU binutils
 name: binutils
-version: "2.22"
+version: "2.23.2"
 
 The GNU binary utilities are a collection of programs and
 libraries that produce and operate on object files.  The primary
@@ -24,9 +24,9 @@ all releases.  It's always a good idea to use all the updates
 from the maintenance branch.
 
 patches:
- - branch-update-20120420
+ - branch-update-20130817
 
-GNU binutils, like many toolchain components,  must be
+GNU binutils, like many toolchain components,  should be
 constructed from a directory outside the source directory.
 
 build-dir: ../build-binutils
@@ -50,7 +50,7 @@ configure-commands:
      --with-lib-path=PARAM[TMPTOOLS]/lib
  - make configure-host
 
-test-commands:
+test-commands: (none)
 
 install-commands:
  - make install

@@ -1,5 +1,5 @@
 name: GNU MP Library
-version: "5.0.5"
+version: "5.1.2"
 project-url: http://gmplib.org/
 
 configuration-defaults:
@@ -20,6 +20,9 @@ C++) as well.
 
 If your system already has GMP installed, this step can be
 skipped.
+
+MPC, another dependency of GCC, requires a GMP built with C++
+support, so we need to specify that at configure time.
 
 configure-commands:
  - CPPFLAGS=-fexceptions ./configure --prefix=PARAM[GMP_PREFIX] --enable-cxx

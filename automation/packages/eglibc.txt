@@ -69,7 +69,7 @@ configure-commands:
       --with-headers=PARAM[SYSROOT]/usr/include
       --cache-file=config.cache
 
-test-commands:
+test-commands: (none)
 
 install-commands:
  - make install_root=PARAM[SYSROOT] install
@@ -124,7 +124,7 @@ configure-commands:
       --with-headers=PARAM[TMPTOOLS]/include
       --cache-file=config.cache
 
-test-commands:
+test-commands: (none)
 
 The +install_root+ is specified as +/+ for this installation
 because that causes the installation to occur directly in the

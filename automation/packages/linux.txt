@@ -1,6 +1,6 @@
 name: linux
 full-name: Linux kernel
-version: "3.5.2"
+version: "3.10.9"
 project-url: http://www.kernel.org/
 
 The kernel is Linux _per se_ -- the core of the operating system.
@@ -65,7 +65,7 @@ configure-commands:
 make-commands:
  - make PARAM[KERNEL_ARCH] headers_check
 
-test-commands:
+test-commands: (none)
 
 install-commands:
  - make PARAM[KERNEL_ARCH] INSTALL_HDR_PATH=_dest headers_install
@@ -86,7 +86,7 @@ configure-commands:
 make-commands:
  - make PARAM[KERNEL_ARCH] headers_check
 
-test-commands:
+test-commands: (none)
 
 install-commands:
  - make PARAM[KERNEL_ARCH] INSTALL_HDR_PATH=_dest headers_install

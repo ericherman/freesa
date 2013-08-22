@@ -1,11 +1,11 @@
 full-name: GNU Compiler Collection
 name: gcc
-version: "4.7.1"
+version: "4.8.1"
 project-url: http://gcc.gnu.org/
 
 GCC is the GNU Compiler Collection.  The most important compiler
 in the collection, for purposes of bootstrapping a system, is the
-C compiler; but GCC also includes compilers for C++, Fortran,
+C and C++ compiler; but GCC also includes compilers for Fortran,
 Java, Ada, and probably other languages as well.
 
 The job of a compiler is to translate source code in a high-level
@@ -21,20 +21,20 @@ documentation (which is maintained in texinfo format) in section
 Oh, I almost forgot.  The GCC package also includes the C
 pre-processor (+cpp+).
 
-Bootstrapping GCC as part of a cross-toolchain is tricky.  The
-only thing that can be built without a working C library (libc)
-is a plain compiler, but that compiler won't be able to produce
-executable programs:  GCC can only create programs if it has
-access to a support library called libgcc.  (That's because
-sometimes, when GCC is compiling C code, it generates references
-to functions defined in libgcc, rather than assembler code; and
-GCC can't produce libgcc unless it has access to some C runtime
-startup files -- object files -- the source for which is
-distributed as part of the C library rather than GCC itself.)
+Bootstrapping GCC as part of a cross-toolchain is tricky.  You
+can build a plain compiler without a working C library (libc),
+but that compiler won't be able to produce executable programs:
+GCC can only create programs if it has access to a support
+library called libgcc.  (That's because sometimes, when GCC is
+compiling C code, it generates references to functions defined in
+libgcc, rather than assembler code; and GCC can't produce libgcc
+unless it has access to some C runtime startup files -- object
+files -- which are distributed as part of the C library rather
+than GCC itself.)
 
-The C libraries that are useful for our purposes -- glibc and
-uClibc -- can't be built unless libgcc is available.  That's
-where the trickiness comes from:  we have to produce the bare
+Compounding the trickiness, the C libraries that are useful for
+our purposes -- glibc and uClibc -- can't be built unless libgcc
+is available.  So what we need to do is produce the bare
 compiler, then use it (along with +as+ from the binutils package)
 to compile the C runtime files from the C library, then use those
 files and the bare compiler to produce libgcc, and then use the
@@ -55,22 +55,16 @@ builds are documented, please tell us!)
 A few dependencies were added to gcc in recent releases (4.3 and
 higher):  the GMP, MPFR, and MPC libraries are required for all
 compiler builds, and a few loop optimizations are only available
-if the Parma Polyhedra Library (PPL), the isl library, and the
-Chunky Loop Generator (CLooG) are available.  Those latter two
-aren't hard dependencies, though; you only need those to be
-available if you want to enable three specific optimizations.
-(The optimizations in question, as of the last time I checked,
-are loop-interchange, loop-strip-mine, and loop-block.  It's not
-clear to us whether or not those optimizations are particularly
-valuable, but we're certainly not worried about them for a
-cross-toolchain build.)
-
-Previous versions of PPL, probably before 0.12, included a
-separate "watchdog" library called PWL, and the gcc configure
-script has a check for that library.  In the 1.0 release of PPL,
-PWL has been integrated into the main library so no separate
-check is necessary.  The disable-pwl-check patch eliminates that
-check.
+if the Integer Set Library (isl) and the Chunky Loop Generator
+(CLooG) are available.  Those latter two aren't hard
+dependencies, though; you only need those to be available if you
+want to enable the Graphite loop optimizations, which are not
+critically important.  (The optimizations in question, as of the
+last time I checked, are loop-interchange, loop-strip-mine, and
+loop-block.  We're certainly not worried about having those
+optimizations for a cross-toolchain build that is only intended
+for use in bootstrapping a new system and will be replaced by a
+native toolchain later on!)
 
 Sources for the required libraries can be included in the GCC
 sources in directories named gmp, mpfr, and mpc; if they are,
@@ -85,13 +79,12 @@ support.  For our cross-toolchain purposes, it's difficult to see
 how that kind of high-precision math would be useful. We just
 disable the libquadmath library altogether.
 
-GCC's version checks for PPL and CLooG try to ensure that old
+GCC's version checks for ISL and CLooG try to ensure that old
 versions of those libraries are in use.  Since we want to use the
 latest stable version of everything, we disable those version
-checks with a patch.
+checks during configuration.
 
 patches:
- - disable-pwl-check-1
 
 phase: static compiler
 
@@ -119,13 +112,13 @@ configure-commands:
      --disable-decimal-float --disable-libquadmath --disable-libgomp
      --disable-libmudflap --disable-libssp --disable-multilib
      --disable-nls --disable-shared --disable-threads --enable-languages=c
-     --with-newlib --without-headers --disable-ppl-version-check
+     --with-newlib --without-headers --disable-isl-version-check
      --enable-cloog-backend=isl --disable-cloog-version-check
 
 make-commands:
  - make all-gcc all-target-libgcc
 
-test-commands:
+test-commands: (none)
 
 install-commands:
  - make install-gcc install-target-libgcc
@@ -151,13 +144,13 @@ configure-commands:
     --disable-multilib --disable-nls --enable-shared --disable-libquadmath
     --enable-languages=c,c++ --enable-__cxa_atexit
     --enable-c99 --enable-long-long --enable-threads=posix
-    --disable-ppl-version-check --enable-cloog-backend=isl
+    --disable-isl-version-check --enable-cloog-backend=isl
     --disable-cloog-version-check
 
 make-commands:
  - make AS_FOR_TARGET="PARAM[TARGET]-as" LD_FOR_TARGET="PARAM[TARGET]-ld"
 
-test-commands:
+test-commands: (none)
 
 install-commands:
  - make install

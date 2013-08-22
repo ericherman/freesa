@@ -1,5 +1,5 @@
 name: CLooG
-version: "0.17.o"
+version: "0.18.0"
 project-url: http://www.cloog.org/
 
 configuration-defaults:
@@ -10,19 +10,20 @@ CLooG is the "Chunky LOOp Generator," another mathematics
 library: it generates code for scanning Z-polyhedra.  This is
 needed for the Graphite loop optimizations in GCC.  There are
 various versions of CLooG that use different polyhedral
-libraries; the standard version relies on isl and bundles a
-version of it.  Unfortunately GCC requires a later version of
-isl, so we need to install that separately and then instruct
-CLooG to use the pre-built one.
+libraries; the standard version relies on ISL and bundles a
+version of it.  The configuration parameters used here assumes
+that there is a later version of ISL installed already that
+should be used rather than the bundled version.
 
 According to the GCC documentation, we also need to specify
---with-bits=gmp so that CLooG uses GMP internally.
+--with-bits=gmp so that CLooG uses GMP internally.  However, this
+is no longer accurate with CLooG 0.18.0; with that version,
+configuration fails if that option is specified.
 
 If your system already has the correct version of CLooG
 installed, this step can be skipped.
 
 configure-commands:
- - ./configure --with-bits=gmp --with-gmp=system 
-   --with-gmp-prefix=PARAM[GMP_PREFIX]
+ - ./configure --with-gmp=system --with-gmp-prefix=PARAM[GMP_PREFIX]
    --with-isl=system --with-isl-prefix=PARAM[ISL_PREFIX] 
    --prefix=PARAM[PPL_PREFIX]

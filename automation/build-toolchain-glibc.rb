@@ -8,23 +8,14 @@ require 'litbuild'
 
 @log = GlobalLogPolicy.new('/tmp/Build/logs')
 
-class ShuntExecutioner < Executioner
-  def execute_in_dir(shell_command, output_file, cwd)
-    puts "IN [#{cwd}] RUN [#{shell_command}] LOGGING TO [#{output_file}]"
-  end
-end
-
 def load_misc(name)
   File.read(File.join("miscellany", "#{name}.txt"))
 end
 def package(name)
   text = File.read(File.join('packages', "#{name}.txt"))
   parent_dir = File.join("/tmp", "Build")
-  Package.new(text, @exec, @log, parent_dir)
+  Package.new(text, @log, parent_dir)
 end
-
-#@exec = ShuntExecutioner.new
-@exec = Executioner.new
 
 cfg_x86 = {
   'KERNEL_ARCH' => '',
@@ -60,17 +51,15 @@ binutils = package('binutils')
 gcc = package('gcc')
 glibc = package('glibc')
 linux = package('linux')
-specs = Commands.new(load_misc('specs'), @exec, @log)
+specs = Commands.new(load_misc('specs'), @log)
 
 [ binutils, gcc, glibc, linux, specs ].each { |r| r.set(cfg) }
 
-linux.build('sysroot headers')
-binutils.build
-gcc.build('static compiler')
-glibc.build('sysroot glibc')
-gcc.build('full compiler')
-linux.build('temporary tool headers')
-glibc.build('temporary tool glibc')
-specs.build
-
-[ binutils, gcc, glibc, linux ].each { |r| r.cleanup }
+File.open("/tmp/01-linux-sysroot-headers.sh",'w') { |f| f.puts(linux.to_bash_script('sysroot headers')) }
+File.open("/tmp/02-binutils.sh", 'w') { |f| f.puts(binutils.to_bash_script) }
+File.open("/tmp/03-gcc-static.sh", 'w') { |f| f.puts(gcc.to_bash_script('static compiler')) }
+File.open("/tmp/04-glibc-sysroot.sh", 'w') { |f| f.puts(glibc.to_bash_script('sysroot glibc')) }
+File.open("/tmp/05-gcc-full.sh", 'w') { |f| f.puts(gcc.to_bash_script('full compiler')) }
+File.open("/tmp/06-linux-tools-headers.sh", 'w') { |f| f.puts(linux.to_bash_script('temporary tool headers')) }
+File.open("/tmp/07-glibc-tools.sh", 'w') { |f| f.puts(glibc.to_bash_script('temporary tool glibc')) }
+File.open("/tmp/08-specs.sh", 'w') { |f| f.puts(specs.to_bash_script) }
