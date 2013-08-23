@@ -68,8 +68,17 @@ native toolchain later on!)
 
 Sources for the required libraries can be included in the GCC
 sources in directories named gmp, mpfr, and mpc; if they are,
-then they'll be built automatically along with gcc.  (We haven't
-tried doing that, though.)
+then they'll be built automatically along with gcc.  isl and
+cloog can, similarly, be included in the gcc source tree and will
+be built from there.  As of GCC 4.8, it appears to be very
+difficult to construct cross-toolchains without setting up a
+combined source tree in this way, so that's the process we follow
+here.
+
+GCC's version checks for ISL and CLooG try to ensure that old
+versions of those libraries are in use.  Since we want to use the
+latest stable version of everything, we disable those version
+checks during configuration.
 
 There's a problem when building a toolchain for Intel
 architecture CPUs and uClibc 0.9.32: when the C library is
@@ -78,11 +87,6 @@ was added to GCC in 4.6 and provides 128-bit floating point math
 support.  For our cross-toolchain purposes, it's difficult to see
 how that kind of high-precision math would be useful. We just
 disable the libquadmath library altogether.
-
-GCC's version checks for ISL and CLooG try to ensure that old
-versions of those libraries are in use.  Since we want to use the
-latest stable version of everything, we disable those version
-checks during configuration.
 
 patches:
 
