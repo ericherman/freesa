@@ -66,15 +66,6 @@ optimizations for a cross-toolchain build that is only intended
 for use in bootstrapping a new system and will be replaced by a
 native toolchain later on!)
 
-Sources for the required libraries can be included in the GCC
-sources in directories named gmp, mpfr, and mpc; if they are,
-then they'll be built automatically along with gcc.  isl and
-cloog can, similarly, be included in the gcc source tree and will
-be built from there.  As of GCC 4.8, it appears to be very
-difficult to construct cross-toolchains without setting up a
-combined source tree in this way, so that's the process we follow
-here.
-
 GCC's version checks for ISL and CLooG try to ensure that old
 versions of those libraries are in use.  Since we want to use the
 latest stable version of everything, we disable those version
@@ -89,6 +80,23 @@ how that kind of high-precision math would be useful. We just
 disable the libquadmath library altogether.
 
 patches:
+ - branch-update-20130823
+
+Sources for the required libraries can be included in the GCC
+sources in directories named gmp, mpfr, and mpc; if they are,
+then they'll be built automatically along with gcc.  isl and
+cloog can, similarly, be included in the gcc source tree and will
+be built from there.  As of GCC 4.8, it appears to be very
+difficult to construct cross-toolchains without setting up a
+combined source tree in this way, so that's the process we follow
+here.
+
+in-tree-sources:
+ - cloog 0.18.0
+ - gmp 5.1.2
+ - isl 0.12.1
+ - mpc 1.0.1 
+ - mpfr 3.1.2
 
 phase: static compiler
 
