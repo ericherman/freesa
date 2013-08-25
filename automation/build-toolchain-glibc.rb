@@ -17,34 +17,34 @@ def package(name)
   Package.new(text, @log, parent_dir)
 end
 
-cfg_x86 = {
-  'KERNEL_ARCH' => '',
+cfg_base = {
   'SYSROOT' => '/tmp/cross-tools/sysroot',
   'HOST' => 'i686-cross-linux-gnu',
-  'TARGET' => 'i686-pc-linux-gnu',
   'TOOL_PREFIX' => '/tmp/cross-tools',
-  'GLIBCFLAG' => '-march=i686 -g -O2',
-  'KERNEL_VERSION' => '3.1.4',
-  'TMPTOOLS' => '/tmp/tools'
+  'KERNEL_VERSION' => '3.10.9',
+  'TMPTOOLS' => '/tmp/tools',
+  'TARFILE_DIR' => '/home/random/toolchain-sources',
+  'PATCH_DIR' => '/home/random/gits/freesa/patches'
+}
+
+cfg_x86 = {
+  'KERNEL_ARCH' => '',
+  'TARGET' => 'i686-pc-linux-gnu',
+  'GLIBCFLAG' => '-march=i686 -g -O2'
 }
 
 cfg_mips = {
   'KERNEL_ARCH' => 'ARCH=mips',
-  'SYSROOT' => '/tmp/cross-tools/sysroot',
-  'HOST' => 'i686-cross-linux-gnu',
   'TARGET' => 'mipsel-unknown-linux-gnu',
-  'TOOL_PREFIX' => '/tmp/cross-tools',
-  'GLIBCFLAG' => '-g -O2',
-  'KERNEL_VERSION' => '3.0.0',
-  'TMPTOOLS' => '/tmp/tools'
+  'GLIBCFLAG' => '-g -O2'
 }
 
 if ARGV[0] == 'mips'
   puts "Building glibc/mips toolchain"
-  cfg = cfg_mips
+  cfg = cfg_base.merge(cfg_mips)
 else
   puts "Building glibc/x86 toolchain"
-  cfg = cfg_x86
+  cfg = cfg_base.merge(cfg_x86)
 end
 
 binutils = package('binutils')
