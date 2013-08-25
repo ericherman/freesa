@@ -35,31 +35,12 @@ necessary to worry about optimizing the glibc here that way,
 since it won't wind up on the final system, but it won't hurt
 anything and is good practice in general.
 
-The libgcc_eh patch that we apply is very important:  it allows
-glibc to be built without requiring the libgcc_eh library
-provided as part of GCC.  (We think that's an exception handling
-library.) That library is only built during a full GCC build,
-which we can't do until after we have a working glibc, so it
-introduces a cyclical dependency into the toolchain build
-process.  However, even though the standard glibc build process
-crashes when libgcc_eh is not available, the library is not
-actually required to do a glibc build.  The patch modifies the
-build machinery so that the glibc build can complete successfully
-even when there is no libgcc_eh available.
-
-Another patch we apply prevents the localedef function from
-failing with segmentation faults on some machine architectures.
-It's probably not particularly important for our purposes, but it
-doesn't hurt anything to apply it.
-
-The final patch corrects a configure script so that glibc can be
-built using gcc 4.5.0 or later -- without it, the glibc configure
-script reports that cpuid.h exists but cannot be used.
+Current versions of glibc have been modified so that they do not
+depend on libgcc_eh at all -- this means that a patch that was
+needed for previous versions when constructing toolchains is not
+needed any longer.
 
 patches:
- - libgcc_eh-1
- - libgcc_s-1
- - localedef_segfault-1
 
 phase: sysroot glibc
 
