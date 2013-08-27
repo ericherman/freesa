@@ -1,6 +1,26 @@
 name: specs
 full-name: Adjust specs for temporary tools
 
+If you look at the structure of the cross-toolchain, you'll see
+that there are a couple of different ways you can refer to the
+programs in it.  First, in the +bin+ directory, there are a bunch
+of programs prefixed with the target-triple (e.g.
++PARAM[TARGET]-gcc+); second, in +PARAM[TARGET]/bin+, the sames
+set of programs exist without a prefix.  You can use either one,
+but there's a gotcha: if you put
++PARAM[TOOL_PREFIX]/PARAM[TARGET]/bin+ in your PATH, driver
+programs like gcc and g++ won't be able to find some of the other
+programs they rely on, like cc1 and cc1plus.  Those programs are
+in +libexec/gcc/PARAM[TARGET]/VERSION+, and for some reason they
+can be found when the driver executable is in +bin+ but not when
+it's in +PARAM[TARGET]/bin+.  That means that unless you put the
+path to the directory containing cc1 in your PATH as well, you
+might wind up getting mysterious error messages like "gcc: error
+trying to exec 'cc1': execvp: No such file or directory" when you
+try to compile programs.  Just add the cc1 directory in your
+PATH, or use the full +PARAM[TARGET]-gcc+ program name to
+compile programs.
+
 The point of this compiler is to build the temporary tools that
 will allow us to build the final system entirely from source
 code.  When we're using those tools to build the final system, we
@@ -15,12 +35,21 @@ like +/lib/ld-linux.so.2+ or +/lib/ld.so.1+).  That's normally
 fine, but we want the temporary tool programs to be entirely
 independent of +/lib+.  So we need to adjust our cross-toolchain
 so that the programs it builds look in the +/lib+ directory under
-the temporary tools location for their libraries.  Alternatively,
-we could build all of our temporary tools as static executables,
-so they would be self-contained and not need any shared libraries
-at all; but that option isn't well-supported by glibc.
+the temporary tools location for their libraries.  We could
+alternatively build all of our temporary tools as static
+executables, so they would be self-contained and not need any
+shared libraries at all; but that option isn't well-supported by
+glibc.
 
 commands:
  - PARAM[TARGET]-gcc -dumpspecs | 
      sed -e 's@/lib/ld@PARAM[TMPTOOLS]/lib/ld@g' >
      $(dirname $(PARAM[TARGET]-gcc --print-libgcc-file-name))/specs
+
+You can now verify that the cross-toolchain is set up to link
+against the temporary tools glibc by compiling any simple program
+(like Hello World) and then running +readelf -a a.out+ -- there
+will be a line in the program headers section that says
+"Requesting program interpreter:" and should contain the path to
+the dynamic link library in the temporary tools location.
+
