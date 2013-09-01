@@ -35,8 +35,9 @@ cfg_x86 = {
 
 cfg_mips = {
   'KERNEL_ARCH' => 'ARCH=mips',
-  'TARGET' => 'mipsel-unknown-linux-gnu',
-  'GLIBCFLAG' => '-g -O2'
+  'KERNEL_VERSION' => '3.6',
+  'TARGET' => 'mips64el-unknown-linux-gnu',
+  'GLIBCFLAG' => '-g -O2 -march=mips64 -mabi=64'
 }
 
 if ARGV[0] == 'mips'
@@ -55,11 +56,27 @@ specs = Commands.new(load_misc('specs'), @log)
 
 [ binutils, gcc, glibc, linux, specs ].each { |r| r.set(cfg) }
 
-File.open("/tmp/01-linux-sysroot-headers.sh",'w') { |f| f.puts(linux.to_bash_script('sysroot headers')) }
-File.open("/tmp/02-binutils.sh", 'w') { |f| f.puts(binutils.to_bash_script) }
-File.open("/tmp/03-gcc-static.sh", 'w') { |f| f.puts(gcc.to_bash_script('static compiler')) }
-File.open("/tmp/04-glibc-sysroot.sh", 'w') { |f| f.puts(glibc.to_bash_script('sysroot glibc')) }
-File.open("/tmp/05-gcc-full.sh", 'w') { |f| f.puts(gcc.to_bash_script('full compiler')) }
-File.open("/tmp/06-linux-tools-headers.sh", 'w') { |f| f.puts(linux.to_bash_script('temporary tool headers')) }
-File.open("/tmp/07-glibc-tools.sh", 'w') { |f| f.puts(glibc.to_bash_script('temporary tool glibc')) }
-File.open("/tmp/08-specs.sh", 'w') { |f| f.puts(specs.to_bash_script) }
+File.open("/tmp/01-linux-sysroot-headers.sh",'w') { |f| 
+  f.puts(linux.to_bash_script('sysroot headers')) 
+}
+File.open("/tmp/02-binutils.sh", 'w') { |f| 
+  f.puts(binutils.to_bash_script) 
+}
+File.open("/tmp/03-gcc-static.sh", 'w') { |f| 
+  f.puts(gcc.to_bash_script('static compiler')) 
+}
+File.open("/tmp/04-glibc-sysroot.sh", 'w') { |f| 
+  f.puts(glibc.to_bash_script('sysroot glibc')) 
+}
+File.open("/tmp/05-gcc-full.sh", 'w') { |f| 
+  f.puts(gcc.to_bash_script('full compiler')) 
+}
+File.open("/tmp/06-linux-tools-headers.sh", 'w') { |f| 
+  f.puts(linux.to_bash_script('temporary tool headers')) 
+}
+File.open("/tmp/07-glibc-tools.sh", 'w') { |f| 
+  f.puts(glibc.to_bash_script('temporary tool glibc')) 
+}
+File.open("/tmp/08-specs.sh", 'w') { |f| 
+  f.puts(specs.to_bash_script) 
+}
