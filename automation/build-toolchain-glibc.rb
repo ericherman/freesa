@@ -36,7 +36,7 @@ cfg_x86 = {
 cfg_mips = {
   'KERNEL_ARCH' => 'ARCH=mips',
   'KERNEL_VERSION' => '3.6',
-  'TARGET' => 'mips64el-unknown-linux-gnu',
+  'TARGET' => 'mipsel-unknown-linux-gnu',
   'GLIBCFLAG' => '-g -O2'
 }
 
