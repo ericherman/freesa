@@ -80,7 +80,7 @@ how that kind of high-precision math would be useful. We just
 disable the libquadmath library altogether.
 
 patches:
- - branch-update-20130823
+ - branch-update-20130901
 
 Sources for the required libraries can be included in the GCC
 sources in directories named gmp, mpfr, and mpc; if they are,
