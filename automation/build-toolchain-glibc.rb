@@ -23,8 +23,8 @@ cfg_base = {
   'TOOL_PREFIX' => '/tmp/cross-tools',
   'KERNEL_VERSION' => '3.10.9',
   'TMPTOOLS' => '/tmp/tools',
-  'TARFILE_DIR' => '/home/random/toolchain-sources',
-  'PATCH_DIR' => '/home/random/gits/freesa/patches'
+  'TARFILE_DIR' => ENV['HOME'] + '/toolchain-sources',
+  'PATCH_DIR' => ENV['HOME'] + '/gits/freesa/patches'
 }
 
 cfg_x86 = {
